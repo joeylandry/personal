@@ -1,0 +1,39 @@
+{
+  "name": "joeylandry-personal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal brand site for Joey Landry \u2014 software engineer and independent builder.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
+    "covers": "node scripts/generate-covers.mjs"
+  },
+  "dependencies": {
+    "geist": "^1.6.1",
+    "next": "16.3.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.20.0",
+    "eslint-config-next": "16.3.5",
+    "prettier": "^3.5.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.7.3",
+    "vitest": "^5.0.1"
+  }
+}

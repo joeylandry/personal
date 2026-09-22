@@ -1,0 +1,464 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Midnight Coastal Lab — design tokens
+   ==========================================================================
+   Two surfaces carry the whole site: deep midnight ink and warm paper. Every
+   component reads semantic variables (--fg, --muted, --rule, --accent) rather
+   than raw colors, so a section changes character by changing one class.
+   ========================================================================== */
+
+@theme {
+  /* Raw palette */
+  --color-ink: #071018;
+  --color-ink-raised: #0b1a24;
+  --color-ink-high: #10242f;
+  --color-paper: #f4f0e8;
+  --color-paper-sunk: #e9e3d6;
+  --color-sea: #72d6c9;
+  --color-amber: #f3b45b;
+  --color-gold: #e7c36a;
+  --color-fog: #9fb1bd;
+  --color-slate: #4a5c68;
+
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SFMono-Regular', 'Menlo', monospace;
+
+  /* Fluid editorial scale. Upper bounds stay restrained so a phone never shows
+     three words of a headline. */
+  --text-display: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.03em;
+  --text-title: clamp(1.9rem, 1.2rem + 3.1vw, 3.25rem);
+  --text-title--line-height: 1.08;
+  --text-title--letter-spacing: -0.022em;
+  --text-heading: clamp(1.4rem, 1.1rem + 1.4vw, 2rem);
+  --text-heading--line-height: 1.18;
+  --text-heading--letter-spacing: -0.015em;
+  --text-lead: clamp(1.0625rem, 0.99rem + 0.42vw, 1.3125rem);
+  --text-lead--line-height: 1.55;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.11em;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Semantic utilities
+   --------------------------------------------------------------------------
+   These must be `@utility` rather than `@theme` entries. A theme colour
+   declared as `--color-fg: var(--fg)` is substituted once, in `:root`, and the
+   resulting value is what inherits — so a section that redefines `--fg` would
+   never change anything. Declaring the `var()` inside the utility defers
+   substitution to the element that uses it, which is what makes a surface
+   swap the entire colour context beneath it. Variants (hover:, md:, group-*)
+   still work.
+   -------------------------------------------------------------------------- */
+
+@utility bg-bg {
+  background-color: var(--bg);
+}
+@utility bg-raised {
+  background-color: var(--raised);
+}
+@utility bg-accent {
+  background-color: var(--accent);
+}
+@utility bg-rule {
+  background-color: var(--rule);
+}
+@utility bg-rule-strong {
+  background-color: var(--rule-strong);
+}
+@utility bg-fg {
+  background-color: var(--fg);
+}
+@utility text-fg {
+  color: var(--fg);
+}
+@utility text-muted {
+  color: var(--muted);
+}
+@utility text-faint {
+  color: var(--faint);
+}
+@utility text-accent {
+  color: var(--accent);
+}
+/* Foreground for text sitting on an accent fill. */
+@utility text-accent-fg {
+  color: var(--accent-fg);
+}
+@utility text-bg {
+  color: var(--bg);
+}
+@utility border-rule {
+  border-color: var(--rule);
+}
+@utility border-rule-strong {
+  border-color: var(--rule-strong);
+}
+@utility border-accent {
+  border-color: var(--accent);
+}
+/* Softened accent border for corner ticks and quiet outlines. */
+@utility border-tick {
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Surfaces
+   -------------------------------------------------------------------------- */
+
+:root,
+.surface-ink {
+  --bg: var(--color-ink);
+  --raised: var(--color-ink-raised);
+  --fg: var(--color-paper);
+  --muted: var(--color-fog);
+  --faint: #7d8f9b;
+  --rule: rgb(159 177 189 / 0.16);
+  --rule-strong: rgb(159 177 189 / 0.34);
+  --accent-sea: var(--color-sea);
+  --accent-amber: var(--color-amber);
+  --accent-gold: var(--color-gold);
+  --accent: var(--color-sea);
+  --accent-graphic: var(--color-sea);
+  /* Readable ON the accent: ink on a bright sea-glass fill. */
+  --accent-fg: var(--color-ink);
+  --shadow-key: rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+.surface-paper {
+  --bg: var(--color-paper);
+  --raised: var(--color-paper-sunk);
+  --fg: #0a1620;
+  --muted: var(--color-slate);
+  /* 4.87:1 on paper. The mono metadata is 12px, so it needs the full
+     normal-text ratio, not the large-text allowance. */
+  --faint: #5a6b77;
+  --rule: rgb(10 22 32 / 0.14);
+  --rule-strong: rgb(10 22 32 / 0.3);
+  /* Darkened accents so accent-colored text clears WCAG AA on paper. */
+  --accent-sea: #0b6d60;
+  --accent-amber: #8a5a10;
+  --accent-gold: #6e5412;
+  --accent: #0b6d60;
+  --accent-graphic: #0b6d60;
+  /* The paper accents are dark, so the fill needs light text on it. */
+  --accent-fg: var(--color-paper);
+  --shadow-key: rgb(7 16 24 / 0.14);
+  color-scheme: light;
+}
+
+/* Project accents pick the variant that belongs to the surrounding surface. */
+.accent-sea {
+  --accent: var(--accent-sea);
+  --accent-graphic: var(--accent-sea);
+}
+.accent-amber {
+  --accent: var(--accent-amber);
+  --accent-graphic: var(--accent-amber);
+}
+.accent-gold {
+  --accent: var(--accent-gold);
+  --accent-graphic: var(--accent-gold);
+}
+
+/* Day-to-night shift: set on <html> from the visitor's local clock. Subtle —
+   the accent warms after dark, nothing moves or flashes. */
+:root[data-daypart='night'] {
+  --accent: var(--color-amber);
+  --accent-sea: var(--color-sea);
+}
+:root[data-daypart='night'] .surface-ink {
+  --accent: var(--color-amber);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* Sticky header clearance for in-page anchors. */
+    scroll-padding-top: 5.5rem;
+    background-color: var(--color-ink);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-sea);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sea);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .surface-paper :focus-visible {
+    outline-color: #0b6d60;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Anchor targets sit below the sticky header. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Components & utilities
+   -------------------------------------------------------------------------- */
+
+@layer components {
+  /* Compact mono metadata — the lab-notebook voice of the design. */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    letter-spacing: var(--text-meta--letter-spacing);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Section label with a leading accent tick. */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 1.5rem;
+    height: 1px;
+    background-color: var(--accent);
+    flex: none;
+  }
+
+  /* Hairline rules, the connective tissue of the layout. */
+  .rule-t {
+    border-top: 1px solid var(--rule);
+  }
+  .rule-b {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* Text link that reveals its underline on hover/focus. */
+  .link {
+    color: inherit;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 240ms var(--ease-out-soft);
+    padding-bottom: 1px;
+  }
+  .link:hover,
+  .link:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Persistent underline that retracts on hover — used where the link is the
+     primary action and should already look like one. */
+  .link-on {
+    color: inherit;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: 100% 1px;
+    transition: background-size 240ms var(--ease-out-soft);
+    padding-bottom: 1px;
+  }
+  .link-on:hover,
+  .link-on:focus-visible {
+    background-size: 0% 1px;
+  }
+
+  /* Fine technical grid. Decorative only — always aria-hidden. */
+  .grid-field {
+    background-image:
+      linear-gradient(to right, var(--rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 5.5rem 5.5rem;
+    mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+  }
+
+  /* Paper grain / ink noise, kept extremely low so it reads as material. */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+}
+
+@layer utilities {
+  .wrap {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .wrap {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .wrap {
+      padding-inline: 3.5rem;
+    }
+  }
+
+  .measure {
+    max-width: 62ch;
+  }
+
+  .measure-tight {
+    max-width: 46ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Motion
+   --------------------------------------------------------------------------
+   Reveals are opt-in: the default state is fully visible, and only a page that
+   has running JavaScript switches into the hidden-then-revealed state. That
+   keeps the no-JS reading path complete.
+   -------------------------------------------------------------------------- */
+
+[data-js='on'] .reveal {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 620ms var(--ease-out-soft),
+    transform 620ms var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-js='on'] .reveal[data-shown='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+/* A few pixels of parallax on project imagery. Never more. */
+[data-js='on'] .parallax {
+  transform: translate3d(0, var(--parallax, 0px), 0);
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+.status-dot {
+  animation: pulse-dot 3.4s var(--ease-out-soft) infinite;
+}
+
+@keyframes caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caret 1.25s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-js='on'] .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-js='on'] .parallax {
+    transform: none;
+  }
+}
+
+@media print {
+  .surface-ink,
+  .surface-paper {
+    --bg: #fff;
+    --fg: #000;
+    --muted: #333;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  header[data-site-header],
+  [data-print-hide] {
+    display: none !important;
+  }
+}
