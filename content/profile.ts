@@ -18,7 +18,11 @@ export const profile = {
 
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
-    headline: ['I build things that work,', 'feel alive,', 'and mean something.'],
+    headline: [
+      'Building software and web applications,',
+      'Integrating AI,',
+      'and fulfilling user needs.',
+    ],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and ship full-stack products — from community-powered commerce and brewery discovery to immersive security games.",
     primaryCta: { label: "See what I've built", href: '/#work' },
