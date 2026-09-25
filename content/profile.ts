@@ -38,7 +38,7 @@ export const profile = {
     title: 'I like the moment an idea stops being hypothetical.',
     body: [
       'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-      'The neighborhood kept showing up. Over eight years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
+      'The neighborhood kept showing up. Over nine years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
       'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools, event systems and security games.',
       'The thread is ownership. I like the whole path — from a rough idea to something real people can actually use.',
     ],
@@ -52,7 +52,7 @@ export const profile = {
   /** Milestones for the origin/impact story. Verified facts only. */
   impact: [
     { year: '2013', label: 'A lemonade stand and bracelets in Nyes Neck', value: '$50 raised' },
-    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '8 years' },
+    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '9 years' },
     {
       year: 'Total',
       label: 'Raised for Make-A-Wish Massachusetts and Rhode Island',
