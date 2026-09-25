@@ -75,6 +75,7 @@ export const credibility: CredibilitySignal[] = [
   { value: 'Fidelity', label: 'Software Engineer' },
   { value: 'Tufts', label: 'B.S. Computer Science · cum laude' },
   { value: '$20K+', label: 'Raised for Make-A-Wish' },
+  { value: 'St. Jude', label: 'Actively supported through Nyes Neck' },
   { value: 'Shipped', label: 'Production sites for real organizations' },
 ];
 
