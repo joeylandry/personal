@@ -16,8 +16,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   return new ImageResponse(
     <OgCard
-      eyebrow={project?.kind ?? 'Selected work'}
-      title={project?.tagline ?? 'Selected work'}
+      eyebrow={project?.kind ?? 'Recent work'}
+      title={project?.tagline ?? 'Recent work'}
       meta={project?.name ?? 'Joey Landry'}
       accent={project ? OG_ACCENTS[project.accent] : undefined}
     />,
