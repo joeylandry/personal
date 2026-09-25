@@ -5,7 +5,7 @@ import { Reveal } from './reveal';
 
 const specs = [
   { key: 'Location', value: 'New Hampshire' },
-  { key: 'Origin', value: 'Nyes Neck · Cape Cod' },
+  { key: 'Hometown', value: 'Nyes Neck · Cape Cod' },
   { key: 'Now', value: 'Associate SWE, Fidelity' },
   { key: 'After dark', value: 'Independent products' },
 ];

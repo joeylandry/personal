@@ -19,9 +19,9 @@ export const profile = {
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
     headline: [
-      'Building software and web applications,',
-      'Integrating AI,',
-      'and fulfilling user needs.',
+      'Building software and web apps,',
+      'integrating AI,',
+      'and meeting real user needs.',
     ],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and ship full-stack products — from community-powered commerce and brewery discovery to immersive security games.",
@@ -34,7 +34,7 @@ export const profile = {
     'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms, location tools and immersive security games.',
 
   about: {
-    kicker: 'Origin',
+    kicker: 'Where it started',
     title: 'I like the moment an idea stops being hypothetical.',
     body: [
       'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
