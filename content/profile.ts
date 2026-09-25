@@ -20,14 +20,14 @@ export const profile = {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
     headline: ['I build things that work,', 'feel alive,', 'and mean something.'],
     support:
-      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and ship full-stack products — from community-powered commerce and brewery discovery to immersive security games.",
+      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and ship full-stack products — from community-powered commerce to brewery discovery.",
     primaryCta: { label: "See what I've built", href: '/#work' },
     secondaryCta: { label: 'GitHub', href: 'https://github.com/joeylandry' },
   },
 
   /** Short bio used for meta descriptions and structured data. */
   metaDescription:
-    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms, location tools and immersive security games.',
+    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms and location tools.',
 
   about: {
     kicker: 'Origin',
@@ -35,7 +35,7 @@ export const profile = {
     body: [
       'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
       'The neighborhood kept showing up. Over eight years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
-      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools, event systems and security games.',
+      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools and event systems.',
       'The thread is ownership. I like the whole path — from a rough idea to something real people can actually use.',
     ],
     /** Pull-quote rendered as an editorial aside. */

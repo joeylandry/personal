@@ -88,6 +88,11 @@ Reveals are opt-in: the default CSS state is fully visible, and only a document 
 hidden-then-revealed. Content is therefore complete without JavaScript. Everything is
 disabled under `prefers-reduced-motion`.
 
+One exception, on purpose: this site lists itself as project 03, so its "live site" link
+(and the word _recursive_ in its tagline) opens `components/recursion.tsx` — a five-second
+infinite zoom into the site that ends by apologising. Without JavaScript it is a plain link
+back to the page you are already on. Under reduced motion the zoom holds still.
+
 ---
 
 ## Configuration
@@ -146,11 +151,10 @@ Every page except `/api/contact` is statically prerendered.
 
 Verified locally against the production build (Lighthouse, mobile emulation):
 
-| Route                  | Performance | Accessibility | Best practices | SEO |
-| ---------------------- | ----------- | ------------- | -------------- | --- |
-| `/`                    | 98          | 100           | 100            | 100 |
-| `/work`                | 96          | 100           | 100            | 100 |
-| `/work/the-black-veil` | 95          | 100           | 100            | 100 |
+| Route   | Performance | Accessibility | Best practices | SEO |
+| ------- | ----------- | ------------- | -------------- | --- |
+| `/`     | 98          | 100           | 100            | 100 |
+| `/work` | 96          | 100           | 100            | 100 |
 
 The Playwright suite additionally asserts WCAG AA contrast for every text node on every
 route, keyboard operation of the mobile menu, focus visibility, landmark structure,

@@ -26,7 +26,7 @@ test.describe('homepage', () => {
     for (const name of [
       'Nyes Neck Clothing & Apparel',
       'Arlington Brewing Company',
-      'The Black Veil',
+      'joeylandry.com',
     ]) {
       await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     }
@@ -91,8 +91,8 @@ test.describe('project case studies', () => {
   });
 
   test('links live site and source with a safe rel', async ({ page }) => {
-    await page.goto('/work/the-black-veil');
-    const live = page.locator('a[href="https://black-veil-eight.vercel.app"]').first();
+    await page.goto('/work/arlington-brewing-company');
+    const live = page.locator('a[href="https://www.drinkarlingtonbeer.com"]').first();
     await expect(live).toHaveAttribute('target', '_blank');
     await expect(live).toHaveAttribute('rel', /noopener/);
 
@@ -101,10 +101,23 @@ test.describe('project case studies', () => {
     }
   });
 
+  test('recurses, then apologises', async ({ page }) => {
+    await page.goto('/#work');
+    await page.getByRole('link', { name: 'recursive', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Recursion' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText("You didn't break the site!")).toBeVisible({
+      timeout: 10_000,
+    });
+    await dialog.getByRole('button', { name: /Back to the/ }).click();
+    await expect(dialog).toBeHidden();
+    await expect(page).toHaveURL(/\/#work$/);
+  });
+
   test('wraps previous/next navigation around the set', async ({ page }) => {
     await page.goto('/work/nyes-neck');
     const nav = page.getByRole('navigation', { name: 'More work' });
-    await expect(nav.getByText('The Black Veil')).toBeVisible();
+    await expect(nav.getByText('joeylandry.com')).toBeVisible();
     await nav.getByRole('link', { name: /Arlington Brewing Company/ }).click();
     await expect(page).toHaveURL(/\/work\/arlington-brewing-company$/);
   });
@@ -118,7 +131,7 @@ test.describe('project case studies', () => {
     const expected = {
       'nyes-neck': { onPaper: 'rgb(11, 109, 96)', onInk: 'rgb(114, 214, 201)' },
       'arlington-brewing-company': { onPaper: 'rgb(138, 90, 16)', onInk: 'rgb(243, 180, 91)' },
-      'the-black-veil': { onPaper: 'rgb(110, 84, 18)', onInk: 'rgb(231, 195, 106)' },
+      'joeylandry-com': { onPaper: 'rgb(110, 84, 18)', onInk: 'rgb(231, 195, 106)' },
     };
 
     for (const [slug, colour] of Object.entries(expected)) {
@@ -154,7 +167,7 @@ test.describe('routing and crawling', () => {
     const sitemap = await request.get('/sitemap.xml');
     expect(sitemap.ok()).toBe(true);
     const xml = await sitemap.text();
-    for (const slug of ['nyes-neck', 'arlington-brewing-company', 'the-black-veil']) {
+    for (const slug of ['nyes-neck', 'arlington-brewing-company', 'joeylandry-com']) {
       expect(xml).toContain(`/work/${slug}`);
     }
 

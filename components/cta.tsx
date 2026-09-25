@@ -15,6 +15,11 @@ const variants = {
 
 type Variant = keyof typeof variants;
 
+/** CTA styling for elements that are not a plain link, e.g. the recursion trigger. */
+export function ctaClassName(variant: Variant = 'solid', className = ''): string {
+  return `${base} ${variants[variant]} ${className}`.trim();
+}
+
 function Inner({ children, arrow }: { children: ReactNode; arrow: boolean }) {
   return (
     <>
@@ -55,7 +60,7 @@ export function Cta({
   external?: boolean;
   className?: string;
 }) {
-  const classes = `${base} ${variants[variant]} ${className}`.trim();
+  const classes = ctaClassName(variant, className);
 
   if (external || /^https?:/.test(href)) {
     return (

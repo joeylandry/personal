@@ -70,6 +70,12 @@ export interface Project {
   order: number;
   /** One line, headline-grade. */
   tagline: string;
+  /**
+   * A word in `tagline` that opens the recursion easter egg when clicked. Only
+   * the project describing this site sets it; its "live site" link becomes a
+   * trigger too, since that link would point straight back here.
+   */
+  recursionTrigger?: string;
   /** Two to three sentences for cards and meta descriptions. */
   summary: string;
   liveUrl?: string;

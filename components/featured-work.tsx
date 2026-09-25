@@ -11,7 +11,7 @@ export function FeaturedWork() {
           id="work-heading"
           label="Selected work"
           title="Three products, all in production."
-          lead="A short portfolio on purpose. Each of these is live, built end to end, and still being maintained — an apparel brand, a brewery's content platform, and an immersive mystery with a real security layer underneath it."
+          lead="A short portfolio on purpose. Each of these is live, built end to end, and still being maintained — an apparel brand, a brewery's content platform, and the site you are reading right now."
           aside={
             <Link href="/work" className="link-on text-sm font-medium text-fg">
               All work →
