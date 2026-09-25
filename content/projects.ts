@@ -19,9 +19,9 @@ export const projects: Project[] = [
     featured: true,
     order: 1,
     accent: 'sea',
-    tagline: 'A childhood fundraiser, rebuilt as a modern storefront.',
+    tagline: 'My childhood fundraiser, rebuilt as a modern storefront.',
     summary:
-      'A Cape Cod lifestyle and apparel brand that turns a neighborhood fundraiser into a mission-driven store. I own the brand, the design and the whole stack — Next.js storefront, Sanity content operations, and a Printful product boundary.',
+      'A Cape Cod lifestyle and apparel brand that grew out of nine years of fundraising for Make-A-Wish, now a mission-driven store with a portion of proceeds supporting St. Jude Children’s Research Hospital. I own the brand, the design and the whole stack — Next.js storefront, Sanity content operations, and a Printful product boundary.',
     liveUrl: 'https://www.nyesneck.shop',
     repoUrl: 'https://github.com/joeylandry/nyes_neck',
     highlights: ['Next.js 16', 'Sanity CMS', 'Printful', 'Tailwind 4'],
@@ -50,7 +50,7 @@ export const projects: Project[] = [
         'A Cape Cod lifestyle and apparel brand built as a real storefront, where the product catalog, the brand story and the charitable mission are all the same system.',
       context: [
         'In 2013, at nine years old, I sold lemonade and bracelets in Nyes Neck and raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-        'With help from the neighborhood, that experiment kept expanding — movie nights, raffles, apparel, live music, community events — and over eight years it raised more than $20,000.',
+        'With help from the neighborhood, that experiment kept expanding — movie nights, raffles, apparel, live music, community events — and over nine years it raised more than $20,000.',
         'After Tufts I wanted to bring the idea back as something permanent instead of an annual event. Nyes Neck Clothing & Apparel is that: a brand inspired by Nyes Neck and Cape Cod, with a portion of proceeds supporting St. Jude Children’s Research Hospital and a long-term ambition to widen that impact.',
       ],
       owned: [

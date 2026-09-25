@@ -13,14 +13,18 @@ export const profile = {
   /** Neighbourhood-level coastal reference behind the brand. Decorative. */
   origin: 'Nyes Neck · Cape Cod',
   coordinates: '41.63° N · 70.36° W',
-  statusLine: 'Based in New Hampshire · Building after dark',
+  statusLine: 'Based in New Hampshire · Building after hours',
   signature: 'midnight vibecoder',
 
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
-    headline: ['I build things that work,', 'feel alive,', 'and mean something.'],
+    headline: [
+      'Building software and web apps,',
+      'integrating AI,',
+      'and advancing what users can do.',
+    ],
     support:
-      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and ship full-stack products — from community-powered commerce to brewery discovery.",
+      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
     primaryCta: { label: "See what I've built", href: '/#work' },
     secondaryCta: { label: 'GitHub', href: 'https://github.com/joeylandry' },
   },
@@ -30,17 +34,17 @@ export const profile = {
     'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms and location tools.',
 
   about: {
-    kicker: 'Origin',
+    kicker: 'Where it started',
     title: 'I like the moment an idea stops being hypothetical.',
     body: [
       'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-      'The neighborhood kept showing up. Over eight years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
-      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools and event systems.',
+      'The neighborhood kept showing up. Over nine years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
+      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools, event systems and security games.',
       'The thread is ownership. I like the whole path — from a rough idea to something real people can actually use.',
     ],
     /** Pull-quote rendered as an editorial aside. */
     aside: {
-      quote: 'Engineer by day. Builder after dark.',
+      quote: 'Engineer by day. Builder after hours.',
       caption: 'The short version.',
     },
   },
@@ -48,7 +52,7 @@ export const profile = {
   /** Milestones for the origin/impact story. Verified facts only. */
   impact: [
     { year: '2013', label: 'A lemonade stand and bracelets in Nyes Neck', value: '$50 raised' },
-    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '8 years' },
+    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '9 years' },
     {
       year: 'Total',
       label: 'Raised for Make-A-Wish Massachusetts and Rhode Island',
@@ -71,6 +75,7 @@ export const credibility: CredibilitySignal[] = [
   { value: 'Fidelity', label: 'Software Engineer' },
   { value: 'Tufts', label: 'B.S. Computer Science · cum laude' },
   { value: '$20K+', label: 'Raised for Make-A-Wish' },
+  { value: 'St. Jude', label: 'Actively supported through Nyes Neck' },
   { value: 'Shipped', label: 'Production sites for real organizations' },
 ];
 

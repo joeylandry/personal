@@ -82,7 +82,7 @@ export function collectionSchema() {
     '@type': 'CollectionPage',
     '@id': absoluteUrl('/work#collection'),
     url: absoluteUrl('/work'),
-    name: 'Selected work — Joey Landry',
+    name: 'Recent work — Joey Landry',
     isPartOf: { '@id': websiteId },
     about: { '@id': personId },
     hasPart: featuredProjects.map((project) => ({
