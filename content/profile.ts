@@ -13,7 +13,7 @@ export const profile = {
   /** Neighbourhood-level coastal reference behind the brand. Decorative. */
   origin: 'Nyes Neck · Cape Cod',
   coordinates: '41.63° N · 70.36° W',
-  statusLine: 'Based in New Hampshire · Building after dark',
+  statusLine: 'Based in New Hampshire · Building after hours',
   signature: 'midnight vibecoder',
 
   hero: {
@@ -44,7 +44,7 @@ export const profile = {
     ],
     /** Pull-quote rendered as an editorial aside. */
     aside: {
-      quote: 'Engineer by day. Builder after dark.',
+      quote: 'Engineer by day. Builder after hours.',
       caption: 'The short version.',
     },
   },

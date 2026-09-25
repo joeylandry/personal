@@ -164,7 +164,7 @@ export function OgCard({
         }}
       >
         <div style={{ display: 'flex', color: accent }}>{meta}</div>
-        <div style={{ display: 'flex' }}>Engineer by day · Builder after dark</div>
+        <div style={{ display: 'flex' }}>Engineer by day · Builder after hours</div>
       </div>
     </div>
   );
