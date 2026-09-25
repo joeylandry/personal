@@ -10,7 +10,7 @@ export default function Image() {
   return new ImageResponse(
     <OgCard
       eyebrow="Recent work"
-      title="Three products, all in production."
+      title="Current projects, all in production."
       meta={featuredProjects.map((project) => project.shortName).join(' · ')}
     />,
     { ...size, fonts: ogFonts() },

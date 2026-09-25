@@ -10,7 +10,7 @@ export function FeaturedWork() {
         <SectionHeading
           id="work-heading"
           label="Recent work"
-          title="Three products, all in production."
+          title="Current projects, all in production."
           lead="A short portfolio on purpose. Each of these is live, built end to end, and still being maintained — an apparel brand, a brewery's content platform, and an immersive mystery with a real security layer underneath it."
           aside={
             <Link href="/work" className="link-on text-sm font-medium text-fg">
