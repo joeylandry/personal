@@ -11,7 +11,7 @@ export function CredibilityStrip() {
     <section aria-label="Credentials" className="surface-ink rule-t bg-ink text-fg">
       <div className="wrap grid grid-cols-2 lg:grid-cols-5">
         {credibility.map((signal, index) => {
-          // On two-column phones an odd final item spans the full row.
+          // In the two-column layout an odd final item spans the full row.
           const spansRow = count % 2 === 1 && index === count - 1;
           return (
             <Reveal
