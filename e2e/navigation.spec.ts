@@ -107,7 +107,7 @@ test.describe('project case studies', () => {
     const dialog = page.getByRole('dialog', { name: 'Recursion' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText("You didn't break the site!")).toBeVisible({
-      timeout: 10_000,
+      timeout: 20_000,
     });
     await dialog.getByRole('button', { name: /Back to the/ }).click();
     await expect(dialog).toBeHidden();

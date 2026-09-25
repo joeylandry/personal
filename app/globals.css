@@ -427,11 +427,9 @@
 /* --------------------------------------------------------------------------
    Recursion easter egg (components/recursion.tsx)
    --------------------------------------------------------------------------
-   Each window holds a child at 80% of its size, inset 10% from the sides and
-   14.25% from the top (an 8.5% title bar, then centred in what is left). That
-   maps a window onto its child with a fixed point at (50%, 71.25%), so
-   scaling the tunnel by 1/0.8 about that point lands exactly on the next
-   level, and the zoom can wrap forever without a visible seam.
+   Every level is the real page plus one window of the real page. Levels are
+   styled identically, including their looping "loading" animations, so the
+   zoom can wrap from one level to the next without a visible jump.
    -------------------------------------------------------------------------- */
 
 .recursion-stage {
@@ -441,75 +439,176 @@
     opacity 600ms ease-in;
 }
 .recursion-stage::after {
+  opacity: 0;
+  transition: opacity 800ms ease;
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(closest-side, transparent 55%, var(--color-ink) 130%);
+  background: radial-gradient(closest-side, transparent 70%, rgb(7 16 24 / 0.7) 140%);
   pointer-events: none;
+}
+.recursion-vignette::after {
+  opacity: 1;
 }
 .recursion-collapse {
   transform: scale(0.01) rotate(540deg);
   opacity: 0;
 }
 
-.recursion-frame {
-  --frame: 250vmax;
-  position: absolute;
-  width: var(--frame);
-  height: calc(var(--frame) * 0.625);
-  left: calc(50% - var(--frame) * 0.5);
-  top: calc(50% - var(--frame) * 0.625 * 0.7125);
-}
-.recursion-tunnel {
-  width: 100%;
-  height: 100%;
-  transform-origin: 50% 71.25%;
-  will-change: transform;
-}
-.recursion-window {
+.recursion-level {
   position: relative;
-  width: 100%;
-  height: 100%;
-  container-type: size;
-  border: max(1px, 0.18cqw) solid color-mix(in srgb, var(--color-gold) 75%, transparent);
-  background: var(--color-ink-raised);
+  overflow: hidden;
+  background: var(--color-ink);
+}
+.recursion-page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+}
+/* The copies are pictures: flatten anything that would give them their own
+   GPU layers, so seven of them can be scaled every frame without repainting. */
+.recursion-page * {
+  will-change: auto !important;
+  backdrop-filter: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+.recursion-page .parallax,
+.recursion-page .reveal {
+  transform: none !important;
+}
+/* Opening beat: a quick flash, as if the page simply reloaded. */
+.recursion-reload {
+  animation: recursion-reload 1100ms ease both;
+}
+@keyframes recursion-reload {
+  0%,
+  35% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.recursion-nav-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-sea);
+  box-shadow: 0 0 8px var(--color-sea);
+  transform-origin: 0 50%;
+  animation: recursion-nav-progress 1100ms ease-out both;
+}
+@keyframes recursion-nav-progress {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  45% {
+    transform: scaleX(0.7);
+  }
+  80% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+.recursion-fade-in {
+  animation: recursion-face 500ms var(--ease-out-soft) both;
+}
+
+.recursion-window {
+  position: absolute;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 60%, transparent),
+    0 24px 48px -12px rgb(0 0 0 / 0.8);
+  animation: recursion-window-in 380ms var(--ease-out-soft) both;
+  animation-delay: var(--delay);
 }
 .recursion-bar {
-  position: absolute;
-  inset: 0 0 auto;
-  height: 8.5%;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 1.1cqw;
-  padding: 0 2cqw;
-  border-bottom: max(1px, 0.1cqw) solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+  gap: 0.45em;
+  padding: 0 0.9em;
+  font-size: 13px;
+  background: var(--color-ink-high);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-gold) 30%, transparent);
 }
-.recursion-bar span {
-  width: 1.1cqw;
-  height: 1.1cqw;
+.recursion-dot {
+  width: 0.7em;
+  height: 0.7em;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-gold) 60%, transparent);
+  background: color-mix(in srgb, var(--color-fog) 45%, transparent);
 }
-.recursion-bar em {
-  position: absolute;
-  left: 50%;
-  translate: -50% 0;
-  padding: 0.25cqw 7cqw;
-  border: max(1px, 0.1cqw) solid color-mix(in srgb, var(--color-gold) 50%, transparent);
+.recursion-spinner {
+  width: 1em;
+  height: 1em;
+  margin-left: 0.6em;
   border-radius: 999px;
+  border: 2px solid var(--color-gold);
+  border-right-color: transparent;
+  animation: recursion-spin 700ms linear infinite;
+}
+.recursion-url {
+  flex: 1;
+  max-width: 60%;
+  margin: 0 auto;
+  padding: 0.3em 1em;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-fog);
   font-family: var(--font-mono);
-  font-size: 2.2cqw;
-  font-style: normal;
-  letter-spacing: 0.08em;
-  color: var(--color-gold);
+  text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.recursion-child {
+.recursion-progress {
   position: absolute;
-  left: 10%;
-  top: 14.25%;
-  width: 80%;
-  height: 80%;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-gold);
+  transform-origin: 0 50%;
+  animation: recursion-progress 1.3s var(--ease-out-soft) infinite;
+}
+
+@keyframes recursion-window-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+@keyframes recursion-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes recursion-progress {
+  from {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  85% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
 }
 
 .recursion-line {
