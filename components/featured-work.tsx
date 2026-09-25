@@ -9,7 +9,7 @@ export function FeaturedWork() {
       <div className="wrap">
         <SectionHeading
           id="work-heading"
-          label="Selected work"
+          label="Recent work"
           title="Three products, all in production."
           lead="A short portfolio on purpose. Each of these is live, built end to end, and still being maintained — an apparel brand, a brewery's content platform, and an immersive mystery with a real security layer underneath it."
           aside={
