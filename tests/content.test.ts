@@ -23,7 +23,7 @@ describe('projects', () => {
     expect(featuredProjects.map((p) => p.slug)).toEqual([
       'nyes-neck',
       'arlington-brewing-company',
-      'the-black-veil',
+      'joeylandry-com',
     ]);
   });
 
@@ -90,14 +90,25 @@ describe('projects', () => {
 
   it('wraps previous/next navigation around the featured set', () => {
     const first = getProjectNeighbors('nyes-neck');
-    expect(first?.previous.slug).toBe('the-black-veil');
+    expect(first?.previous.slug).toBe('joeylandry-com');
     expect(first?.next.slug).toBe('arlington-brewing-company');
 
-    const last = getProjectNeighbors('the-black-veil');
+    const last = getProjectNeighbors('joeylandry-com');
     expect(last?.previous.slug).toBe('arlington-brewing-company');
     expect(last?.next.slug).toBe('nyes-neck');
 
     expect(getProjectNeighbors('does-not-exist')).toBeNull();
+  });
+
+  it('only offers the recursion joke where the tagline can carry it', () => {
+    for (const project of projects) {
+      if (project.recursionTrigger) {
+        expect(project.tagline).toContain(project.recursionTrigger);
+        // The joke replaces the live link; a real one would be skipped.
+        expect(project.liveUrl).toBeUndefined();
+      }
+    }
+    expect(projects.filter((p) => p.recursionTrigger)).toHaveLength(1);
   });
 
   it('looks projects up by slug', () => {
@@ -107,7 +118,7 @@ describe('projects', () => {
 
   it('derives display hosts without the www prefix', () => {
     expect(displayHost('https://www.nyesneck.shop')).toBe('nyesneck.shop');
-    expect(displayHost('https://black-veil-eight.vercel.app')).toBe('black-veil-eight.vercel.app');
+    expect(displayHost('https://drinkarlingtonbeer.com')).toBe('drinkarlingtonbeer.com');
   });
 });
 

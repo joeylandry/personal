@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import type { CaseStudyBlock, Project } from '@/content';
 import { displayHost, statusLabels } from '@/content';
-import { ExternalLink } from './external-link';
+import { ExternalLink, OutboundArrow } from './external-link';
+import { RecursionTrigger } from './recursion';
 import { Reveal } from './reveal';
 
 /** Masthead for a case study: identity, status and the two outbound links. */
@@ -63,6 +64,11 @@ export function CaseStudyHeader({ project }: { project: Project }) {
                 <ExternalLink href={project.liveUrl} className="link-on text-accent" arrow>
                   {displayHost(project.liveUrl)}
                 </ExternalLink>
+              ) : project.recursionTrigger ? (
+                <RecursionTrigger className="link-on text-accent">
+                  {project.name}
+                  <OutboundArrow />
+                </RecursionTrigger>
               ) : (
                 <span className="text-muted">—</span>
               )}

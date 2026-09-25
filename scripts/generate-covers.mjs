@@ -192,66 +192,56 @@ function arlington() {
 </svg>`;
 }
 
-/* ------------------------------------------------------------ The Black Veil */
+/* ----------------------------------------------------------- joeylandry.com */
 
-function blackVeil() {
-  const rays = [];
-  const cx = 800;
-  const cy = 1180;
-  for (let i = 0; i <= 30; i += 1) {
-    const angle = Math.PI + (i / 30) * Math.PI;
-    const x = cx + Math.cos(angle) * 1250;
-    const y = cy + Math.sin(angle) * 1250;
-    rays.push(
-      `<path d="M${cx} ${cy}L${round(x)} ${round(y)}" stroke="${GOLD}" stroke-width="${
-        i % 5 === 0 ? 2 : 1
-      }" opacity="${round(0.24 - Math.abs(i - 15) * 0.006)}"/>`,
-    );
+function recursiveSite() {
+  // A browser window showing this site, which shows a browser window showing
+  // this site, which… Each level is the previous one scaled about the centre.
+  const windows = [];
+  let x = 250;
+  let y = 150;
+  let w = 1100;
+  let h = 700;
+  for (let depth = 0; depth < 11; depth += 1) {
+    const bar = h * 0.085;
+    const stroke = round(Math.max(0.6, 2.4 - depth * 0.22));
+    const opacity = round(Math.max(0.18, 0.95 - depth * 0.08));
+    const dot = (i) =>
+      `<circle cx="${round(x + bar * (0.55 + i * 0.5))}" cy="${round(y + bar / 2)}" r="${round(bar * 0.14)}" fill="${GOLD}" opacity="0.6"/>`;
+    const pill = `<rect x="${round(x + w * 0.3)}" y="${round(y + bar * 0.24)}" width="${round(w * 0.4)}" height="${round(bar * 0.52)}" rx="${round(bar * 0.26)}" fill="none" stroke="${GOLD}" stroke-width="${round(stroke * 0.6)}" opacity="0.55"/>`;
+    const url =
+      depth < 4
+        ? `<text x="${round(x + w / 2)}" y="${round(y + bar * 0.62)}" fill="${GOLD}" font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace" font-size="${round(bar * 0.3)}" letter-spacing="${round(bar * 0.03)}" text-anchor="middle">joeylandry.com</text>`
+        : '';
+    windows.push(`<g opacity="${opacity}">
+      <rect x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" fill="#0A141C" stroke="${GOLD}" stroke-width="${stroke}"/>
+      <path d="M${round(x)} ${round(y + bar)}H${round(x + w)}" stroke="${GOLD}" stroke-width="${round(stroke * 0.6)}" opacity="0.5"/>
+      ${dot(0)}${dot(1)}${dot(2)}${pill}${url}
+    </g>`);
+
+    // The next window sits centred in the content area below the bar.
+    const nw = w * 0.8;
+    const nh = h * 0.8;
+    const contentTop = y + bar;
+    x += (w - nw) / 2;
+    y = contentTop + (h - bar - nh) / 2;
+    w = nw;
+    h = nh;
   }
-
-  const card = (x, y, rotate, opacity) => `
-    <g transform="rotate(${rotate} ${x + 110} ${y + 75})" opacity="${opacity}">
-      <rect x="${x}" y="${y}" width="220" height="150" fill="#0B0E14" stroke="${GOLD}" stroke-width="1.6" stroke-opacity="0.55"/>
-      <path d="M${x + 20} ${y + 32}h120M${x + 20} ${y + 58}h180M${x + 20} ${y + 80}h150M${x + 20} ${y + 102}h168M${x + 20} ${y + 124}h96"
-        stroke="${GOLD}" stroke-width="3" opacity="0.32"/>
-    </g>`;
-
-  const mask = `
-    <g fill="none" stroke="${GOLD}" stroke-width="3.5">
-      <path d="M800 372c-78-52-176-58-224-24-46 33-40 108 12 142 60 39 152 22 212-40 60 62 152 79 212 40 52-34 58-109 12-142-48-34-146-28-224 24z"
-        fill="#0B0E14" fill-opacity="0.85"/>
-      <path d="M646 424c20-26 60-26 82 0-22 24-62 24-82 0z" fill="#05070B" stroke-width="2.5"/>
-      <path d="M872 424c22-26 62-26 82 0-20 24-60 24-82 0z" fill="#05070B" stroke-width="2.5"/>
-      <path d="M612 372c34-20 84-18 112 4M876 376c28-22 78-24 112-4" stroke-width="2" opacity="0.7"/>
-      <path d="M800 402v56" stroke-width="2" opacity="0.6"/>
-      <path d="M576 452c-54 18-92 46-112 84M1024 452c54 18 92 46 112 84" stroke-width="2" opacity="0.45"/>
-    </g>`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">
   <defs>
-    <radialGradient id="veil" cx="0.5" cy="0.42" r="0.75">
-      <stop offset="0" stop-color="#101620"/>
-      <stop offset="1" stop-color="#05070B"/>
+    <radialGradient id="tunnel" cx="0.5" cy="0.55" r="0.75">
+      <stop offset="0" stop-color="#132330"/>
+      <stop offset="1" stop-color="${INK}"/>
     </radialGradient>
   </defs>
-  <rect width="${W}" height="${H}" fill="url(#veil)"/>
-  <g>${rays.join('')}</g>
+  <rect width="${W}" height="${H}" fill="url(#tunnel)"/>
   ${grid(80, GOLD, 0.05)}
-  <circle cx="800" cy="430" r="300" fill="none" stroke="${GOLD}" stroke-width="1.5" opacity="0.28"/>
-  <circle cx="800" cy="430" r="356" fill="none" stroke="${GOLD}" stroke-width="1" opacity="0.14"/>
-  ${card(150, 640, -7, 0.85)}
-  ${card(1230, 660, 6, 0.7)}
-  ${mask}
-  <g>
-    <rect x="560" y="820" width="480" height="58" fill="#0B0E14" stroke="${GOLD}" stroke-opacity="0.45" stroke-width="1.5"/>
-    ${monoText(586, 857, '&#62; trial 03 · verified', { size: 20, fill: GOLD, spacing: 2 })}
-    <rect x="${586 + 302}" y="838" width="12" height="24" fill="${GOLD}" opacity="0.8"/>
-  </g>
+  ${windows.join('')}
   ${corners(96, 96, W - 192, H - 192, GOLD)}
-  ${monoText(800, 170, 'THE BLACK VEIL', { size: 28, fill: GOLD, anchor: 'middle', spacing: 10 })}
-  ${monoText(800, 212, 'MANCHESTER, N.H. · 1921—1926', { size: 17, fill: FOG, anchor: 'middle' })}
-  ${monoText(150, 940, 'POSTGRES · DRIZZLE · HMAC SESSIONS', { size: 17, fill: FOG })}
-  ${monoText(W - 150, 940, 'ARCHIVE · RSVP · CTF', { size: 17, fill: GOLD, anchor: 'end' })}
+  ${monoText(150, 940, 'NEXT.JS · TAILWIND · TYPED CONTENT', { size: 17, fill: FOG })}
+  ${monoText(W - 150, 940, 'SEE: JOEYLANDRY.COM', { size: 17, fill: GOLD, anchor: 'end' })}
 </svg>`;
 }
 
@@ -260,7 +250,7 @@ function blackVeil() {
 const covers = {
   'nyes-neck.svg': nyesNeck(),
   'arlington-brewing.svg': arlington(),
-  'the-black-veil.svg': blackVeil(),
+  'joeylandry-com.svg': recursiveSite(),
 };
 
 mkdirSync(OUT, { recursive: true });

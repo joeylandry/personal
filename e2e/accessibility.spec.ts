@@ -79,7 +79,7 @@ const ROUTES = [
   '/work',
   '/work/nyes-neck',
   '/work/arlington-brewing-company',
-  '/work/the-black-veil',
+  '/work/joeylandry-com',
 ];
 
 test.describe('colour contrast', () => {

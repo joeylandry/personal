@@ -424,6 +424,236 @@
   animation: caret 1.25s steps(1, end) infinite;
 }
 
+/* --------------------------------------------------------------------------
+   Recursion easter egg (components/recursion.tsx)
+   --------------------------------------------------------------------------
+   Every level is the real page plus one window of the real page. Levels are
+   styled identically, including their looping "loading" animations, so the
+   zoom can wrap from one level to the next without a visible jump.
+   -------------------------------------------------------------------------- */
+
+.recursion-stage {
+  transform-origin: 50% 50%;
+  transition:
+    transform 600ms cubic-bezier(0.6, 0, 0.9, 0.4),
+    opacity 600ms ease-in;
+}
+.recursion-stage::after {
+  opacity: 0;
+  transition: opacity 800ms ease;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(closest-side, transparent 70%, rgb(7 16 24 / 0.7) 140%);
+  pointer-events: none;
+}
+.recursion-vignette::after {
+  opacity: 1;
+}
+.recursion-collapse {
+  transform: scale(0.01) rotate(540deg);
+  opacity: 0;
+}
+
+.recursion-level {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-ink);
+}
+.recursion-page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+}
+/* The copies are pictures: flatten anything that would give them their own
+   GPU layers, so seven of them can be scaled every frame without repainting. */
+.recursion-page * {
+  will-change: auto !important;
+  backdrop-filter: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+.recursion-page .parallax,
+.recursion-page .reveal {
+  transform: none !important;
+}
+/* Opening beat: a quick flash, as if the page simply reloaded. */
+.recursion-reload {
+  animation: recursion-reload 1100ms ease both;
+}
+@keyframes recursion-reload {
+  0%,
+  35% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.recursion-nav-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-sea);
+  box-shadow: 0 0 8px var(--color-sea);
+  transform-origin: 0 50%;
+  animation: recursion-nav-progress 1100ms ease-out both;
+}
+@keyframes recursion-nav-progress {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  45% {
+    transform: scaleX(0.7);
+  }
+  80% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+.recursion-fade-in {
+  animation: recursion-face 500ms var(--ease-out-soft) both;
+}
+
+.recursion-window {
+  position: absolute;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 60%, transparent),
+    0 24px 48px -12px rgb(0 0 0 / 0.8);
+  animation: recursion-window-in 380ms var(--ease-out-soft) both;
+  animation-delay: var(--delay);
+}
+.recursion-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0 0.9em;
+  font-size: 13px;
+  background: var(--color-ink-high);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-gold) 30%, transparent);
+}
+.recursion-dot {
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-fog) 45%, transparent);
+}
+.recursion-spinner {
+  width: 1em;
+  height: 1em;
+  margin-left: 0.6em;
+  border-radius: 999px;
+  border: 2px solid var(--color-gold);
+  border-right-color: transparent;
+  animation: recursion-spin 700ms linear infinite;
+}
+.recursion-url {
+  flex: 1;
+  max-width: 60%;
+  margin: 0 auto;
+  padding: 0.3em 1em;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-fog);
+  font-family: var(--font-mono);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recursion-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-gold);
+  transform-origin: 0 50%;
+  animation: recursion-progress 1.3s var(--ease-out-soft) infinite;
+}
+
+@keyframes recursion-window-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+@keyframes recursion-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes recursion-progress {
+  from {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  85% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+.recursion-line {
+  transform: translate(-50%, -50%) rotate(var(--tilt));
+  text-align: center;
+  animation: recursion-pop 280ms var(--ease-out-soft) both;
+}
+@keyframes recursion-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--tilt)) scale(1.8);
+  }
+}
+
+.recursion-shake {
+  animation: recursion-shake 110ms linear infinite;
+}
+@keyframes recursion-shake {
+  0% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -6px 3px;
+  }
+  50% {
+    translate: 5px -4px;
+  }
+  75% {
+    translate: -3px -5px;
+  }
+  100% {
+    translate: 4px 4px;
+  }
+}
+
+.recursion-face {
+  animation: recursion-face 520ms var(--ease-out-soft) both;
+}
+@keyframes recursion-face {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

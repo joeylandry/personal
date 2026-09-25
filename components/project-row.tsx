@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { Project } from '@/content';
 import { displayHost, statusLabels } from '@/content';
-import { ExternalLink } from './external-link';
+import { ExternalLink, OutboundArrow } from './external-link';
 import { Frame } from './frame';
+import { RecursionTrigger } from './recursion';
 import { Reveal } from './reveal';
 
 /**
@@ -58,7 +59,9 @@ export function ProjectRow({ project, index }: { project: Project; index: number
           </Link>
         </h3>
 
-        <p className="mt-3 text-lead text-accent">{project.tagline}</p>
+        <p className="mt-3 text-lead text-accent">
+          <Tagline project={project} />
+        </p>
         <p className="measure mt-4 text-[0.95rem] leading-relaxed text-muted">{project.summary}</p>
 
         <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-rule pt-5">
@@ -81,6 +84,12 @@ export function ProjectRow({ project, index }: { project: Project; index: number
               {displayHost(project.liveUrl)}
             </ExternalLink>
           ) : null}
+          {project.recursionTrigger ? (
+            <RecursionTrigger className="link text-muted hover:text-fg">
+              {project.name}
+              <OutboundArrow />
+            </RecursionTrigger>
+          ) : null}
           {project.repoUrl ? (
             <ExternalLink href={project.repoUrl} className="link text-muted hover:text-fg" arrow>
               Source
@@ -89,6 +98,29 @@ export function ProjectRow({ project, index }: { project: Project; index: number
         </div>
       </Reveal>
     </article>
+  );
+}
+
+/**
+ * The tagline, with the project's recursion trigger word (if any) turned into
+ * a quiet link. Only the first occurrence is linked.
+ */
+function Tagline({ project }: { project: Project }) {
+  const word = project.recursionTrigger;
+  const at = word ? project.tagline.indexOf(word) : -1;
+  if (!word || at === -1) return project.tagline;
+
+  return (
+    <>
+      {project.tagline.slice(0, at)}
+      <RecursionTrigger
+        href={`/work/${project.slug}`}
+        className="underline decoration-dotted decoration-1 underline-offset-[5px] hover:decoration-solid"
+      >
+        {word}
+      </RecursionTrigger>
+      {project.tagline.slice(at + word.length)}
+    </>
   );
 }
 

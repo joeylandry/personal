@@ -31,7 +31,7 @@ export const profile = {
 
   /** Short bio used for meta descriptions and structured data. */
   metaDescription:
-    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms, location tools and immersive security games.',
+    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms and location tools.',
 
   about: {
     kicker: 'Where it started',

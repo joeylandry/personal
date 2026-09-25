@@ -10,8 +10,9 @@ import {
   StackTable,
 } from '@/components/case-study';
 import { Coastline } from '@/components/coastline';
-import { Cta } from '@/components/cta';
+import { Cta, ctaClassName } from '@/components/cta';
 import { Frame } from '@/components/frame';
+import { RecursionTrigger } from '@/components/recursion';
 import { Reveal } from '@/components/reveal';
 import { Section } from '@/components/section';
 import { displayHost, getProject, getProjectNeighbors, projects } from '@/content';
@@ -154,6 +155,9 @@ export default async function ProjectPage({ params }: Params) {
               <Cta href={project.liveUrl} external>
                 Visit {displayHost(project.liveUrl)}
               </Cta>
+            ) : null}
+            {project.recursionTrigger ? (
+              <RecursionTrigger className={ctaClassName()}>Visit {project.name}</RecursionTrigger>
             ) : null}
             {project.repoUrl ? (
               <Cta href={project.repoUrl} variant="outline" arrow={false} external>
