@@ -10,7 +10,17 @@ import { Reveal } from './reveal';
  * A featured project, presented as an editorial spread rather than a card in a
  * grid. Image and text swap sides down the page so the rhythm stays alive.
  */
-export function ProjectRow({ project, index }: { project: Project; index: number }) {
+export function ProjectRow({
+  project,
+  index,
+  headingLevel = 2,
+}: {
+  project: Project;
+  index: number;
+  /** 3 when the row sits under a section heading rather than a page title. */
+  headingLevel?: 2 | 3;
+}) {
+  const Heading = headingLevel === 3 ? 'h3' : 'h2';
   const flipped = index % 2 === 1;
   const number = String(index + 1).padStart(2, '0');
 
@@ -53,11 +63,11 @@ export function ProjectRow({ project, index }: { project: Project; index: number
           {project.kind}
         </p>
 
-        <h2 className="mt-5 text-heading font-medium tracking-tight">
+        <Heading className="mt-5 text-heading font-medium tracking-tight">
           <Link href={`/work/${project.slug}`} className="link-on">
             {project.name}
           </Link>
-        </h2>
+        </Heading>
 
         <p className="mt-3 text-lead text-accent">
           <Tagline project={project} />

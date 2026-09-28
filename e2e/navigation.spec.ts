@@ -17,6 +17,16 @@ test.describe('homepage', () => {
 
     await expect(page).toHaveTitle(/Joey Landry/);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Building software');
+
+    // A recent-work teaser follows the hero and points on to the work page.
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Current projects, all in production.' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 3, name: 'Nyes Neck Clothing & Apparel' }),
+    ).toBeVisible();
+    await page.getByRole('link', { name: 'All work →' }).click();
+    await expect(page).toHaveURL(/\/work$/);
     expect(errors).toEqual([]);
   });
 
