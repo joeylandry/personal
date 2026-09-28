@@ -133,15 +133,17 @@
 }
 
 .surface-paper {
-  --bg: var(--color-paper);
+  /* True white rather than the tinted paper token: the light bands read
+     crisp against the midnight ones instead of faintly grey. */
+  --bg: #ffffff;
   --raised: var(--color-paper-sunk);
   --fg: #0a1620;
   --muted: var(--color-slate);
   /* 5.2:1 on paper. The mono metadata is 12px, so it needs the full
      normal-text ratio, not the large-text allowance. */
   --faint: #5a6b77;
-  --rule: rgb(10 22 32 / 0.14);
-  --rule-strong: rgb(10 22 32 / 0.3);
+  --rule: rgb(10 22 32 / 0.16);
+  --rule-strong: rgb(10 22 32 / 0.32);
   /* Darkened accents so accent-colored text clears WCAG AA on paper. */
   --accent-sea: #0b6d60;
   --accent-amber: #8a5a10;
