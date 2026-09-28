@@ -1,24 +1,28 @@
 /**
  * The JL monogram.
  *
- * Two grotesk strokes on a shared baseline, with the L's foot continuing past
- * the mark as a horizon line — the coastal half of "Midnight Coastal Lab".
+ * Solid grotesk letters on a 40×30 grid: shared cap height and baseline, one
+ * stroke weight, the J's bowl landing exactly on the L's foot. A hairline
+ * horizon sits below the baseline — the coastal half of "Midnight Coastal Lab".
  * Drawn rather than imported so it inherits color from its surface.
  */
+export const MONOGRAM_J = 'M13.5 1h4v15a7 7 0 0 1-14 0h4a3 3 0 0 0 6 0z';
+export const MONOGRAM_L = 'M22.5 1h4v18h10v4h-14z';
+
 export function Monogram({
   className,
   horizon = true,
   title,
 }: {
   className?: string;
-  /** The accent horizon extending from the L. */
+  /** The accent horizon beneath the letters. */
   horizon?: boolean;
   /** Accessible name. Omit inside a labelled link to avoid double-reading. */
   title?: string;
 }) {
   return (
     <svg
-      viewBox="0 0 44 38"
+      viewBox="0 0 40 30"
       fill="none"
       className={className}
       role={title ? 'img' : 'presentation'}
@@ -29,26 +33,14 @@ export function Monogram({
       {title ? <title>{title}</title> : null}
       {horizon ? (
         <path
-          d="M0 30.25h44"
+          d="M3.5 27.5h33"
           stroke="var(--accent)"
           strokeWidth="1"
-          opacity="0.9"
           vectorEffect="non-scaling-stroke"
         />
       ) : null}
-      <path
-        d="M17 6v16.5a7 7 0 0 1-14 0"
-        stroke="currentColor"
-        strokeWidth="3.4"
-        strokeLinecap="square"
-      />
-      <path
-        d="M27.5 6v24.25H41"
-        stroke="currentColor"
-        strokeWidth="3.4"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-      />
+      <path d={MONOGRAM_J} fill="currentColor" />
+      <path d={MONOGRAM_L} fill="currentColor" />
     </svg>
   );
 }

@@ -11,7 +11,7 @@ export function SiteFooter() {
     <footer className="surface-ink rule-t relative overflow-hidden bg-ink text-fg">
       <div className="wrap grid gap-12 py-16 md:grid-cols-12 md:py-20">
         <div className="md:col-span-5">
-          <Monogram className="h-8 w-9 text-fg" title={`${profile.name} monogram`} />
+          <Monogram className="h-8 w-[2.667rem] text-fg" title={`${profile.name} monogram`} />
           <p className="measure-tight mt-6 text-sm leading-relaxed text-muted">
             {profile.footerNote}
           </p>
