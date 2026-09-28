@@ -19,7 +19,8 @@ export const profile = {
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
     headline: [
-      'Building software and web apps,',
+      'Building software,',
+      'designing web apps,',
       'integrating AI,',
       'and advancing what users can do.',
     ],

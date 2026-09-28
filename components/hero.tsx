@@ -56,11 +56,11 @@ export function Hero() {
             ))}
           </h1>
 
-          <Reveal delay={260}>
+          <Reveal delay={350}>
             <p className="measure mt-8 text-lead text-muted">{hero.support}</p>
           </Reveal>
 
-          <Reveal delay={340}>
+          <Reveal delay={430}>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Cta href={hero.primaryCta.href}>{hero.primaryCta.label}</Cta>
               <Cta href={hero.secondaryCta.href} variant="outline" arrow={false} external>
@@ -72,7 +72,7 @@ export function Hero() {
 
         {/* Spec rail — the lab half of the identity. */}
         <Reveal
-          delay={420}
+          delay={510}
           className="md:col-span-4 md:self-end md:border-l md:border-rule md:pl-8"
         >
           <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-1 md:gap-y-4">
