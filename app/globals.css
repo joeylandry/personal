@@ -3,7 +3,7 @@
 /* ==========================================================================
    Midnight Coastal Lab — design tokens
    ==========================================================================
-   Two surfaces carry the whole site: deep midnight ink and warm paper. Every
+   Two surfaces carry the whole site: deep midnight ink and clean cool paper. Every
    component reads semantic variables (--fg, --muted, --rule, --accent) rather
    than raw colors, so a section changes character by changing one class.
    ========================================================================== */
@@ -13,8 +13,8 @@
   --color-ink: #071018;
   --color-ink-raised: #0b1a24;
   --color-ink-high: #10242f;
-  --color-paper: #f4f0e8;
-  --color-paper-sunk: #e9e3d6;
+  --color-paper: #f7f9fb;
+  --color-paper-sunk: #eef2f5;
   --color-sea: #72d6c9;
   --color-amber: #f3b45b;
   --color-gold: #e7c36a;
@@ -137,7 +137,7 @@
   --raised: var(--color-paper-sunk);
   --fg: #0a1620;
   --muted: var(--color-slate);
-  /* 4.87:1 on paper. The mono metadata is 12px, so it needs the full
+  /* 5.2:1 on paper. The mono metadata is 12px, so it needs the full
      normal-text ratio, not the large-text allowance. */
   --faint: #5a6b77;
   --rule: rgb(10 22 32 / 0.14);
