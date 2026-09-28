@@ -1,22 +1,24 @@
-import Link from 'next/link';
 import { featuredProjects } from '@/content';
 import { ProjectRow } from './project-row';
 import { Section, SectionHeading } from './section';
 
 export function FeaturedWork() {
   return (
-    <Section id="work" surface="paper" labelledBy="work-heading" className="py-20 md:py-28">
+    <Section
+      id="work"
+      surface="paper"
+      divider={false}
+      labelledBy="work-heading"
+      className="py-16 md:py-24"
+    >
       <div className="wrap">
         <SectionHeading
           id="work-heading"
-          label="Recent work"
+          level={1}
+          label="Work"
           title="Current projects, all in production."
           lead="Every project here is live, built end to end, and actively maintained — from design and front end through backend and deployment."
-          aside={
-            <Link href="/work" className="link-on text-sm font-medium text-fg">
-              All work →
-            </Link>
-          }
+          aside={<p className="meta text-faint">{featuredProjects.length} projects</p>}
         />
 
         <div className="mt-16 space-y-20 md:mt-24 md:space-y-28">

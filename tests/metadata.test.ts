@@ -29,8 +29,8 @@ describe('site urls', () => {
   });
 
   it('points every nav link at a real destination', () => {
-    const ids = ['work', 'about', 'experience', 'contact'];
-    expect(navLinks.map((link) => link.href.split('#')[1])).toEqual(ids);
+    const routes = ['/work', '/about', '/experience', '/contact'];
+    expect(navLinks.map((link) => link.href)).toEqual(routes);
   });
 });
 

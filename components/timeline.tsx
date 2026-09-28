@@ -4,14 +4,15 @@ import { Section, SectionHeading } from './section';
 
 /**
  * Experience and education in one column, newest first. Deliberately compact:
- * the work above is the evidence, this is the trajectory.
+ * the work page is the evidence, this is the trajectory.
  */
 export function Timeline() {
   return (
-    <Section id="experience" surface="paper" labelledBy="experience-heading">
+    <Section id="experience" surface="paper" divider={false} labelledBy="experience-heading">
       <div className="wrap py-20 md:py-28">
         <SectionHeading
           id="experience-heading"
+          level={1}
           label="Experience"
           title="Where I've been building."
           lead="Kept high-level on purpose — internal project detail stays internal."
@@ -41,14 +42,14 @@ export function Timeline() {
               </div>
 
               <div className="md:col-span-9">
-                <h3 className="text-lg font-medium tracking-tight text-fg">
+                <h2 className="text-lg font-medium tracking-tight text-fg">
                   {entry.title}
                   {entry.distinction ? (
                     <span className="ml-2.5 align-middle text-sm font-normal text-accent italic">
                       {entry.distinction}
                     </span>
                   ) : null}
-                </h3>
+                </h2>
                 <p className="mt-1 text-sm text-muted">
                   {entry.org}
                   {/* Only education needs labelling; a job title already says it. */}

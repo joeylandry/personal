@@ -77,6 +77,9 @@ async function sample(page: Page) {
 const ROUTES = [
   '/',
   '/work',
+  '/about',
+  '/experience',
+  '/contact',
   '/work/nyes-neck',
   '/work/arlington-brewing-company',
   '/work/joeylandry-com',
@@ -117,16 +120,21 @@ test.describe('colour contrast', () => {
 
 test.describe('keyboard and assistive technology', () => {
   test('has one h1 and a sensible heading order', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+    for (const route of ROUTES) {
+      await page.goto(route);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
 
-    const levels = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('h1,h2,h3,h4')).map((node) =>
-        Number(node.tagName.slice(1)),
-      ),
-    );
-    for (let i = 1; i < levels.length; i += 1) {
-      expect(levels[i]! - levels[i - 1]!, `heading jump at index ${i}`).toBeLessThanOrEqual(1);
+      const levels = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('h1,h2,h3,h4')).map((node) =>
+          Number(node.tagName.slice(1)),
+        ),
+      );
+      for (let i = 1; i < levels.length; i += 1) {
+        expect(
+          levels[i]! - levels[i - 1]!,
+          `heading jump at index ${i} on ${route}`,
+        ).toBeLessThanOrEqual(1);
+      }
     }
   });
 
@@ -197,7 +205,7 @@ test.describe('mobile menu', () => {
     await page.getByRole('button', { name: 'Open menu' }).click();
     await page.locator('#mobile-nav').getByRole('link', { name: 'Contact' }).click();
     await expect(page.locator('#mobile-nav')).toBeHidden();
-    await expect(page).toHaveURL(/#contact$/);
+    await expect(page).toHaveURL(/\/contact$/);
   });
 });
 
@@ -218,10 +226,12 @@ test.describe('motion and progressive enhancement', () => {
     await page.goto('/');
 
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    // Sections far down the page must be visible without an observer running.
+    // Revealed content must be visible without an observer running.
+    await page.goto('/experience');
     await expect(
       page.getByRole('heading', { name: /Where I.{0,3}ve been building/ }),
     ).toBeVisible();
+    await page.goto('/work');
     await expect(page.getByRole('link', { name: /Nyes Neck Clothing/ }).first()).toBeVisible();
     await context.close();
   });

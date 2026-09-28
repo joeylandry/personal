@@ -60,6 +60,7 @@ export function SectionHeading({
   lead,
   id,
   aside,
+  level = 2,
 }: {
   label: string;
   title: ReactNode;
@@ -67,14 +68,17 @@ export function SectionHeading({
   id?: string;
   /** Right-hand column content, e.g. a link or a count. */
   aside?: ReactNode;
+  /** 1 when the section opens its own page. */
+  level?: 1 | 2;
 }) {
+  const Heading = level === 1 ? 'h1' : 'h2';
   return (
     <header className="grid gap-x-10 gap-y-6 md:grid-cols-12">
       <Reveal className="md:col-span-8">
         <p className="meta section-label">{label}</p>
-        <h2 id={id} className="mt-5 text-title font-medium text-fg">
+        <Heading id={id} className="mt-5 text-title font-medium text-fg">
           {title}
-        </h2>
+        </Heading>
         {lead ? <p className="measure mt-5 text-lead text-muted">{lead}</p> : null}
       </Reveal>
       {aside ? (

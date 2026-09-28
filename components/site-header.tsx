@@ -11,19 +11,20 @@ import { GitHubGlyph } from './glyphs';
 /**
  * Sticky header.
  *
- * Transparent over the hero, then a midnight bar with a hairline once the page
- * scrolls — it stays ink-surfaced on every section so contrast never depends on
+ * Transparent over the homepage hero, then a midnight bar with a hairline once
+ * the page scrolls. Every other page opens straight into content, some of it on
+ * paper, so there the bar is solid from the start and contrast never depends on
  * what happens to be behind it.
  */
 export function SiteHeader() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
   const onHome = pathname === '/';
+  const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -31,30 +32,6 @@ export function SiteHeader() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  // Track which homepage section is in view for aria-current.
-  useEffect(() => {
-    // Off the homepage `onHome` gates every read of `active`, so a stale value
-    // is never rendered and does not need clearing here.
-    if (!onHome || typeof IntersectionObserver === 'undefined') return;
-    const ids = navLinks.map((link) => link.href.split('#')[1]).filter(Boolean) as string[];
-    const nodes = ids
-      .map((id) => document.getElementById(id))
-      .filter((node): node is HTMLElement => node !== null);
-    if (nodes.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActive(visible.target.id);
-      },
-      { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.2, 0.6] },
-    );
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, [onHome]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -97,7 +74,7 @@ export function SiteHeader() {
       data-site-header
       className={[
         'surface-ink sticky top-0 z-50 text-fg transition-colors duration-300',
-        scrolled || open
+        scrolled || open || !onHome
           ? 'border-b border-rule bg-ink/96 backdrop-blur-md supports-[backdrop-filter]:bg-ink/88'
           : 'border-b border-transparent bg-transparent',
       ].join(' ')}
@@ -119,13 +96,12 @@ export function SiteHeader() {
 
         <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => {
-            const id = link.href.split('#')[1];
-            const current = onHome && id === active;
+            const current = isCurrent(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                aria-current={current ? 'true' : undefined}
+                aria-current={current ? 'page' : undefined}
                 className={[
                   'link text-sm transition-colors duration-200',
                   current ? 'text-accent' : 'text-muted hover:text-fg',
@@ -177,11 +153,12 @@ export function SiteHeader() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="rule-b flex items-center justify-between py-4 text-base text-fg"
+              aria-current={isCurrent(link.href) ? 'page' : undefined}
+              className="rule-b flex items-center justify-between py-4 text-base text-fg aria-[current=page]:text-accent"
             >
               {link.label}
               <span aria-hidden="true" className="meta text-faint">
-                ↘
+                →
               </span>
             </Link>
           ))}
