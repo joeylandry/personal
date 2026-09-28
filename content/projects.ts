@@ -138,11 +138,11 @@ export const projects: Project[] = [
       { label: 'Platform', items: ['Vercel'] },
     ],
     image: {
-      src: '/images/projects/arlington-brewing.svg',
-      alt: 'Illustrated cover for Arlington Brewing Company: an amber map plane with location pins marking where the beer is available, beside a row of beer-can silhouettes standing in for the catalog.',
-      width: 1600,
-      height: 1000,
-      illustrated: true,
+      src: '/images/projects/arlington-brewing.webp',
+      alt: 'The Arlington Brewing Company homepage: a full-bleed photo of a smiling bartender at the outdoor tap stand, overlaid with the white water-tower logo, the headline “Great community deserves great beer” and Explore Beers and Visit Us buttons, under a navigation bar with a Beer Finder link.',
+      width: 2000,
+      height: 1178,
+      illustrated: false,
     },
     caseStudy: {
       statement:
