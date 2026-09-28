@@ -11,7 +11,13 @@ const github = socials.find((social) => social.label === 'GitHub')!;
 
 export function Contact() {
   return (
-    <Section id="contact" surface="ink" labelledBy="contact-heading" className="overflow-hidden">
+    <Section
+      id="contact"
+      surface="ink"
+      divider={false}
+      labelledBy="contact-heading"
+      className="overflow-hidden"
+    >
       <div
         aria-hidden="true"
         className="grid-field pointer-events-none absolute inset-0 opacity-60"
@@ -21,9 +27,9 @@ export function Contact() {
         <div className="md:col-span-5">
           <Reveal>
             <p className="meta section-label">{profile.contact.kicker}</p>
-            <h2 id="contact-heading" className="mt-5 text-title font-medium">
+            <h1 id="contact-heading" className="mt-5 text-title font-medium">
               {profile.contact.headline}
-            </h2>
+            </h1>
             <p className="measure-tight mt-6 text-lead text-muted">{profile.contact.body}</p>
           </Reveal>
 

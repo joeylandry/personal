@@ -11,18 +11,61 @@ function trackErrors(page: Page): string[] {
 }
 
 test.describe('homepage', () => {
-  test('renders the hero, every section and no console errors', async ({ page }) => {
+  test('renders the hero and no console errors', async ({ page }) => {
     const errors = trackErrors(page);
     await page.goto('/');
 
     await expect(page).toHaveTitle(/Joey Landry/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('I build things');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Building software');
 
-    for (const id of ['work', 'about', 'experience', 'toolbox', 'exploring', 'contact']) {
-      await expect(page.locator(`#${id}`)).toBeAttached();
+    // A recent-work teaser follows the hero and points on to the work page.
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Current projects, all in production.' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 3, name: 'Nyes Neck Clothing & Apparel' }),
+    ).toBeVisible();
+    await page.getByRole('link', { name: 'All work →' }).click();
+    await expect(page).toHaveURL(/\/work$/);
+    expect(errors).toEqual([]);
+  });
+
+  test('gives each section its own page, reachable from the header', async ({ page }) => {
+    const errors = trackErrors(page);
+    const pages = [
+      { label: 'Work', path: '/work', ids: ['work'] },
+      { label: 'About', path: '/about', ids: ['about', 'toolbox', 'exploring'] },
+      { label: 'Experience', path: '/experience', ids: ['experience'] },
+      { label: 'Contact', path: '/contact', ids: ['contact'] },
+    ];
+
+    await page.goto('/');
+    const menu = page.getByRole('button', { name: 'Open menu' });
+    const nav = page.locator('nav[aria-label="Primary"]:visible');
+    for (const { label, path, ids } of pages) {
+      // Small screens reach the nav through the menu toggle.
+      if (await menu.isVisible()) await menu.click();
+      await nav.getByRole('link', { name: label, exact: true }).click();
+      await expect(page).toHaveURL(new RegExp(`${path}$`));
+      if (await menu.isVisible()) await menu.click();
+      await expect(nav.getByRole('link', { name: label, exact: true })).toHaveAttribute(
+        'aria-current',
+        'page',
+      );
+      if (await page.getByRole('button', { name: 'Close menu' }).isVisible()) {
+        await page.getByRole('button', { name: 'Close menu' }).click();
+      }
+      await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+      for (const id of ids) await expect(page.locator(`#${id}`)).toBeAttached();
     }
 
-    // The three featured projects are all present by name.
+    expect(errors).toEqual([]);
+  });
+
+  test('lists every featured project on the work page', async ({ page }) => {
+    const errors = trackErrors(page);
+    await page.goto('/work');
+
     for (const name of [
       'Nyes Neck Clothing & Apparel',
       'Arlington Brewing Company',
@@ -35,13 +78,15 @@ test.describe('homepage', () => {
   });
 
   test('never scrolls horizontally, from 320px up', async ({ page }) => {
-    for (const width of [320, 390, 768, 1024, 1440]) {
-      await page.setViewportSize({ width, height: 900 });
-      await page.goto('/');
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      );
-      expect(overflow, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(0);
+    for (const route of ['/', '/work', '/about', '/experience', '/contact']) {
+      for (const width of [320, 390, 768, 1024, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(route);
+        const overflow = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+        expect(overflow, `horizontal overflow on ${route} at ${width}px`).toBeLessThanOrEqual(0);
+      }
     }
   });
 
@@ -64,9 +109,9 @@ test.describe('homepage', () => {
 });
 
 test.describe('project case studies', () => {
-  test('navigates from a homepage card into the case study', async ({ page }) => {
+  test('navigates from a work card into the case study', async ({ page }) => {
     const errors = trackErrors(page);
-    await page.goto('/');
+    await page.goto('/work');
 
     await page.getByRole('link', { name: 'Nyes Neck Clothing & Apparel' }).click();
     await expect(page).toHaveURL(/\/work\/nyes-neck$/);
@@ -102,7 +147,7 @@ test.describe('project case studies', () => {
   });
 
   test('recurses, then apologises', async ({ page }) => {
-    await page.goto('/#work');
+    await page.goto('/work');
     await page.getByRole('link', { name: 'recursive', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Recursion' });
     await expect(dialog).toBeVisible();
@@ -111,7 +156,7 @@ test.describe('project case studies', () => {
     });
     await dialog.getByRole('button', { name: /Back to the/ }).click();
     await expect(dialog).toBeHidden();
-    await expect(page).toHaveURL(/\/#work$/);
+    await expect(page).toHaveURL(/\/work$/);
   });
 
   test('wraps previous/next navigation around the set', async ({ page }) => {
@@ -190,7 +235,7 @@ test.describe('routing and crawling', () => {
 
 test.describe('contact', () => {
   test('validates before sending and never fakes a success', async ({ page }) => {
-    await page.goto('/#contact');
+    await page.goto('/contact');
     await page.getByLabel('Name').fill('A');
     await page.getByLabel('Email').fill('not-an-email');
     await page.getByLabel('Message').fill('too short');

@@ -37,8 +37,10 @@ npm run test:e2e     # Playwright (builds and starts the app itself, port 3100)
 ```
 app/                      Routes, metadata, OG images, API
   layout.tsx              Fonts, metadata, JSON-LD, header/footer shell
-  page.tsx                Homepage — composed entirely of section components
+  page.tsx                Homepage — hero, credentials and a recent-work teaser
   work/                   Work index + /work/[slug] case studies
+  about/, experience/,    One page per nav item, each composed of section components
+  contact/
   api/contact/route.ts    Contact endpoint (validation, rate limit, delivery)
   opengraph-image.tsx     Generated social cards (also per-project)
   sitemap.ts, robots.ts   Crawling

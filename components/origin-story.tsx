@@ -7,7 +7,13 @@ export function OriginStory() {
   const { about, impact } = profile;
 
   return (
-    <Section id="about" surface="ink" labelledBy="about-heading" className="overflow-hidden">
+    <Section
+      id="about"
+      surface="ink"
+      divider={false}
+      labelledBy="about-heading"
+      className="overflow-hidden"
+    >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <Coastline
           className="absolute -top-[18%] -left-[20%] h-[110%] w-[90%] text-fog"
@@ -21,9 +27,9 @@ export function OriginStory() {
         <div className="md:col-span-7">
           <Reveal>
             <p className="meta section-label">{about.kicker}</p>
-            <h2 id="about-heading" className="mt-5 text-title font-medium">
+            <h1 id="about-heading" className="mt-5 text-title font-medium">
               {about.title}
-            </h2>
+            </h1>
           </Reveal>
 
           <div className="measure mt-8 space-y-5 text-lead text-muted">
@@ -46,7 +52,7 @@ export function OriginStory() {
 
         {/* Impact ledger — verified milestones only. */}
         <Reveal delay={140} className="md:col-span-4 md:col-start-9">
-          <h3 className="meta text-faint">Make-A-Wish · Nyes Neck</h3>
+          <h2 className="meta text-faint">Make-A-Wish · Nyes Neck</h2>
           <ol className="mt-6 space-y-0">
             {impact.map((entry) => (
               <li key={entry.year} className="rule-t py-5 first:border-t-0 first:pt-0">

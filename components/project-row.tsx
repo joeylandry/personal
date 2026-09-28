@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Project } from '@/content';
-import { displayHost, statusLabels } from '@/content';
+import { displayHost } from '@/content';
 import { ExternalLink, OutboundArrow } from './external-link';
 import { Frame } from './frame';
 import { RecursionTrigger } from './recursion';
@@ -10,7 +10,17 @@ import { Reveal } from './reveal';
  * A featured project, presented as an editorial spread rather than a card in a
  * grid. Image and text swap sides down the page so the rhythm stays alive.
  */
-export function ProjectRow({ project, index }: { project: Project; index: number }) {
+export function ProjectRow({
+  project,
+  index,
+  headingLevel = 2,
+}: {
+  project: Project;
+  index: number;
+  /** 3 when the row sits under a section heading rather than a page title. */
+  headingLevel?: 2 | 3;
+}) {
+  const Heading = headingLevel === 3 ? 'h3' : 'h2';
   const flipped = index % 2 === 1;
   const number = String(index + 1).padStart(2, '0');
 
@@ -53,11 +63,11 @@ export function ProjectRow({ project, index }: { project: Project; index: number
           {project.kind}
         </p>
 
-        <h3 className="mt-5 text-heading font-medium tracking-tight">
+        <Heading className="mt-5 text-heading font-medium tracking-tight">
           <Link href={`/work/${project.slug}`} className="link-on">
             {project.name}
           </Link>
-        </h3>
+        </Heading>
 
         <p className="mt-3 text-lead text-accent">
           <Tagline project={project} />
@@ -121,39 +131,5 @@ function Tagline({ project }: { project: Project }) {
       </RecursionTrigger>
       {project.tagline.slice(at + word.length)}
     </>
-  );
-}
-
-/** Compact listing used on the work index. */
-export function ProjectListItem({ project }: { project: Project }) {
-  return (
-    <article className={`accent-${project.accent} group rule-b py-10`}>
-      <Link href={`/work/${project.slug}`} className="grid gap-x-10 gap-y-6 md:grid-cols-12">
-        <div className="md:col-span-4">
-          <Frame image={project.image} sizes="(min-width: 768px) 32vw, 100vw" />
-        </div>
-        <div className="md:col-span-8">
-          <p className="meta flex flex-wrap items-center gap-x-3 gap-y-1 text-faint">
-            <span className="text-accent">{statusLabels[project.status]}</span>
-            <span aria-hidden="true">·</span>
-            {project.kind}
-            <span aria-hidden="true">·</span>
-            {project.year}
-          </p>
-          <h2 className="mt-4 text-heading font-medium tracking-tight underline-offset-4 group-hover:underline">
-            {project.name}
-          </h2>
-          <p className="mt-3 text-lead text-accent">{project.tagline}</p>
-          <p className="measure mt-4 text-[0.95rem] leading-relaxed text-muted">
-            {project.summary}
-          </p>
-          <p className="meta mt-6 flex flex-wrap gap-x-4 gap-y-1 text-faint">
-            {project.highlights.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
-          </p>
-        </div>
-      </Link>
-    </article>
   );
 }

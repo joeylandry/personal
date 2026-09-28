@@ -28,7 +28,7 @@ import { createPortal } from 'react-dom';
  */
 export function RecursionTrigger({
   children,
-  href = '/',
+  href = '/work',
   className = '',
 }: {
   children: ReactNode;
