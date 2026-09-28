@@ -31,11 +31,13 @@ export function Hero() {
       <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-16 md:grid-cols-12 md:pt-16 md:pb-24 lg:pt-20">
         <div className="md:col-span-8">
           <Reveal>
-            {/* The name is already in the header, so small screens drop it
-                and keep the role, which is the part that positions him. */}
-            <p className="meta section-label text-base tracking-[0.06em] text-accent sm:text-lg md:whitespace-nowrap md:text-[clamp(1.125rem,2.1vw,1.875rem)] md:leading-tight">
+            {/* An eyebrow over the headline, not a rival to it. The name is
+                already in the header, so small screens drop it and keep the
+                role, which is the part that positions him. */}
+            <p className="meta section-label text-[0.8125rem] tracking-[0.12em] text-accent sm:text-sm md:whitespace-nowrap">
               <span className="text-muted">
-                <span className="hidden whitespace-nowrap sm:inline">{profile.name} ·</span>{' '}
+                <span className="hidden whitespace-nowrap text-fg sm:inline">{profile.name}</span>
+                <span className="hidden sm:inline"> · </span>
                 <span className="sm:whitespace-nowrap">
                   Software Engineer &amp; Independent Builder
                 </span>
@@ -43,7 +45,7 @@ export function Hero() {
             </p>
           </Reveal>
 
-          <h1 id="hero-heading" className="mt-7 text-display font-medium md:mt-10">
+          <h1 id="hero-heading" className="mt-6 text-display font-medium md:mt-8">
             {hero.headline.map((line, index) => (
               <Reveal as="span" key={line} delay={index * 90} className="block">
                 {index === hero.headline.length - 1 ? (

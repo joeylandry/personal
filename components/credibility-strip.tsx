@@ -29,7 +29,9 @@ export function CredibilityStrip() {
                 .filter(Boolean)
                 .join(' ')}
             >
-              <p className="text-heading font-medium tracking-tight text-fg">
+              {/* One line per value: the size tracks the column width so the
+                  longest value (Make-A-Wish®) never breaks at its hyphens. */}
+              <p className="text-[clamp(1.0625rem,5.4vw,1.4rem)] leading-tight font-medium tracking-tight whitespace-nowrap text-fg sm:text-heading lg:text-[clamp(1.25rem,1.95vw,1.5625rem)]">
                 {signal.href ? (
                   <ExternalLink href={signal.href} className="link hover:text-accent" arrow>
                     {signal.value}
