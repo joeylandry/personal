@@ -61,7 +61,8 @@ export function SectionHeading({
   id,
   aside,
 }: {
-  label: string;
+  /** Mono label above the title. Omit to lead with the title alone. */
+  label?: string;
   title: ReactNode;
   lead?: ReactNode;
   id?: string;
@@ -71,8 +72,8 @@ export function SectionHeading({
   return (
     <header className="grid gap-x-10 gap-y-6 md:grid-cols-12">
       <Reveal className="md:col-span-8">
-        <p className="meta section-label">{label}</p>
-        <h2 id={id} className="mt-5 text-title font-medium text-fg">
+        {label ? <p className="meta section-label">{label}</p> : null}
+        <h2 id={id} className={`${label ? 'mt-5 ' : ''}text-title font-medium text-fg`}>
           {title}
         </h2>
         {lead ? <p className="measure mt-5 text-lead text-muted">{lead}</p> : null}

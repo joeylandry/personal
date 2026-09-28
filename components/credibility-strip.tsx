@@ -1,4 +1,5 @@
 import { credibility } from '@/content';
+import { ExternalLink } from './external-link';
 import { Reveal } from './reveal';
 
 /**
@@ -28,7 +29,15 @@ export function CredibilityStrip() {
                 .filter(Boolean)
                 .join(' ')}
             >
-              <p className="text-heading font-medium tracking-tight text-fg">{signal.value}</p>
+              <p className="text-heading font-medium tracking-tight text-fg">
+                {signal.href ? (
+                  <ExternalLink href={signal.href} className="link hover:text-accent" arrow>
+                    {signal.value}
+                  </ExternalLink>
+                ) : (
+                  signal.value
+                )}
+              </p>
               <p className="mt-2 text-sm leading-snug text-muted">{signal.label}</p>
             </Reveal>
           );

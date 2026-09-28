@@ -9,7 +9,6 @@ export function FeaturedWork() {
       <div className="wrap">
         <SectionHeading
           id="work-heading"
-          label="Recent work"
           title="Current projects, all in production."
           lead="Every project here is live, built end to end, and actively maintained — from design and front end through backend and deployment."
           aside={
@@ -25,10 +24,7 @@ export function FeaturedWork() {
           ))}
         </div>
 
-        <p className="meta mt-20 border-t border-rule pt-6 text-faint normal-case tracking-normal">
-          Project visuals are authored covers, not screenshots of the live sites.
-        </p>
-        <p className="meta mt-3 text-faint">
+        <p className="meta mt-20 border-t border-rule pt-6 text-faint">
           More code, including coursework and experiments, lives on{' '}
           <a
             href="https://github.com/joeylandry"

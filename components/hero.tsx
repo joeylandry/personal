@@ -33,10 +33,12 @@ export function Hero() {
           <Reveal>
             {/* The name is already in the header, so small screens drop it
                 and keep the role, which is the part that positions him. */}
-            <p className="meta section-label text-sm text-accent sm:text-base">
+            <p className="meta section-label text-base tracking-[0.06em] text-accent sm:text-lg">
               <span className="text-muted">
-                <span className="hidden sm:inline">{profile.name} · </span>
-                Software Engineer &amp; Independent Builder
+                <span className="hidden whitespace-nowrap sm:inline">{profile.name} ·</span>{' '}
+                <span className="sm:whitespace-nowrap">
+                  Software Engineer &amp; Independent Builder
+                </span>
               </span>
             </p>
           </Reveal>
