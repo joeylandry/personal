@@ -62,7 +62,8 @@ export function SectionHeading({
   aside,
   level = 2,
 }: {
-  label: string;
+  /** Mono label above the title. Omit to lead with the title alone. */
+  label?: string;
   title: ReactNode;
   lead?: ReactNode;
   id?: string;

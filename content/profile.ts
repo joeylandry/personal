@@ -19,7 +19,8 @@ export const profile = {
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
     headline: [
-      'Building software and web apps,',
+      'Building software,',
+      'designing web apps,',
       'integrating AI,',
       'and advancing what users can do.',
     ],
@@ -75,8 +76,12 @@ export const credibility: CredibilitySignal[] = [
   { value: 'Fidelity', label: 'Software Engineer' },
   { value: 'Tufts', label: 'B.S. Computer Science · cum laude' },
   { value: '$20K+', label: 'Raised for Make-A-Wish' },
-  { value: 'St. Jude', label: 'Actively supported through Nyes Neck' },
-  { value: 'Shipped', label: 'Production sites for real organizations' },
+  {
+    value: 'St. Jude',
+    label: 'Children’s Research Hospital®, supported through Nyes Neck',
+    href: 'https://www.stjude.org',
+  },
+  { value: 'Live', label: 'Production sites for real organizations' },
 ];
 
 export const socials: SocialLink[] = [

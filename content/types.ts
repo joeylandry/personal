@@ -130,6 +130,8 @@ export interface Exploration {
 export interface CredibilitySignal {
   value: string;
   label: string;
+  /** Off-site page for the organization the signal names. */
+  href?: string;
 }
 
 export interface SocialLink {

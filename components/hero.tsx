@@ -33,10 +33,12 @@ export function Hero() {
           <Reveal>
             {/* The name is already in the header, so small screens drop it
                 and keep the role, which is the part that positions him. */}
-            <p className="meta section-label text-sm text-accent sm:text-base">
+            <p className="meta section-label text-base tracking-[0.06em] text-accent sm:text-lg">
               <span className="text-muted">
-                <span className="hidden sm:inline">{profile.name} · </span>
-                Software Engineer &amp; Independent Builder
+                <span className="hidden whitespace-nowrap sm:inline">{profile.name} ·</span>{' '}
+                <span className="sm:whitespace-nowrap">
+                  Software Engineer &amp; Independent Builder
+                </span>
               </span>
             </p>
           </Reveal>
@@ -56,11 +58,11 @@ export function Hero() {
             ))}
           </h1>
 
-          <Reveal delay={260}>
+          <Reveal delay={350}>
             <p className="measure mt-8 text-lead text-muted">{hero.support}</p>
           </Reveal>
 
-          <Reveal delay={340}>
+          <Reveal delay={430}>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Cta href={hero.primaryCta.href}>{hero.primaryCta.label}</Cta>
               <Cta href={hero.secondaryCta.href} variant="outline" arrow={false} external>
@@ -72,7 +74,7 @@ export function Hero() {
 
         {/* Spec rail — the lab half of the identity. */}
         <Reveal
-          delay={420}
+          delay={510}
           className="md:col-span-4 md:self-end md:border-l md:border-rule md:pl-8"
         >
           <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-1 md:gap-y-4">

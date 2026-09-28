@@ -45,10 +45,7 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
           ))}
         </div>
 
-        <p className="meta mt-20 border-t border-rule pt-6 text-faint normal-case tracking-normal">
-          Project visuals are authored covers, not screenshots of the live sites.
-        </p>
-        <p className="meta mt-3 text-faint">
+        <p className="meta mt-20 border-t border-rule pt-6 text-faint">
           More code, including coursework and experiments, lives on{' '}
           <a
             href="https://github.com/joeylandry"
