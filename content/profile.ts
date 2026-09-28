@@ -26,7 +26,7 @@ export const profile = {
     ],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
-    primaryCta: { label: "See what I've built", href: '/#work' },
+    primaryCta: { label: "See what I've built", href: '/work' },
     secondaryCta: { label: 'GitHub', href: 'https://github.com/joeylandry' },
   },
 

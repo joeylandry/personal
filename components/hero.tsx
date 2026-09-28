@@ -96,9 +96,6 @@ export function Hero() {
           />
           {profile.statusLine}
         </p>
-        <p className="meta hidden text-faint sm:block">
-          Scroll <span aria-hidden="true">↓</span>
-        </p>
       </div>
     </section>
   );

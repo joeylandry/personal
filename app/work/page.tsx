@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
-import { ProjectListItem } from '@/components/project-row';
-import { Section, SectionHeading } from '@/components/section';
-import { featuredProjects } from '@/content';
+import { FeaturedWork } from '@/components/featured-work';
 import { collectionSchema, jsonLdString } from '@/lib/jsonld';
 
 export const metadata: Metadata = {
@@ -24,38 +22,7 @@ export default function WorkPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdString(collectionSchema()) }}
       />
-      <Section surface="ink" divider={false} className="pt-16 pb-4 md:pt-24">
-        <div className="wrap">
-          <SectionHeading
-            label="Work"
-            title="Everything I've shipped and still maintain."
-            lead="A short list by design. Each project is live, built end to end, and has a case study covering the decisions behind it."
-            aside={<p className="meta text-faint">{featuredProjects.length} projects</p>}
-          />
-        </div>
-      </Section>
-
-      <Section surface="ink" divider={false} className="pb-16 md:pb-24">
-        <div className="wrap mt-10">
-          {featuredProjects.map((project) => (
-            <ProjectListItem key={project.slug} project={project} />
-          ))}
-        </div>
-        <div className="wrap">
-          <p className="meta pt-8 text-faint">
-            Coursework and experiments live on{' '}
-            <a
-              href="https://github.com/joeylandry"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link text-accent"
-            >
-              GitHub
-            </a>
-            .
-          </p>
-        </div>
-      </Section>
+      <FeaturedWork />
     </>
   );
 }
