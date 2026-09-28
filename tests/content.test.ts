@@ -200,7 +200,7 @@ describe('experience', () => {
 describe('profile', () => {
   it('states the verified fundraising total', () => {
     expect(JSON.stringify(profile.impact)).toContain('$20,000+');
-    expect(credibility.some((signal) => signal.value === '$20K+')).toBe(true);
+    expect(credibility.some((signal) => signal.label === '$20K+ raised')).toBe(true);
   });
 
   it('keeps the hero headline to four readable lines', () => {
