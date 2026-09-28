@@ -39,11 +39,11 @@ export const projects: Project[] = [
       { label: 'Platform', items: ['Formspree contact route', 'SEO & sitemap', 'Vercel'] },
     ],
     image: {
-      src: '/images/projects/nyes-neck.svg',
-      alt: 'Illustrated cover for Nyes Neck Clothing & Apparel: sea-glass contour lines shaped like a Cape Cod neck of land, with an apparel product grid and a sunrise band above the horizon.',
-      width: 1600,
-      height: 1000,
-      illustrated: true,
+      src: '/images/projects/nyes-neck.webp',
+      alt: 'The Nyes Neck shop page: the “Nyes Neck Collection” heading with 42 styles, grid-density and sort controls, and a Sweatshirts row of three crewnecks and a hoodie, each embroidered with the small red, white and navy pennant logo.',
+      width: 2000,
+      height: 1140,
+      illustrated: false,
     },
     caseStudy: {
       statement:
