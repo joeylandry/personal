@@ -108,7 +108,7 @@ export function SiteHeader() {
           className="group flex items-center gap-3 focus-visible:outline-offset-4"
           aria-label={`${profile.name} — home`}
         >
-          <Monogram className="h-6 w-7 text-fg transition-colors duration-200 group-hover:text-accent" />
+          <Monogram className="h-6 w-8 text-fg transition-colors duration-200 group-hover:text-accent" />
           <span className="flex flex-col leading-none">
             <span className="text-sm font-medium tracking-tight">{profile.name}</span>
             <span className="meta mt-1 hidden text-[0.625rem] text-faint sm:block">

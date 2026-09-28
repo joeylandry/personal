@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { MONOGRAM_J, MONOGRAM_L } from '@/components/monogram';
 
 export const size = { width: 180, height: 180 };
 export const contentType = 'image/png';
@@ -16,15 +17,10 @@ export default function AppleIcon() {
         backgroundColor: '#071018',
       }}
     >
-      <svg width="124" height="107" viewBox="0 0 44 38" fill="none">
-        <path d="M0 30.25h44" stroke="#72D6C9" strokeWidth="1.6" />
-        <path
-          d="M17 6v16.5a7 7 0 0 1-14 0"
-          stroke="#F4F0E8"
-          strokeWidth="3.6"
-          strokeLinecap="square"
-        />
-        <path d="M27.5 6v24.25H41" stroke="#F4F0E8" strokeWidth="3.6" strokeLinecap="square" />
+      <svg width="132" height="108" viewBox="3.5 1 33 27" fill="none">
+        <path d="M3.5 27h33" stroke="#72D6C9" strokeWidth="1.6" />
+        <path fill="#F4F0E8" d={MONOGRAM_J} />
+        <path fill="#F4F0E8" d={MONOGRAM_L} />
       </svg>
     </div>,
     size,
