@@ -4,7 +4,6 @@ import type { GivingChapter, StoryPhoto } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
 import { Pennant } from './pennant';
-import { Reveal } from './reveal';
 import { Section } from './section';
 
 /** A captioned photo at its natural aspect ratio, never cropped. */
@@ -43,22 +42,20 @@ export function GivingIntro() {
     <Section id="giving" surface="ink" divider={false} labelledBy="giving-heading">
       <div className="wrap grid gap-x-10 gap-y-12 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-7">
-          <Reveal>
+          <div>
             <p className="meta section-label">{intro.kicker}</p>
             <h1 id="giving-heading" className="mt-5 text-title font-medium">
               {intro.title}
             </h1>
-          </Reveal>
+          </div>
           <div className="measure mt-8 space-y-5 text-lead text-muted">
-            {intro.body.map((paragraph, index) => (
-              <Reveal as="p" key={paragraph.slice(0, 24)} delay={60 + index * 60}>
-                {paragraph}
-              </Reveal>
+            {intro.body.map((paragraph) => (
+              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
         </div>
 
-        <Reveal delay={140} className="md:col-span-4 md:col-start-9 md:self-end">
+        <div className="md:col-span-4 md:col-start-9 md:self-end">
           <dl className="space-y-6">
             {[
               { value: '$20,000+', label: 'Raised for Make-A-Wish Massachusetts and Rhode Island' },
@@ -76,7 +73,7 @@ export function GivingIntro() {
           <blockquote className="mt-10 border-l border-accent pl-6">
             <p className="text-lg leading-snug text-fg">“{intro.quote}”</p>
           </blockquote>
-        </Reveal>
+        </div>
       </div>
     </Section>
   );
@@ -112,12 +109,12 @@ export function GivingTimeline() {
   return (
     <Section surface="paper" labelledBy="giving-timeline-heading">
       <div className="wrap py-20 md:py-28">
-        <Reveal>
+        <div>
           <p className="meta section-label">Make-A-Wish · Nyes Neck</p>
           <h2 id="giving-timeline-heading" className="mt-5 text-title font-medium">
             The fundraisers, in order.
           </h2>
-        </Reveal>
+        </div>
 
         <ol className="mt-14 md:mt-20">
           {giving.chapters.map((chapter) => (
@@ -125,16 +122,16 @@ export function GivingTimeline() {
               key={chapter.title}
               className="grid gap-x-10 gap-y-8 border-t border-rule py-12 md:grid-cols-12 md:py-16"
             >
-              <Reveal className="md:col-span-4">
+              <div className="md:col-span-4">
                 <div className="md:sticky md:top-28">
                   <p className="meta text-accent">{chapter.year ?? 'Early years'}</p>
                   <h3 className="mt-3 text-heading font-medium tracking-tight">{chapter.title}</h3>
                   <p className="mt-4 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
                 </div>
-              </Reveal>
-              <Reveal delay={80} className="md:col-span-8">
+              </div>
+              <div className="md:col-span-8">
                 <ChapterPhotos chapter={chapter} />
-              </Reveal>
+              </div>
             </li>
           ))}
         </ol>
@@ -148,15 +145,15 @@ export function GivingThanks() {
   return (
     <Section surface="ink" labelledBy="giving-thanks-heading">
       <div className="wrap py-20 md:py-28">
-        <Reveal>
+        <div>
           <p className="meta section-label">{thanks.kicker}</p>
           <h2 id="giving-thanks-heading" className="measure mt-5 text-title font-medium">
             {thanks.title}
           </h2>
-        </Reveal>
-        <Reveal delay={80} className="mt-12">
+        </div>
+        <div className="mt-12">
           <Photo photo={thanks.image} sizes="(min-width: 1280px) 1200px, 100vw" />
-        </Reveal>
+        </div>
       </div>
     </Section>
   );
@@ -168,7 +165,7 @@ export function GivingNext() {
     <Section surface="paper" labelledBy="giving-next-heading">
       <div className="wrap grid items-center gap-x-10 gap-y-12 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-5">
-          <Reveal>
+          <div>
             <p className="meta section-label flex items-center gap-3">
               {next.kicker}
               <Pennant className="h-3.5 w-auto" />
@@ -176,15 +173,13 @@ export function GivingNext() {
             <h2 id="giving-next-heading" className="mt-5 text-title font-medium">
               {next.title}
             </h2>
-          </Reveal>
+          </div>
           <div className="mt-8 space-y-5 text-lead text-muted">
-            {next.body.map((paragraph, index) => (
-              <Reveal as="p" key={paragraph.slice(0, 24)} delay={60 + index * 60}>
-                {paragraph}
-              </Reveal>
+            {next.body.map((paragraph) => (
+              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
-          <Reveal delay={200}>
+          <div>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
               <ExternalLink href={next.shopUrl} className="link-on font-medium text-fg" arrow>
                 Visit nyesneck.shop
@@ -196,11 +191,11 @@ export function GivingNext() {
                 St. Jude
               </ExternalLink>
             </div>
-          </Reveal>
+          </div>
         </div>
-        <Reveal delay={120} className="md:col-span-7">
+        <div className="md:col-span-7">
           <Photo photo={next.photo} sizes="(min-width: 768px) 55vw, 100vw" />
-        </Reveal>
+        </div>
       </div>
     </Section>
   );
@@ -210,11 +205,11 @@ export function GivingClosing() {
   return (
     <Section surface="ink">
       <div className="wrap py-20 text-center md:py-28">
-        <Reveal>
+        <div>
           <p className="mx-auto max-w-3xl text-title font-medium tracking-tight">
             {giving.closing}
           </p>
-        </Reveal>
+        </div>
       </div>
     </Section>
   );
