@@ -3,6 +3,7 @@ import type { Project } from '@/content';
 import { displayHost } from '@/content';
 import { ExternalLink, OutboundArrow } from './external-link';
 import { Frame } from './frame';
+import { LivePreview } from './live-preview';
 import { RecursionTrigger } from './recursion';
 import { Reveal } from './reveal';
 
@@ -33,22 +34,31 @@ export function ProjectRow({
           ' ',
         )}
       >
-        <Link href={`/work/${project.slug}`} tabIndex={-1} aria-hidden="true" className="block">
-          <Frame
-            image={project.image}
-            sizes="(min-width: 768px) 58vw, 100vw"
-            className="[&_figcaption]:hidden"
-          >
-            {/* Hover detail: the stack, revealed on the image itself. */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule bg-ink/86 px-4 py-2.5 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
-              {project.highlights.map((item) => (
-                <span key={item} className="meta text-fog">
-                  {item}
-                </span>
-              ))}
-            </div>
-          </Frame>
-        </Link>
+        {project.liveUrl ? (
+          <LivePreview
+            url={project.liveUrl}
+            host={displayHost(project.liveUrl)}
+            name={project.name}
+            fallback={project.image}
+          />
+        ) : (
+          <Link href={`/work/${project.slug}`} tabIndex={-1} aria-hidden="true" className="block">
+            <Frame
+              image={project.image}
+              sizes="(min-width: 768px) 58vw, 100vw"
+              className="[&_figcaption]:hidden"
+            >
+              {/* Hover detail: the stack, revealed on the image itself. */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule bg-ink/86 px-4 py-2.5 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
+                {project.highlights.map((item) => (
+                  <span key={item} className="meta text-fog">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </Frame>
+          </Link>
+        )}
       </Reveal>
 
       <Reveal
