@@ -12,18 +12,25 @@ import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode
  * The shown flag is written straight to the DOM rather than held in React
  * state: it drives a CSS transition and nothing else renders from it, so a
  * state update here would only cost a re-render.
+ *
+ * `immediate` plays the reveal as soon as the page loads instead of waiting for
+ * the element to scroll into view, so a staggered sequence (the home hero)
+ * runs start to finish in one go.
  */
 export function Reveal({
   children,
   as: Tag = 'div',
   delay = 0,
   className = '',
+  immediate = false,
 }: {
   children: ReactNode;
   as?: ElementType;
   /** Stagger in milliseconds. Keep small — this is punctuation, not a show. */
   delay?: number;
   className?: string;
+  /** Reveal on page load rather than on scroll. */
+  immediate?: boolean;
 }) {
   const ref = useRef<HTMLElement | null>(null);
 
@@ -32,6 +39,12 @@ export function Reveal({
     if (!node) return;
 
     const show = () => node.setAttribute('data-shown', 'true');
+
+    if (immediate) {
+      // Wait a frame so the hidden state is painted and the transition runs.
+      const frame = requestAnimationFrame(show);
+      return () => cancelAnimationFrame(frame);
+    }
 
     if (typeof IntersectionObserver === 'undefined') {
       show();
@@ -52,7 +65,7 @@ export function Reveal({
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, []);
+  }, [immediate]);
 
   return (
     <Tag
