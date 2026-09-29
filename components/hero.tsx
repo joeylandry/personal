@@ -1,6 +1,7 @@
-import { profile } from '@/content';
+import Image from 'next/image';
+import Link from 'next/link';
+import { donny, profile } from '@/content';
 import { Cta } from './cta';
-import { MountainScene } from './mountain-scene';
 import { Reveal } from './reveal';
 
 export function Hero() {
@@ -11,21 +12,21 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="surface-ink relative isolate overflow-hidden bg-ink text-fg"
     >
-      {/* Scenic backdrop: a dawn sky, sunrise over the mountains, a light scrim for the copy. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            'linear-gradient(to bottom, #0b2140 0%, #1b4a80 30%, #4f86c0 44%, #f0b27e 56%, #ffdca3 64%)',
-        }}
-      >
-        <MountainScene className="absolute inset-x-0 bottom-0 h-[62%] w-full md:h-[66%]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/55 via-60% to-transparent md:bg-gradient-to-r md:from-ink/70 md:via-ink/30 md:via-50% md:to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink to-transparent" />
+      {/* Backdrop: fall foliage over a mountain lake, with a scrim on the copy side. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <Image
+          src="/images/hero-foliage.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[60%_center]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/55 to-ink/30 md:bg-gradient-to-r md:from-ink/80 md:via-ink/45 md:via-55% md:to-ink/10" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-48 md:grid-cols-12 md:pt-16 md:pb-64 lg:pt-20">
+      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-20 md:grid-cols-12 md:pt-16 md:pb-32 lg:pt-20">
         <div className="md:col-span-8">
           <Reveal>
             {/* An eyebrow over the headline, not a rival to it. The name is
@@ -70,6 +71,34 @@ export function Hero() {
             </div>
           </Reveal>
         </div>
+
+        {/* Meet Donny: the cat in the headline. */}
+        <Reveal delay={510} className="md:col-span-4 md:self-end">
+          <Link
+            href="/about#donny"
+            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
+          >
+            <span className="relative block aspect-square w-24 shrink-0 overflow-hidden border border-rule md:w-full">
+              <Image
+                src={donny.headshot.src}
+                alt={donny.headshot.alt}
+                fill
+                sizes="(min-width: 768px) 28vw, 96px"
+                className="object-cover object-[50%_35%]"
+              />
+            </span>
+            <span className="block">
+              <span className="meta block text-accent">The cat</span>
+              <span className="mt-2 block text-xl font-medium tracking-tight text-fg">
+                Meet {donny.name}.
+              </span>
+              <span className="mt-1.5 block text-sm leading-snug text-muted">
+                Coworker, code reviewer, professional napper.{' '}
+                <span className="whitespace-nowrap text-fg group-hover:text-accent">More →</span>
+              </span>
+            </span>
+          </Link>
+        </Reveal>
       </div>
     </section>
   );

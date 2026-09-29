@@ -59,30 +59,3 @@ export function DonnySection() {
     </Section>
   );
 }
-
-/** Home page: a small card — the guy and the cat, out in the woods. */
-export function DonnyCard() {
-  const photo = donny.woods;
-
-  return (
-    <Section surface="ink" labelledBy="donny-card-heading">
-      <div className="wrap py-16 md:py-20">
-        <Reveal className="grid items-center gap-8 sm:grid-cols-[10rem_1fr] md:grid-cols-[12rem_1fr] md:gap-12">
-          <div className="relative aspect-[3/4] w-40 overflow-hidden border border-rule bg-raised md:w-48">
-            <Image src={photo.src} alt={photo.alt} fill sizes="192px" className="object-cover" />
-          </div>
-          <div>
-            <p className="meta section-label">After hours</p>
-            <h2 id="donny-card-heading" className="mt-4 text-heading font-medium tracking-tight">
-              A guy, a cat, and a laptop in the woods.
-            </h2>
-            <p className="measure mt-4 text-[0.95rem] leading-relaxed text-muted">
-              Most of what you see here gets built after hours, somewhere quiet, with {donny.name}{' '}
-              supervising.
-            </p>
-          </div>
-        </Reveal>
-      </div>
-    </Section>
-  );
-}

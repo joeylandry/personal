@@ -3,13 +3,13 @@ import type { StoryPhoto } from './types';
 /** Donny, the cat — the other half of "a guy and a cat in the woods". */
 export const donny = {
   name: 'Donny',
-  /** Home-page showcase: out in the woods. */
-  woods: {
-    src: '/images/donny/woods.jpg',
-    alt: 'Donny, an orange tabby, sitting on a mossy boulder in a sunlit forest, ferns behind, looking off to the side.',
-    width: 360,
-    height: 480,
-    caption: 'Out in the woods with Donny.',
+  /** Home-page hero card. */
+  headshot: {
+    src: '/images/donny/close-up.jpg',
+    alt: 'Donny, an orange tabby, staring straight into the camera, wide-eyed, with the tip of the tongue out.',
+    width: 900,
+    height: 1200,
+    caption: 'Donny.',
   },
   then: [
     {
@@ -59,7 +59,7 @@ export const donny = {
   ],
 } satisfies {
   name: string;
-  woods: StoryPhoto;
+  headshot: StoryPhoto;
   then: StoryPhoto[];
   now: StoryPhoto[];
 };
