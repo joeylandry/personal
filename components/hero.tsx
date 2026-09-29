@@ -45,7 +45,7 @@ export function Hero() {
 
           <h1 id="hero-heading" className="mt-6 text-display font-medium md:mt-8">
             {hero.headline.map((line, index) => (
-              <Reveal immediate as="span" key={line} delay={index * 90} className="block">
+              <Reveal immediate as="span" key={line} delay={150 + index * 150} className="block">
                 {index === hero.headline.length - 1 ? (
                   <>
                     {line.replace(/\.$/, '')}
@@ -58,11 +58,11 @@ export function Hero() {
             ))}
           </h1>
 
-          <Reveal immediate delay={350}>
+          <Reveal immediate delay={650}>
             <p className="measure mt-8 text-lead text-muted">{hero.support}</p>
           </Reveal>
 
-          <Reveal immediate delay={430}>
+          <Reveal immediate delay={800}>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Cta href={hero.primaryCta.href}>{hero.primaryCta.label}</Cta>
               <Cta href={hero.secondaryCta.href} variant="outline" arrow={false} external>
@@ -72,8 +72,9 @@ export function Hero() {
           </Reveal>
         </div>
 
-        {/* Meet Donny: the cat in the headline. */}
-        <Reveal immediate delay={510} className="md:col-span-4 md:self-end">
+        {/* Meet Donny: the cat in the headline. It lands last, after a beat,
+            as the punchline. */}
+        <Reveal immediate delay={1300} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
             className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
