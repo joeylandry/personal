@@ -1,6 +1,5 @@
 import { credibility } from '@/content';
 import { ExternalLink } from './external-link';
-import { Reveal } from './reveal';
 
 /**
  * Three verified signals, each lit in its own accent. No invented numbers,

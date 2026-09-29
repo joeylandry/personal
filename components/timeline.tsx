@@ -1,5 +1,4 @@
 import { timeline } from '@/content';
-import { Reveal } from './reveal';
 import { Section, SectionHeading } from './section';
 
 /**
@@ -19,11 +18,9 @@ export function Timeline() {
         />
 
         <ol className="mt-14 md:mt-20">
-          {timeline.map((entry, index) => (
-            <Reveal
-              as="li"
+          {timeline.map((entry) => (
+            <li
               key={`${entry.org}-${entry.start}`}
-              delay={index * 60}
               className="rule-t grid gap-x-10 gap-y-3 py-8 md:grid-cols-12 md:py-10"
             >
               <div className="md:col-span-3">
@@ -74,7 +71,7 @@ export function Timeline() {
                   </p>
                 ) : null}
               </div>
-            </Reveal>
+            </li>
           ))}
         </ol>
       </div>
