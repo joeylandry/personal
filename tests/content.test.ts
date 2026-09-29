@@ -132,8 +132,8 @@ describe('portfolio boundary', () => {
     },
   );
 
-  it('links the GitHub profile rather than enumerating repositories', () => {
-    expect(socials.some((s) => s.href === 'https://github.com/joeylandry')).toBe(true);
+  it('links the LinkedIn profile', () => {
+    expect(socials.some((s) => s.href === 'https://www.linkedin.com/in/josephlandry/')).toBe(true);
   });
 });
 

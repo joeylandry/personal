@@ -39,7 +39,7 @@ describe('structured data', () => {
     const schema = personSchema();
     expect(schema['@type']).toBe('Person');
     expect(schema.name).toBe('Joey Landry');
-    expect(schema.sameAs).toContain('https://github.com/joeylandry');
+    expect(schema.sameAs).not.toContain('https://github.com/joeylandry');
     expect(schema.sameAs).toContain('https://www.linkedin.com/in/josephlandry/');
   });
 

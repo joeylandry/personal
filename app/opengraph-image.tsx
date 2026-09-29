@@ -10,7 +10,7 @@ export default function Image() {
     <OgCard
       eyebrow="Software Engineer & Independent Builder"
       title="Building software, designing web apps, and integrating AI."
-      meta="github.com/joeylandry"
+      meta="linkedin.com/in/josephlandry"
     />,
     { ...size, fonts: ogFonts() },
   );

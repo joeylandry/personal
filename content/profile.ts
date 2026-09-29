@@ -18,15 +18,11 @@ export const profile = {
 
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
-    headline: [
-      'Building software,',
-      'designing web apps,',
-      'and integrating AI.',
-    ],
+    headline: ['Building software,', 'designing web apps,', 'and integrating AI.'],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
     primaryCta: { label: "See what I've built", href: '/work' },
-    secondaryCta: { label: 'GitHub', href: 'https://github.com/joeylandry' },
+    secondaryCta: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/josephlandry/' },
   },
 
   /** Short bio used for meta descriptions and structured data. */
@@ -84,7 +80,6 @@ export const credibility: CredibilitySignal[] = [
 ];
 
 export const socials: SocialLink[] = [
-  { label: 'GitHub', href: 'https://github.com/joeylandry', handle: '@joeylandry' },
   {
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/josephlandry/',
