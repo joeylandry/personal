@@ -133,13 +133,13 @@
 }
 
 .surface-paper {
-  /* True white rather than the tinted paper token: the light bands read
-     crisp against the midnight ones instead of faintly grey. */
-  --bg: #ffffff;
-  --raised: var(--color-paper-sunk);
+  /* A soft cool grey rather than pure white, so the light bands sit calmly
+     next to the midnight ones instead of glaring. */
+  --bg: var(--color-paper-sunk);
+  --raised: #e3e9ee;
   --fg: #0a1620;
   --muted: var(--color-slate);
-  /* 5.2:1 on paper. The mono metadata is 12px, so it needs the full
+  /* 4.9:1 on paper. The mono metadata is 12px, so it needs the full
      normal-text ratio, not the large-text allowance. */
   --faint: #5a6b77;
   --rule: rgb(10 22 32 / 0.16);
