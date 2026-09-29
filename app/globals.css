@@ -176,7 +176,9 @@
   --accent: var(--color-amber);
   --accent-sea: var(--color-sea);
 }
-:root[data-daypart='night'] .surface-ink {
+/* A project accent on the same element wins: the shift only warms the
+   default accent, never a project's own colour. */
+:root[data-daypart='night'] .surface-ink:not(.accent-sea, .accent-amber, .accent-gold) {
   --accent: var(--color-amber);
 }
 

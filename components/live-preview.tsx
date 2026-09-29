@@ -90,6 +90,7 @@ export function LivePreview({
         <BrowserBar host={host} />
         <div
           ref={viewportRef}
+          aria-hidden="true"
           className="relative overflow-hidden"
           style={{ aspectRatio: `${VIEWPORT.width} / ${VIEWPORT.height}` }}
         >

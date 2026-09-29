@@ -103,7 +103,14 @@ test.describe('homepage', () => {
     await page.goto('/');
     for (const image of await page.locator('img').all()) {
       const alt = await image.getAttribute('alt');
-      expect(alt, 'image is missing alt text').toBeTruthy();
+      expect(alt, 'image is missing an alt attribute').not.toBeNull();
+      // Decorative images (backdrops, preview stills) opt out with an empty
+      // alt, but only inside a subtree already hidden from assistive tech.
+      if (alt === '') {
+        const hidden = await image.evaluate((el) => el.closest('[aria-hidden="true"]') !== null);
+        expect(hidden, 'empty alt on an image that is not decorative').toBe(true);
+        continue;
+      }
       expect(alt!.length).toBeGreaterThan(20);
     }
   });
