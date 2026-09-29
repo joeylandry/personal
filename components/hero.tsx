@@ -32,14 +32,12 @@ export function Hero() {
           <div>
             {/* An eyebrow over the headline, not a rival to it. The name is
                 already in the header, so small screens drop it and keep the
-                role, which is the part that positions him. */}
+                location. */}
             <p className="meta section-label text-[0.8125rem] tracking-[0.12em] text-accent sm:text-sm md:whitespace-nowrap">
               <span className="text-muted">
                 <span className="hidden whitespace-nowrap text-fg sm:inline">{profile.name}</span>
                 <span className="hidden sm:inline"> · </span>
-                <span className="sm:whitespace-nowrap">
-                  Software Engineer &amp; Independent Builder
-                </span>
+                <span className="sm:whitespace-nowrap">Merrimack, NH</span>
               </span>
             </p>
           </div>
