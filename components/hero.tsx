@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { donny, profile } from '@/content';
 import { Cta } from './cta';
+import { Reveal } from './reveal';
 
 export function Hero() {
   const { hero } = profile;
@@ -27,9 +28,7 @@ export function Hero() {
 
       <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-20 md:grid-cols-12 md:pt-16 md:pb-32 lg:pt-20">
         <div className="md:col-span-8">
-          {/* The hero is the first thing on screen, so it renders in place
-              rather than fading in with the scroll reveals further down. */}
-          <div>
+          <Reveal>
             {/* An eyebrow over the headline, not a rival to it. The name is
                 already in the header, so small screens drop it and keep the
                 role, which is the part that positions him. */}
@@ -42,11 +41,11 @@ export function Hero() {
                 </span>
               </span>
             </p>
-          </div>
+          </Reveal>
 
           <h1 id="hero-heading" className="mt-6 text-display font-medium md:mt-8">
             {hero.headline.map((line, index) => (
-              <span key={line} className="block">
+              <Reveal as="span" key={line} delay={index * 90} className="block">
                 {index === hero.headline.length - 1 ? (
                   <>
                     {line.replace(/\.$/, '')}
@@ -55,22 +54,26 @@ export function Hero() {
                 ) : (
                   line
                 )}
-              </span>
+              </Reveal>
             ))}
           </h1>
 
-          <p className="measure mt-8 text-lead text-muted">{hero.support}</p>
+          <Reveal delay={350}>
+            <p className="measure mt-8 text-lead text-muted">{hero.support}</p>
+          </Reveal>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Cta href={hero.primaryCta.href}>{hero.primaryCta.label}</Cta>
-            <Cta href={hero.secondaryCta.href} variant="outline" arrow={false} external>
-              {hero.secondaryCta.label}
-            </Cta>
-          </div>
+          <Reveal delay={430}>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Cta href={hero.primaryCta.href}>{hero.primaryCta.label}</Cta>
+              <Cta href={hero.secondaryCta.href} variant="outline" arrow={false} external>
+                {hero.secondaryCta.label}
+              </Cta>
+            </div>
+          </Reveal>
         </div>
 
         {/* Meet Donny: the cat in the headline. */}
-        <div className="md:col-span-4 md:self-end">
+        <Reveal delay={510} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
             className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
@@ -95,7 +98,7 @@ export function Hero() {
               </span>
             </span>
           </Link>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
