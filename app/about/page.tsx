@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
+import { DonnySection } from '@/components/donny';
 import { Exploring } from '@/components/exploring';
 import { OriginStory } from '@/components/origin-story';
-import { StoryGallery } from '@/components/story-gallery';
 import { Toolbox } from '@/components/toolbox';
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function AboutPage() {
   return (
     <>
       <OriginStory />
-      <StoryGallery />
+      <DonnySection />
       <Toolbox />
       <Exploring />
     </>

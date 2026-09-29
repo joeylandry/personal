@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Coworker } from '@/components/coworker';
+import { DonnyCard } from '@/components/donny';
 import { CredibilityStrip } from '@/components/credibility-strip';
 import { FeaturedWork } from '@/components/featured-work';
 import { Hero } from '@/components/hero';
@@ -19,7 +19,7 @@ export default function HomePage() {
       <Hero />
       <CredibilityStrip />
       <FeaturedWork teaser />
-      <Coworker />
+      <DonnyCard />
     </>
   );
 }

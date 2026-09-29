@@ -11,13 +11,21 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="surface-ink relative isolate overflow-hidden bg-ink text-fg"
     >
-      {/* Decorative field: fine grid above, night in the White Mountains below. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="grid-field absolute inset-0 opacity-50" />
-        <MountainScene className="absolute inset-x-0 bottom-0 h-[62%] w-full text-fog md:h-[78%]" />
+      {/* Scenic backdrop: a dawn sky, sunrise over the mountains, a light scrim for the copy. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'linear-gradient(to bottom, #0b2140 0%, #1b4a80 30%, #4f86c0 44%, #f0b27e 56%, #ffdca3 64%)',
+        }}
+      >
+        <MountainScene className="absolute inset-x-0 bottom-0 h-[62%] w-full md:h-[66%]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/55 via-60% to-transparent md:bg-gradient-to-r md:from-ink/70 md:via-ink/30 md:via-50% md:to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-16 md:grid-cols-12 md:pt-16 md:pb-24 lg:pt-20">
+      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-48 md:grid-cols-12 md:pt-16 md:pb-64 lg:pt-20">
         <div className="md:col-span-8">
           <Reveal>
             {/* An eyebrow over the headline, not a rival to it. The name is

@@ -140,7 +140,7 @@ export interface SocialLink {
   handle: string;
 }
 
-/** A captioned photo (fundraiser archive, the cat). */
+/** A captioned photo (the Giving timeline, Donny). */
 export interface StoryPhoto {
   /** Path under /public. */
   src: string;
@@ -148,6 +148,4 @@ export interface StoryPhoto {
   width: number;
   height: number;
   caption: string;
-  /** Spans the full row as a closing panorama. */
-  wide?: boolean;
 }
