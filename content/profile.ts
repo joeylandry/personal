@@ -13,7 +13,6 @@ export const profile = {
   /** Neighbourhood-level coastal reference behind the brand. Decorative. */
   origin: 'Nyes Neck · Cape Cod',
   coordinates: '41.63° N · 70.36° W',
-  statusLine: 'Based in New Hampshire · Building after hours',
   signature: 'midnight vibecoder',
 
   hero: {
