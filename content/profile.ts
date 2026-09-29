@@ -21,7 +21,7 @@ export const profile = {
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
     primaryCta: { label: "See what I've built", href: '/work' },
-    secondaryCta: { label: 'GitHub', href: 'https://github.com/joeylandry' },
+    secondaryCta: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/josephlandry/' },
   },
 
   /** Short bio used for meta descriptions and structured data. */
@@ -67,19 +67,23 @@ export const profile = {
 } as const;
 
 export const credibility: CredibilitySignal[] = [
-  { value: 'Fidelity SWE', label: 'Merrimack, NH' },
-  { value: 'Tufts Grad', label: 'B.S. Computer Science · cum laude' },
-  { value: 'Make-A-Wish®', label: '$20K+ raised' },
   {
+    kicker: 'Education',
+    value: 'Tufts Grad',
+    label: 'B.S. Computer Science · cum laude',
+    accent: 'sea',
+  },
+  { kicker: 'Impact', value: 'Make-A-Wish®', label: '$20K+ raised', accent: 'amber' },
+  {
+    kicker: 'Giving',
     value: 'St. Jude',
     label: 'Children’s Research Hospital®, supported through Nyes Neck',
     href: 'https://www.stjude.org',
+    accent: 'gold',
   },
-  { value: 'Live Sites', label: 'Production sites for organizations' },
 ];
 
 export const socials: SocialLink[] = [
-  { label: 'GitHub', href: 'https://github.com/joeylandry', handle: '@joeylandry' },
   {
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/josephlandry/',

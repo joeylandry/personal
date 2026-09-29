@@ -2,11 +2,11 @@ import { profile, socials } from '@/content';
 import { contactEmail } from '@/lib/site';
 import { ContactForm } from './contact-form';
 import { ExternalLink } from './external-link';
-import { GitHubGlyph, LinkedInGlyph, MailGlyph } from './glyphs';
+import { LinkedInGlyph, MailGlyph } from './glyphs';
+import { Reveal } from './reveal';
 import { Section } from './section';
 
 const linkedin = socials.find((social) => social.label === 'LinkedIn')!;
-const github = socials.find((social) => social.label === 'GitHub')!;
 
 export function Contact() {
   return (
@@ -44,18 +44,6 @@ export function Contact() {
                     <span className="text-sm text-fg">LinkedIn</span>
                   </span>
                   <span className="meta text-faint">{linkedin.handle}</span>
-                </ExternalLink>
-              </li>
-              <li className="rule-t">
-                <ExternalLink
-                  href={github.href}
-                  className="group flex items-center justify-between gap-4 py-4"
-                >
-                  <span className="flex items-center gap-3.5">
-                    <GitHubGlyph className="h-4 w-4 text-faint transition-colors group-hover:text-accent" />
-                    <span className="text-sm text-fg">GitHub</span>
-                  </span>
-                  <span className="meta text-faint">{github.handle}</span>
                 </ExternalLink>
               </li>
               {contactEmail ? (

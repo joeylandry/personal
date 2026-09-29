@@ -2,34 +2,24 @@ import { credibility } from '@/content';
 import { ExternalLink } from './external-link';
 
 /**
- * Verified signals, read as one line. No invented numbers, no logo wall.
+ * Three verified signals, each lit in its own accent. No invented numbers,
+ * no logo wall.
  */
 export function CredibilityStrip() {
-  const count = credibility.length;
-
   return (
     <section aria-label="Credentials" className="surface-ink rule-t bg-ink text-fg">
-      <div className="wrap grid grid-cols-2 lg:grid-cols-5">
-        {credibility.map((signal, index) => {
-          // In the two-column layout an odd final item spans the full row.
-          const spansRow = count % 2 === 1 && index === count - 1;
-          return (
-            <div
-              key={signal.label}
-              className={[
-                'py-7 md:py-9',
-                spansRow ? 'col-span-2 lg:col-span-1' : '',
-                index % 2 === 1 ? 'border-l border-rule pl-5 md:pl-8' : 'pr-5 md:pr-8',
-                index > 1 ? 'rule-t lg:border-t-0' : '',
-                index > 0 ? 'lg:border-l lg:border-rule lg:pl-6' : '',
-                'lg:pr-6',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {/* One line per value: the size tracks the column width so the
-                  longest value (Make-A-Wish®) never breaks at its hyphens. */}
-              <p className="text-[clamp(1.0625rem,5.4vw,1.4rem)] leading-tight font-medium tracking-tight whitespace-nowrap text-fg sm:text-heading lg:text-[clamp(1.25rem,1.95vw,1.5625rem)]">
+      <div className="wrap grid gap-4 py-10 md:grid-cols-3 md:gap-5 md:py-14">
+        {credibility.map((signal, index) => (
+          <Reveal key={signal.value} delay={index * 90} className={`accent-${signal.accent}`}>
+            <div className="cred-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-rule bg-raised p-6 md:p-7">
+              <div className="flex items-center justify-between">
+                <span className="meta text-accent">{signal.kicker}</span>
+                <span className="font-mono text-xs text-faint tabular-nums">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </div>
+
+              <p className="mt-8 text-[clamp(1.75rem,1.2rem+2vw,2.5rem)] leading-none font-semibold tracking-tight whitespace-nowrap text-fg">
                 {signal.href ? (
                   <ExternalLink href={signal.href} className="link hover:text-accent" arrow>
                     {signal.value}
@@ -38,10 +28,16 @@ export function CredibilityStrip() {
                   signal.value
                 )}
               </p>
-              <p className="mt-2 text-sm leading-snug text-muted">{signal.label}</p>
+
+              <span
+                aria-hidden="true"
+                className="cred-bar mt-5 block h-0.5 rounded-full bg-accent"
+              />
+
+              <p className="mt-4 text-sm leading-snug text-muted">{signal.label}</p>
             </div>
-          );
-        })}
+          </Reveal>
+        ))}
       </div>
     </section>
   );
