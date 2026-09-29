@@ -40,4 +40,12 @@ export const storyPhotos: StoryPhoto[] = [
     height: 768,
     caption: 'Apparel and gift bags under the Make-A-Wish tent.',
   },
+  {
+    src: '/images/story/dock-sunset.jpg',
+    alt: 'The sun setting over calm water at the end of a long wooden dock, one person sitting alone at the far end, a jetty of rocks and a few shingled houses on the point to the left.',
+    width: 1024,
+    height: 769,
+    caption: 'Sundown from the dock.',
+    wide: true,
+  },
 ];

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { profile } from '@/content';
 import { Coastline } from './coastline';
 import { Reveal } from './reveal';
@@ -41,12 +42,26 @@ export function OriginStory() {
           </div>
 
           <Reveal delay={260}>
-            <blockquote className="mt-12 border-l border-accent pl-6">
-              <p className="text-heading font-medium tracking-tight text-fg">
-                “{about.aside.quote}”
-              </p>
-              <footer className="meta mt-3 text-faint">{about.aside.caption}</footer>
-            </blockquote>
+            <div className="mt-12 flex items-end gap-6">
+              <blockquote className="flex-1 border-l border-accent pl-6">
+                <p className="text-heading font-medium tracking-tight text-fg">
+                  “{about.aside.quote}”
+                </p>
+                <footer className="meta mt-3 text-faint">{about.aside.caption}</footer>
+              </blockquote>
+              <figure className="w-24 shrink-0 sm:w-32">
+                <div className="relative aspect-[3/4] overflow-hidden border border-rule bg-raised">
+                  <Image
+                    src="/images/story/the-cat.jpg"
+                    alt="An orange kitten peeking over a fuzzy gray blanket on a windowsill, only its ears and eyes showing, with a toy fish dangling above."
+                    fill
+                    sizes="128px"
+                    className="object-cover"
+                  />
+                </div>
+                <figcaption className="meta mt-2 text-faint">The coworker</figcaption>
+              </figure>
+            </div>
           </Reveal>
         </div>
 

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { storyPhotos } from '@/content';
+import { Pennant } from './pennant';
 import { Reveal } from './reveal';
 import { Section } from './section';
 
@@ -9,7 +10,10 @@ export function StoryGallery() {
     <Section surface="ink" labelledBy="story-gallery-heading">
       <div className="wrap py-20 md:py-28">
         <Reveal>
-          <p className="meta section-label">From the archive</p>
+          <p className="meta section-label flex items-center gap-3">
+            From the archive
+            <Pennant className="h-3.5 w-auto" />
+          </p>
           <h2 id="story-gallery-heading" className="mt-5 text-title font-medium">
             Nine summers in Nyes Neck.
           </h2>
@@ -23,20 +27,28 @@ export function StoryGallery() {
               <Reveal
                 key={photo.src}
                 delay={Math.min(index, 4) * 60}
-                className={tall ? 'sm:row-span-2' : ''}
+                className={photo.wide ? 'sm:col-span-2 lg:col-span-3' : tall ? 'sm:row-span-2' : ''}
               >
                 <figure className="flex h-full flex-col">
                   <div
                     className={[
                       'relative overflow-hidden border border-rule bg-raised',
-                      tall ? 'aspect-[3/4] sm:aspect-auto sm:flex-1' : 'aspect-[4/3]',
+                      photo.wide
+                        ? 'aspect-[4/3] sm:aspect-[21/9]'
+                        : tall
+                          ? 'aspect-[3/4] sm:aspect-auto sm:flex-1'
+                          : 'aspect-[4/3]',
                     ].join(' ')}
                   >
                     <Image
                       src={photo.src}
                       alt={photo.alt}
                       fill
-                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                      sizes={
+                        photo.wide
+                          ? '100vw'
+                          : '(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw'
+                      }
                       className="object-cover"
                     />
                   </div>

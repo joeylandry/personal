@@ -148,4 +148,6 @@ export interface StoryPhoto {
   width: number;
   height: number;
   caption: string;
+  /** Spans the full row as a closing panorama. */
+  wide?: boolean;
 }
