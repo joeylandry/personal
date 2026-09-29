@@ -16,12 +16,10 @@ test.describe('homepage', () => {
     await page.goto('/');
 
     await expect(page).toHaveTitle(/Joey Landry/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Building software');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText("Hi, I'm Joey.");
 
     // A recent-work teaser follows the hero and points on to the work page.
-    await expect(
-      page.getByRole('heading', { level: 2, name: 'Current projects, all in production.' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Recent work' })).toBeVisible();
     await expect(
       page.getByRole('heading', { level: 3, name: 'Nyes Neck Clothing & Apparel' }),
     ).toBeVisible();
@@ -66,11 +64,7 @@ test.describe('homepage', () => {
     const errors = trackErrors(page);
     await page.goto('/work');
 
-    for (const name of [
-      'Nyes Neck Clothing & Apparel',
-      'Arlington Brewing Company',
-      'joeylandry.com',
-    ]) {
+    for (const name of ['Nyes Neck Clothing & Apparel', 'Arlington Brewing Company']) {
       await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     }
 
@@ -119,18 +113,20 @@ test.describe('project case studies', () => {
       'Nyes Neck Clothing & Apparel',
     );
 
-    // Every required case-study section is present.
+    // Every section this case study has content for is present.
     for (const heading of [
-      'Why it exists',
-      'What I owned',
-      'Product & UX calls',
+      'Background',
+      'What I did',
+      'Choices I made',
       "How it's built",
-      'Everything in the build',
-      'Where it landed',
-      "What I'd explore next",
+      'Stack',
+      'The tricky part',
+      'Where it is now',
     ]) {
-      await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+      await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
     }
+    // Nyes Neck has no "later" ideas, so that section is left out.
+    await expect(page.getByRole('heading', { name: 'Ideas for later' })).toHaveCount(0);
 
     expect(errors).toEqual([]);
   });
@@ -147,8 +143,8 @@ test.describe('project case studies', () => {
   });
 
   test('recurses, then apologises', async ({ page }) => {
-    await page.goto('/work');
-    await page.getByRole('link', { name: 'recursive', exact: true }).click();
+    await page.goto('/work/joeylandry-com');
+    await page.getByRole('link', { name: 'Visit joeylandry.com', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Recursion' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText("You didn't break the site!")).toBeVisible({
@@ -156,13 +152,14 @@ test.describe('project case studies', () => {
     });
     await dialog.getByRole('button', { name: /Back to the/ }).click();
     await expect(dialog).toBeHidden();
-    await expect(page).toHaveURL(/\/work$/);
+    await expect(page).toHaveURL(/\/work\/joeylandry-com$/);
   });
 
-  test('wraps previous/next navigation around the set', async ({ page }) => {
+  test('links each featured project to the other', async ({ page }) => {
     await page.goto('/work/nyes-neck');
     const nav = page.getByRole('navigation', { name: 'More work' });
-    await expect(nav.getByText('joeylandry.com')).toBeVisible();
+    // With two projects, previous and next are the same, so it is shown once.
+    await expect(nav.getByRole('link')).toHaveCount(1);
     await nav.getByRole('link', { name: /Arlington Brewing Company/ }).click();
     await expect(page).toHaveURL(/\/work\/arlington-brewing-company$/);
   });
@@ -195,9 +192,13 @@ test.describe('project case studies', () => {
     }
   });
 
-  test('lists all three projects on the work index', async ({ page }) => {
+  test('lists the featured projects on the work index', async ({ page }) => {
     await page.goto('/work');
-    await expect(page.locator('article')).toHaveCount(3);
+    await expect(page.locator('article')).toHaveCount(2);
+    await expect(page.getByRole('link', { name: 'how this site is built' })).toHaveAttribute(
+      'href',
+      '/work/joeylandry-com',
+    );
   });
 });
 
@@ -205,7 +206,7 @@ test.describe('routing and crawling', () => {
   test('serves a designed 404 that is not indexed', async ({ page }) => {
     const response = await page.goto('/this-page-does-not-exist');
     expect(response?.status()).toBe(404);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Off the map');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Page not found');
   });
 
   test('publishes a sitemap and robots.txt', async ({ request }) => {

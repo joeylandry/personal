@@ -50,20 +50,14 @@ export function Section({
   );
 }
 
-/**
- * Standard section masthead: a mono label, an editorial title, and an optional
- * lead paragraph, laid out asymmetrically against the grid.
- */
+/** Standard section masthead: a title and an optional lead paragraph. */
 export function SectionHeading({
-  label,
   title,
   lead,
   id,
   aside,
   level = 2,
 }: {
-  /** Mono label above the title. Omit to lead with the title alone. */
-  label?: string;
   title: ReactNode;
   lead?: ReactNode;
   id?: string;
@@ -76,16 +70,13 @@ export function SectionHeading({
   return (
     <header className="grid gap-x-10 gap-y-6 md:grid-cols-12">
       <Reveal className="md:col-span-8">
-        <p className="meta section-label">{label}</p>
-        <Heading id={id} className="mt-5 text-title font-medium text-fg">
+        <Heading id={id} className="text-title font-medium text-fg">
           {title}
         </Heading>
         {lead ? <p className="measure mt-5 text-lead text-muted">{lead}</p> : null}
       </Reveal>
       {aside ? (
-        <Reveal delay={80} className="flex items-end md:col-span-4 md:justify-end md:pb-1.5">
-          {aside}
-        </Reveal>
+        <Reveal className="flex items-end md:col-span-4 md:justify-end md:pb-1.5">{aside}</Reveal>
       ) : null}
     </header>
   );

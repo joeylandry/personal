@@ -2,40 +2,22 @@ import { timeline } from '@/content';
 import { Reveal } from './reveal';
 import { Section, SectionHeading } from './section';
 
-/**
- * Experience and education in one column, newest first. Deliberately compact:
- * the work page is the evidence, this is the trajectory.
- */
+/** Experience and education in one column, newest first. */
 export function Timeline() {
   return (
     <Section id="experience" surface="paper" divider={false} labelledBy="experience-heading">
       <div className="wrap py-20 md:py-28">
-        <SectionHeading
-          id="experience-heading"
-          level={1}
-          label="Experience"
-          title="Where I've been building."
-          lead="Kept high-level on purpose — internal project detail stays internal."
-        />
+        <SectionHeading id="experience-heading" level={1} title="Experience" />
 
         <ol className="mt-14 md:mt-20">
-          {timeline.map((entry, index) => (
+          {timeline.map((entry) => (
             <Reveal
               as="li"
               key={`${entry.org}-${entry.start}`}
-              delay={index * 60}
               className="rule-t grid gap-x-10 gap-y-3 py-8 md:grid-cols-12 md:py-10"
             >
               <div className="md:col-span-3">
-                <p className="meta flex items-center gap-2.5 text-faint">
-                  {entry.current ? (
-                    <span
-                      aria-hidden="true"
-                      className="status-dot inline-block h-1.5 w-1.5 rounded-full bg-accent"
-                    />
-                  ) : null}
-                  {entry.period}
-                </p>
+                <p className="text-sm text-faint">{entry.period}</p>
                 {entry.location ? (
                   <p className="mt-2 text-xs text-faint">{entry.location}</p>
                 ) : null}

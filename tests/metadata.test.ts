@@ -25,7 +25,7 @@ describe('site urls', () => {
   });
 
   it('uses a descriptive default title', () => {
-    expect(siteTitle).toBe('Joey Landry — Software Engineer & Builder');
+    expect(siteTitle).toBe('Joey Landry — Software Engineer');
   });
 
   it('points every nav link at a real destination', () => {

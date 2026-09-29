@@ -228,9 +228,7 @@ test.describe('motion and progressive enhancement', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     // Revealed content must be visible without an observer running.
     await page.goto('/experience');
-    await expect(
-      page.getByRole('heading', { name: /Where I.{0,3}ve been building/ }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Experience' })).toBeVisible();
     await page.goto('/work');
     await expect(page.getByRole('link', { name: /Nyes Neck Clothing/ }).first()).toBeVisible();
     await context.close();

@@ -5,12 +5,12 @@ import { collectionSchema, jsonLdString } from '@/lib/jsonld';
 export const metadata: Metadata = {
   title: 'Work',
   description:
-    'Production projects designed and built by Joey Landry: Nyes Neck Clothing & Apparel, Arlington Brewing Company and this site.',
+    'Websites designed and built by Joey Landry: Nyes Neck Clothing & Apparel and Arlington Brewing Company.',
   alternates: { canonical: '/work' },
   openGraph: {
     title: 'Work — Joey Landry',
     description:
-      'Production projects designed and built by Joey Landry: e-commerce, a brewery content platform and this site itself.',
+      'Websites designed and built by Joey Landry: an apparel store and a brewery website.',
     url: '/work',
   },
 };

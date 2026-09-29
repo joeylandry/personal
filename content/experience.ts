@@ -58,59 +58,37 @@ export const timeline: TimelineEntry[] = [
   },
 ];
 
-/**
- * Capabilities grouped by what they are actually for. Scoped to the production
- * work on this site — no badge wall, no tools that are not represented above.
- */
+/** Tools and languages, grouped loosely. Limited to what the projects above use. */
 export const skillGroups: SkillGroup[] = [
   {
-    label: 'Product engineering',
-    blurb: 'The layer people actually touch.',
-    items: ['TypeScript', 'JavaScript', 'React', 'Next.js', 'HTML', 'CSS', 'Responsive design'],
+    label: 'Frontend',
+    items: ['TypeScript', 'JavaScript', 'React', 'Next.js', 'HTML', 'CSS', 'Tailwind CSS'],
   },
   {
     label: 'Backend & data',
-    blurb: 'State, identity and the contracts between them.',
     items: [
-      'Node.js patterns',
-      'REST & API routes',
+      'Node.js',
+      'REST APIs',
       'PostgreSQL',
       'Drizzle ORM',
       'Database design',
-      'Authentication & session design',
+      'Authentication',
     ],
   },
   {
-    label: 'Content & commerce',
-    blurb: 'Systems a non-developer can run after launch.',
-    items: [
-      'Sanity CMS',
-      'Printful integration',
-      'Formspree',
-      'Content modeling',
-      'E-commerce architecture',
-    ],
+    label: 'CMS & e-commerce',
+    items: ['Sanity', 'Printful', 'Formspree', 'Content modeling'],
   },
   {
-    label: 'Maps & discovery',
-    blurb: 'Putting things where people can find them.',
-    items: ['Leaflet', 'Geocoding & data synchronization', 'Location-aware interfaces'],
+    label: 'Maps',
+    items: ['Leaflet', 'Geocoding'],
   },
   {
-    label: 'Also working in',
-    blurb: 'Languages outside the front of the stack.',
+    label: 'Other languages',
     items: ['Python', 'SQL', 'Java', 'C'],
   },
   {
-    label: 'Engineering workflow',
-    blurb: 'How the work gets shipped and kept honest.',
-    items: [
-      'Git & version control',
-      'Agile collaboration',
-      'CI concepts',
-      'Testing',
-      'Linting & type checking',
-      'Vercel deployment',
-    ],
+    label: 'Workflow',
+    items: ['Git', 'Agile', 'Testing', 'Linting & type checking', 'Vercel'],
   },
 ];

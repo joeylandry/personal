@@ -18,22 +18,16 @@ export function Contact() {
       labelledBy="contact-heading"
       className="overflow-hidden"
     >
-      <div
-        aria-hidden="true"
-        className="grid-field pointer-events-none absolute inset-0 opacity-60"
-      />
-
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-5">
           <Reveal>
-            <p className="meta section-label">{profile.contact.kicker}</p>
-            <h1 id="contact-heading" className="mt-5 text-title font-medium">
+            <h1 id="contact-heading" className="text-title font-medium">
               {profile.contact.headline}
             </h1>
             <p className="measure-tight mt-6 text-lead text-muted">{profile.contact.body}</p>
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal>
             <ul className="mt-10 space-y-0">
               <li className="rule-t">
                 <ExternalLink
@@ -83,7 +77,7 @@ export function Contact() {
           </Reveal>
         </div>
 
-        <Reveal delay={180} className="md:col-span-6 md:col-start-7">
+        <Reveal className="md:col-span-6 md:col-start-7">
           <ContactForm
             fallbackHref={contactEmail ? `mailto:${contactEmail}` : linkedin.href}
             fallbackLabel={contactEmail ? 'email' : 'LinkedIn'}

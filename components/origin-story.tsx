@@ -17,7 +17,7 @@ export function OriginStory() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <Coastline
           className="absolute -top-[18%] -left-[20%] h-[110%] w-[90%] text-fog"
-          opacity={0.42}
+          opacity={0.3}
           lines={11}
           gap={19}
         />
@@ -26,32 +26,21 @@ export function OriginStory() {
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-7">
           <Reveal>
-            <p className="meta section-label">{about.kicker}</p>
-            <h1 id="about-heading" className="mt-5 text-title font-medium">
+            <h1 id="about-heading" className="text-title font-medium">
               {about.title}
             </h1>
           </Reveal>
 
           <div className="measure mt-8 space-y-5 text-lead text-muted">
-            {about.body.map((paragraph, index) => (
-              <Reveal as="p" key={paragraph.slice(0, 24)} delay={60 + index * 60}>
+            {about.body.map((paragraph) => (
+              <Reveal as="p" key={paragraph.slice(0, 24)}>
                 {paragraph}
               </Reveal>
             ))}
           </div>
-
-          <Reveal delay={260}>
-            <blockquote className="mt-12 border-l border-accent pl-6">
-              <p className="text-heading font-medium tracking-tight text-fg">
-                “{about.aside.quote}”
-              </p>
-              <footer className="meta mt-3 text-faint">{about.aside.caption}</footer>
-            </blockquote>
-          </Reveal>
         </div>
 
-        {/* Impact ledger — verified milestones only. */}
-        <Reveal delay={140} className="md:col-span-4 md:col-start-9">
+        <Reveal className="md:col-span-4 md:col-start-9">
           <h2 className="meta text-faint">Make-A-Wish · Nyes Neck</h2>
           <ol className="mt-6 space-y-0">
             {impact.map((entry) => (

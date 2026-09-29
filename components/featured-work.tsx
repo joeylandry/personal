@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { featuredProjects } from '@/content';
+import { featuredProjects, projects } from '@/content';
 import { ProjectRow } from './project-row';
 import { Section, SectionHeading } from './section';
 
@@ -8,6 +8,8 @@ import { Section, SectionHeading } from './section';
  * teaser section under the hero, pointing on to the full work page.
  */
 export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
+  const thisSite = projects.find((project) => project.slug === 'joeylandry-com');
+
   return (
     <Section
       id="work"
@@ -20,9 +22,8 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
         <SectionHeading
           id="work-heading"
           level={teaser ? 2 : 1}
-          label={teaser ? 'Recent work' : 'Work'}
-          title="Current projects, all in production."
-          lead="Every project here is live, built end to end, and actively maintained — from design and front end through backend and deployment."
+          title={teaser ? 'Recent work' : 'Work'}
+          lead="Websites I designed, built and still look after."
           aside={
             teaser ? (
               <Link href="/work" className="link-on text-sm font-medium text-fg">
@@ -45,8 +46,8 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
           ))}
         </div>
 
-        <p className="meta mt-20 border-t border-rule pt-6 text-faint">
-          More code, including coursework and experiments, lives on{' '}
+        <p className="mt-20 border-t border-rule pt-6 text-sm text-muted">
+          More code, including coursework and experiments, is on{' '}
           <a
             href="https://github.com/joeylandry"
             target="_blank"
@@ -56,6 +57,16 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
             GitHub
           </a>
           .
+          {thisSite ? (
+            <>
+              {' '}
+              There&apos;s also a short write-up on{' '}
+              <Link href={`/work/${thisSite.slug}`} className="link text-accent">
+                how this site is built
+              </Link>
+              .
+            </>
+          ) : null}
         </p>
       </div>
     </Section>

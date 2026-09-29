@@ -1,59 +1,42 @@
-import type { CredibilitySignal, Exploration, SocialLink } from './types';
+import type { Exploration, SocialLink } from './types';
 
 export const profile = {
   name: 'Joey Landry',
   /** Formal name used in structured data. */
   legalName: 'Joseph Landry',
   initials: 'JL',
-  role: 'Software Engineer & Independent Builder',
+  role: 'Software Engineer',
   /** Employment line. Kept factual — no endorsement implied. */
   employer: 'Fidelity Investments',
   employerRole: 'Associate Software Engineer',
   location: 'New Hampshire',
-  /** Neighbourhood-level coastal reference behind the brand. Decorative. */
-  origin: 'Nyes Neck · Cape Cod',
-  coordinates: '41.63° N · 70.36° W',
-  statusLine: 'Based in New Hampshire · Building after hours',
-  signature: 'midnight vibecoder',
 
   hero: {
-    eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
-    headline: [
-      'Building software,',
-      'designing web apps,',
-      'integrating AI,',
-      'and advancing what users can do.',
-    ],
+    headline: ["Hi, I'm Joey.", 'I write software at Fidelity and build websites on the side.'],
     support:
-      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
-    primaryCta: { label: "See what I've built", href: '/work' },
+      'I studied computer science at Tufts. Outside of work I built the online store for Nyes Neck, an apparel brand that grew out of a fundraiser I started when I was nine, and the website for Arlington Brewing Company.',
+    primaryCta: { label: 'See my work', href: '/work' },
     secondaryCta: { label: 'GitHub', href: 'https://github.com/joeylandry' },
   },
 
   /** Short bio used for meta descriptions and structured data. */
   metaDescription:
-    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms and location tools.',
+    'Joey Landry is a software engineer at Fidelity and a Tufts computer science graduate. On the side he builds websites, including the Nyes Neck apparel store and the Arlington Brewing Company site.',
 
   about: {
-    kicker: 'Where it started',
-    title: 'I like the moment an idea stops being hypothetical.',
+    title: 'About me',
     body: [
-      'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-      'The neighborhood kept showing up. Over nine years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
-      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools, event systems and security games.',
-      'The thread is ownership. I like the whole path — from a rough idea to something real people can actually use.',
+      'When I was nine, I set up a lemonade stand and sold bracelets in Nyes Neck, a neighborhood on Cape Cod. I raised $50 that first year and gave it to Make-A-Wish Massachusetts and Rhode Island.',
+      'The neighbors got involved and it kept growing. Over the next nine years we added movie nights, raffles, apparel and live music, and raised more than $20,000 in total.',
+      'I studied computer science at Tufts and graduated cum laude in 2026. I interned at Fidelity in 2025 and started there full time as an associate software engineer in August 2026.',
+      "Outside of work I build websites. Right now that's mostly Nyes Neck Clothing & Apparel, an online store that keeps the fundraiser going and gives part of its proceeds to St. Jude, and the site for Arlington Brewing Company. I've also worked on location tools, event systems and a few security games.",
     ],
-    /** Pull-quote rendered as an editorial aside. */
-    aside: {
-      quote: 'Engineer by day. Builder after hours.',
-      caption: 'The short version.',
-    },
   },
 
   /** Milestones for the origin/impact story. Verified facts only. */
   impact: [
     { year: '2013', label: 'A lemonade stand and bracelets in Nyes Neck', value: '$50 raised' },
-    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '9 years' },
+    { year: '2013–2021', label: 'Movie nights, raffles, apparel, live music', value: '9 years' },
     {
       year: 'Total',
       label: 'Raised for Make-A-Wish Massachusetts and Rhode Island',
@@ -63,26 +46,13 @@ export const profile = {
   ],
 
   contact: {
-    kicker: 'Contact',
-    headline: 'Have an idea that should exist?',
-    body: "I'm always interested in thoughtful products, ambitious builds, and people working on something real.",
+    headline: 'Get in touch',
+    body: "Send me a message with the form, or find me on LinkedIn. I'm happy to hear about projects, jobs, or anything else.",
   },
 
   footerNote:
     'Designed and built by Joey Landry. Independent projects are my own and are not affiliated with or endorsed by my employer.',
 } as const;
-
-export const credibility: CredibilitySignal[] = [
-  { value: 'Fidelity SWE', label: 'Merrimack, NH' },
-  { value: 'Tufts Grad', label: 'B.S. Computer Science · cum laude' },
-  { value: 'Make-A-Wish®', label: '$20K+ raised' },
-  {
-    value: 'St. Jude',
-    label: 'Children’s Research Hospital®, supported through Nyes Neck',
-    href: 'https://www.stjude.org',
-  },
-  { value: 'Live Sites', label: 'Production sites for organizations' },
-];
 
 export const socials: SocialLink[] = [
   { label: 'GitHub', href: 'https://github.com/joeylandry', handle: '@joeylandry' },
@@ -95,18 +65,15 @@ export const socials: SocialLink[] = [
 
 export const explorations: Exploration[] = [
   {
-    index: '01',
     title: 'AI-assisted development',
-    body: 'How much of the distance between an idea and a working product AI actually removes — and which parts of engineering judgement it does not.',
+    body: 'I use AI tools a lot when I code. I want to know which parts of the job they actually speed up, and which parts still need someone to think carefully.',
   },
   {
-    index: '02',
     title: 'AI and cybersecurity',
-    body: 'The new attack surfaces AI creates, how it changes vulnerability discovery, and where it can carry real weight in defensive automation. An active interest, and the direction I am reading and building toward.',
+    body: 'How AI changes the way vulnerabilities get found and exploited, and how it can help on the defensive side. This is what I read about most right now.',
   },
   {
-    index: '03',
-    title: 'Small products, real communities',
-    body: 'Focused digital products that make a specific group of people better off — a neighborhood, a taproom, a table of friends — rather than software built for everyone and no one.',
+    title: 'Sites for small, local groups',
+    body: 'Websites and tools for a specific group of people, like a neighborhood, a brewery or a group of friends. Most of what I have built so far fits here.',
   },
 ];

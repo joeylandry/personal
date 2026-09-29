@@ -9,7 +9,6 @@ import {
   RuledList,
   StackTable,
 } from '@/components/case-study';
-import { Coastline } from '@/components/coastline';
 import { Cta, ctaClassName } from '@/components/cta';
 import { Frame } from '@/components/frame';
 import { RecursionTrigger } from '@/components/recursion';
@@ -76,13 +75,6 @@ export default async function ProjectPage({ params }: Params) {
       <div
         className={`surface-ink accent-${project.accent} relative isolate overflow-hidden bg-ink text-fg`}
       >
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-          <div className="grid-field absolute inset-0 opacity-60" />
-          <Coastline
-            className="absolute -right-[10%] -bottom-[20%] h-[85%] w-[80%] text-fog"
-            opacity={0.32}
-          />
-        </div>
         <CaseStudyHeader project={project} />
       </div>
 
@@ -103,33 +95,35 @@ export default async function ProjectPage({ params }: Params) {
       {/* Narrative */}
       <Section surface="paper" accent={project.accent} divider={false} className="pb-8">
         <div className="wrap">
-          <CaseSection id="context" label="Context" title="Why it exists">
+          <CaseSection id="context" title="Background">
             <Paragraphs items={caseStudy.context} />
           </CaseSection>
 
-          <CaseSection id="owned" label="Ownership" title="What I owned">
+          <CaseSection id="owned" title="What I did">
             <RuledList items={caseStudy.owned} />
           </CaseSection>
 
-          <CaseSection id="decisions" label="Decisions" title="Product & UX calls">
-            <BlockList items={caseStudy.decisions} />
-          </CaseSection>
+          {caseStudy.decisions ? (
+            <CaseSection id="decisions" title="Choices I made">
+              <BlockList items={caseStudy.decisions} />
+            </CaseSection>
+          ) : null}
         </div>
       </Section>
 
       {/* Technical half, on ink */}
       <Section surface="ink" accent={project.accent}>
         <div className="wrap">
-          <CaseSection id="architecture" label="Architecture" title="How it's built">
+          <CaseSection id="architecture" title="How it's built">
             <BlockList items={caseStudy.architecture} />
           </CaseSection>
 
-          <CaseSection id="stack" label="Stack" title="Everything in the build">
+          <CaseSection id="stack" title="Stack">
             <StackTable project={project} />
           </CaseSection>
 
           {caseStudy.constraints ? (
-            <CaseSection id="constraints" label="Constraints" title="The hard parts">
+            <CaseSection id="constraints" title="The tricky part">
               <BlockList items={caseStudy.constraints} />
             </CaseSection>
           ) : null}
@@ -139,16 +133,16 @@ export default async function ProjectPage({ params }: Params) {
       {/* Outcome */}
       <Section surface="paper" accent={project.accent}>
         <div className="wrap">
-          <CaseSection id="outcome" label="Outcome" title="Where it landed">
+          <CaseSection id="outcome" title="Where it is now">
             <RuledList items={caseStudy.outcome} />
           </CaseSection>
 
-          <CaseSection id="next" label="Next" title="What I'd explore next">
-            <p className="measure mb-6 text-sm text-faint italic">
-              Directions I&apos;m considering — none of this is built yet.
-            </p>
-            <RuledList items={caseStudy.next} />
-          </CaseSection>
+          {caseStudy.next ? (
+            <CaseSection id="next" title="Ideas for later">
+              <p className="measure mb-6 text-sm text-faint">None of these are built yet.</p>
+              <RuledList items={caseStudy.next} />
+            </CaseSection>
+          ) : null}
 
           <div className="rule-t flex flex-wrap items-center gap-4 py-12">
             {project.liveUrl ? (

@@ -261,20 +261,6 @@
     color: var(--muted);
   }
 
-  /* Section label with a leading accent tick. */
-  .section-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-  }
-  .section-label::before {
-    content: '';
-    width: 1.5rem;
-    height: 1px;
-    background-color: var(--accent);
-    flex: none;
-  }
-
   /* Hairline rules, the connective tissue of the layout. */
   .rule-t {
     border-top: 1px solid var(--rule);
@@ -314,15 +300,6 @@
   .link-on:hover,
   .link-on:focus-visible {
     background-size: 0% 1px;
-  }
-
-  /* Fine technical grid. Decorative only — always aria-hidden. */
-  .grid-field {
-    background-image:
-      linear-gradient(to right, var(--rule) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
-    background-size: 5.5rem 5.5rem;
-    mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
   }
 
   /* Paper grain / ink noise, kept extremely low so it reads as material. */
@@ -376,11 +353,10 @@
 
 [data-js='on'] .reveal {
   opacity: 0;
-  transform: translate3d(0, 14px, 0);
+  transform: translate3d(0, 8px, 0);
   transition:
-    opacity 620ms var(--ease-out-soft),
-    transform 620ms var(--ease-out-soft);
-  transition-delay: var(--reveal-delay, 0ms);
+    opacity 400ms var(--ease-out-soft),
+    transform 400ms var(--ease-out-soft);
   will-change: opacity, transform;
 }
 
@@ -392,22 +368,6 @@
 /* A few pixels of parallax on project imagery. Never more. */
 [data-js='on'] .parallax {
   transform: translate3d(0, var(--parallax, 0px), 0);
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.45;
-    transform: scale(0.82);
-  }
-}
-
-.status-dot {
-  animation: pulse-dot 3.4s var(--ease-out-soft) infinite;
 }
 
 @keyframes caret {

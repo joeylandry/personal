@@ -23,7 +23,7 @@ export function absoluteUrl(path = '/'): string {
 }
 
 export const siteName = 'Joey Landry';
-export const siteTitle = 'Joey Landry — Software Engineer & Builder';
+export const siteTitle = 'Joey Landry — Software Engineer';
 
 /**
  * Optional public contact address. When unset the UI falls back to LinkedIn
@@ -37,9 +37,3 @@ export const navLinks = [
   { label: 'Experience', href: '/experience' },
   { label: 'Contact', href: '/contact' },
 ] as const;
-
-/**
- * Build timestamp, rendered as a small mono detail. Evaluated once per build so
- * pages stay static.
- */
-export const buildStamp = new Date().toISOString().slice(0, 16).replace('T', ' ');

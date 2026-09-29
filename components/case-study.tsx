@@ -31,23 +31,15 @@ export function CaseStudyHeader({ project }: { project: Project }) {
         </nav>
       </Reveal>
 
-      <Reveal delay={60}>
-        <p className="meta mt-10 flex flex-wrap items-center gap-x-3 gap-y-1 text-faint">
-          <span className="flex items-center gap-2 text-accent">
-            <span
-              aria-hidden="true"
-              className="status-dot inline-block h-1.5 w-1.5 rounded-full bg-accent"
-            />
-            {statusLabels[project.status]}
-          </span>
-          <span aria-hidden="true">·</span>
-          {project.kind}
+      <Reveal>
+        <p className="mt-10 text-sm text-faint">
+          {project.kind} · {statusLabels[project.status]}
         </p>
         <h1 className="mt-5 text-display font-medium">{project.name}</h1>
         <p className="measure mt-6 text-lead text-muted">{project.caseStudy.statement}</p>
       </Reveal>
 
-      <Reveal delay={140}>
+      <Reveal>
         <dl className="mt-12 grid gap-x-8 gap-y-6 border-t border-rule pt-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <dt className="meta text-faint">Role</dt>
@@ -94,12 +86,10 @@ export function CaseStudyHeader({ project }: { project: Project }) {
 
 /** A titled prose section of the case study. */
 export function CaseSection({
-  label,
   title,
   children,
   id,
 }: {
-  label: string;
   title: string;
   children: React.ReactNode;
   id?: string;
@@ -110,14 +100,11 @@ export function CaseSection({
       className="rule-t grid gap-x-10 gap-y-6 py-12 md:grid-cols-12 md:py-16"
     >
       <Reveal className="md:col-span-4">
-        <p className="meta section-label">{label}</p>
-        <h2 id={id} className="mt-4 text-heading font-medium tracking-tight">
+        <h2 id={id} className="text-heading font-medium tracking-tight">
           {title}
         </h2>
       </Reveal>
-      <Reveal delay={80} className="md:col-span-7 md:col-start-6">
-        {children}
-      </Reveal>
+      <Reveal className="md:col-span-7 md:col-start-6">{children}</Reveal>
     </section>
   );
 }
@@ -183,25 +170,31 @@ export function StackTable({ project }: { project: Project }) {
   );
 }
 
-/** Previous / next navigation across the featured set. */
+/**
+ * Previous / next navigation across the featured set. With only two projects
+ * both neighbours are the same, so only the "next" link is shown.
+ */
 export function ProjectNav({ previous, next }: { previous: Project; next: Project }) {
+  const single = previous.slug === next.slug;
   return (
     <nav aria-label="More work" className="wrap grid gap-px sm:grid-cols-2">
-      <Link
-        href={`/work/${previous.slug}`}
-        className={`accent-${previous.accent} group rule-t py-10 sm:pr-8`}
-      >
-        <p className="meta text-faint">
-          <span aria-hidden="true">←</span> Previous
-        </p>
-        <p className="mt-3 text-heading font-medium tracking-tight underline-offset-4 group-hover:underline">
-          {previous.name}
-        </p>
-        <p className="mt-2 text-sm text-accent">{previous.tagline}</p>
-      </Link>
+      {single ? null : (
+        <Link
+          href={`/work/${previous.slug}`}
+          className={`accent-${previous.accent} group rule-t py-10 sm:pr-8`}
+        >
+          <p className="meta text-faint">
+            <span aria-hidden="true">←</span> Previous
+          </p>
+          <p className="mt-3 text-heading font-medium tracking-tight underline-offset-4 group-hover:underline">
+            {previous.name}
+          </p>
+          <p className="mt-2 text-sm text-accent">{previous.tagline}</p>
+        </Link>
+      )}
       <Link
         href={`/work/${next.slug}`}
-        className={`accent-${next.accent} group rule-t py-10 sm:border-l sm:border-rule sm:pl-8 sm:text-right`}
+        className={`accent-${next.accent} group rule-t py-10 ${single ? 'sm:col-span-2' : 'sm:border-l sm:border-rule sm:pl-8 sm:text-right'}`}
       >
         <p className="meta text-faint">
           Next <span aria-hidden="true">→</span>

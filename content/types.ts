@@ -28,16 +28,16 @@ export interface CaseStudy {
   context: string[];
   /** Explicit ownership — what Joey personally did. */
   owned: string[];
-  /** Product and UX decisions, each with reasoning. */
-  decisions: CaseStudyBlock[];
+  /** Product and UX decisions, each with reasoning. Optional. */
+  decisions?: CaseStudyBlock[];
   /** How it is built. */
   architecture: CaseStudyBlock[];
-  /** Genuinely hard constraints. Omitted when there is nothing verified to say. */
+  /** Hard parts. Omitted when there is nothing worth saying. */
   constraints?: CaseStudyBlock[];
   /** Verified outcomes only. No invented metrics. */
   outcome: string[];
-  /** Forward product thinking, clearly labelled as not-yet-built. */
-  next: string[];
+  /** Ideas that aren't built yet. Optional. */
+  next?: string[];
 }
 
 export interface ProjectImage {
@@ -116,22 +116,12 @@ export interface TimelineEntry {
 
 export interface SkillGroup {
   label: string;
-  /** One line explaining what this group is for. */
-  blurb: string;
   items: string[];
 }
 
 export interface Exploration {
-  index: string;
   title: string;
   body: string;
-}
-
-export interface CredibilitySignal {
-  value: string;
-  label: string;
-  /** Off-site page for the organization the signal names. */
-  href?: string;
 }
 
 export interface SocialLink {

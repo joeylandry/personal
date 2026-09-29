@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { featuredProjects, profile, socials } from '@/content';
-import { buildStamp, navLinks } from '@/lib/site';
+import { navLinks } from '@/lib/site';
 import { Monogram } from './monogram';
 import { ExternalLink } from './external-link';
 
 export function SiteFooter() {
-  const year = buildStamp.slice(0, 4);
+  const year = new Date().getFullYear();
 
   return (
     <footer className="surface-ink rule-t relative overflow-hidden bg-ink text-fg">
@@ -14,9 +14,6 @@ export function SiteFooter() {
           <Monogram className="h-8 w-[2.667rem] text-fg" title={`${profile.name} monogram`} />
           <p className="measure-tight mt-6 text-sm leading-relaxed text-muted">
             {profile.footerNote}
-          </p>
-          <p className="meta mt-6 text-faint">
-            {profile.origin} · {profile.coordinates}
           </p>
         </div>
 
@@ -68,13 +65,9 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="wrap rule-t flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="meta text-faint">
+      <div className="wrap rule-t py-6">
+        <p className="text-sm text-faint">
           © {year} {profile.name}
-        </p>
-        <p className="meta text-faint">
-          <span className="text-accent">build</span> {buildStamp} UTC ·{' '}
-          <span className="normal-case tracking-normal italic">{profile.signature}</span>
         </p>
       </div>
     </footer>

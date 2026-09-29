@@ -2,7 +2,6 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  credibility,
   displayHost,
   explorations,
   featuredProjects,
@@ -19,12 +18,12 @@ import {
 const ROOT = join(__dirname, '..');
 
 describe('projects', () => {
-  it('exposes exactly the three featured production projects', () => {
-    expect(featuredProjects.map((p) => p.slug)).toEqual([
-      'nyes-neck',
-      'arlington-brewing-company',
-      'joeylandry-com',
-    ]);
+  it('features the two production client and brand sites', () => {
+    expect(featuredProjects.map((p) => p.slug)).toEqual(['nyes-neck', 'arlington-brewing-company']);
+  });
+
+  it('keeps this site as an unfeatured write-up', () => {
+    expect(getProject('joeylandry-com')?.featured).toBe(false);
   });
 
   it('has unique slugs and unique ordering', () => {
@@ -66,14 +65,17 @@ describe('projects', () => {
     '%s has a complete case study',
     (_slug, project) => {
       const cs = project.caseStudy;
-      expect(cs.statement.length).toBeGreaterThan(40);
+      expect(cs.statement.length).toBeGreaterThan(30);
       expect(cs.context.length).toBeGreaterThan(0);
       expect(cs.owned.length).toBeGreaterThan(2);
-      expect(cs.decisions.length).toBeGreaterThan(1);
       expect(cs.architecture.length).toBeGreaterThan(1);
       expect(cs.outcome.length).toBeGreaterThan(1);
-      expect(cs.next.length).toBeGreaterThan(0);
-      for (const block of [...cs.decisions, ...cs.architecture, ...(cs.constraints ?? [])]) {
+      // Optional sections are either absent or non-empty.
+      for (const section of [cs.decisions, cs.constraints, cs.next]) {
+        if (section) expect(section.length).toBeGreaterThan(0);
+      }
+      const blocks = [...(cs.decisions ?? []), ...cs.architecture, ...(cs.constraints ?? [])];
+      for (const block of blocks) {
         expect(block.title.length).toBeGreaterThan(3);
         expect(block.body.length).toBeGreaterThan(40);
       }
@@ -90,13 +92,11 @@ describe('projects', () => {
 
   it('wraps previous/next navigation around the featured set', () => {
     const first = getProjectNeighbors('nyes-neck');
-    expect(first?.previous.slug).toBe('joeylandry-com');
+    expect(first?.previous.slug).toBe('arlington-brewing-company');
     expect(first?.next.slug).toBe('arlington-brewing-company');
 
-    const last = getProjectNeighbors('joeylandry-com');
-    expect(last?.previous.slug).toBe('arlington-brewing-company');
-    expect(last?.next.slug).toBe('nyes-neck');
-
+    // Unfeatured projects sit outside the loop.
+    expect(getProjectNeighbors('joeylandry-com')).toBeNull();
     expect(getProjectNeighbors('does-not-exist')).toBeNull();
   });
 
@@ -138,7 +138,7 @@ describe('portfolio boundary', () => {
 });
 
 describe('voice', () => {
-  const prose = JSON.stringify({ projects, profile, explorations, skillGroups, credibility });
+  const prose = JSON.stringify({ projects, profile, explorations, skillGroups });
 
   it.each([
     'passionate developer',
@@ -151,11 +151,6 @@ describe('voice', () => {
     'synergy',
   ])('avoids the phrase "%s"', (phrase) => {
     expect(prose.toLowerCase()).not.toContain(phrase);
-  });
-
-  it('uses the midnight signature exactly once', () => {
-    const matches = prose.toLowerCase().match(/midnight vibecoder/g) ?? [];
-    expect(matches).toHaveLength(1);
   });
 });
 
@@ -200,19 +195,16 @@ describe('experience', () => {
 describe('profile', () => {
   it('states the verified fundraising total', () => {
     expect(JSON.stringify(profile.impact)).toContain('$20,000+');
-    expect(credibility.some((signal) => signal.label === '$20K+ raised')).toBe(true);
   });
 
-  it('keeps the hero headline to four readable lines', () => {
-    expect(profile.hero.headline).toHaveLength(4);
-    for (const line of profile.hero.headline) {
-      expect(line.length).toBeLessThan(46);
-    }
+  it('keeps the hero headline short', () => {
+    expect(profile.hero.headline.length).toBeGreaterThan(0);
+    expect(profile.hero.headline.join(' ').length).toBeLessThan(90);
   });
 
-  it('exposes three explorations with unique indexes', () => {
+  it('exposes three explorations with unique titles', () => {
     expect(explorations).toHaveLength(3);
-    expect(new Set(explorations.map((item) => item.index)).size).toBe(3);
+    expect(new Set(explorations.map((item) => item.title)).size).toBe(3);
   });
 
   it('uses https for every social link', () => {

@@ -1,11 +1,8 @@
 import type { Project } from './types';
 
 /**
- * The featured body of work. Production-first and deliberately short.
- *
- * Everything here is verified: live URLs, repositories, roles and technical
- * scope. Cards, case-study pages, sitemap entries and structured data all read
- * from this one array, so they cannot drift apart.
+ * Projects. Cards, case-study pages, sitemap entries and structured data all
+ * read from this one array.
  */
 export const projects: Project[] = [
   {
@@ -19,9 +16,9 @@ export const projects: Project[] = [
     featured: true,
     order: 1,
     accent: 'sea',
-    tagline: 'My childhood fundraiser, rebuilt as a modern storefront.',
+    tagline: 'An online store for the apparel brand that grew out of my childhood fundraiser.',
     summary:
-      'A Cape Cod lifestyle and apparel brand that grew out of nine years of fundraising for Make-A-Wish, now a mission-driven store with a portion of proceeds supporting St. Jude Children’s Research Hospital. I own the brand, the design and the whole stack — Next.js storefront, Sanity content operations, and a Printful product boundary.',
+      'Nyes Neck is a Cape Cod apparel brand I started in 2025. It grew out of a fundraiser I ran for nine years as a kid, and part of every sale goes to St. Jude Children’s Research Hospital. I designed the brand and built the store with Next.js, Sanity and Printful.',
     liveUrl: 'https://www.nyesneck.shop',
     repoUrl: 'https://github.com/joeylandry/nyes_neck',
     highlights: ['Next.js 16', 'Sanity CMS', 'Printful', 'Tailwind 4'],
@@ -47,68 +44,56 @@ export const projects: Project[] = [
     },
     caseStudy: {
       statement:
-        'A Cape Cod lifestyle and apparel brand built as a real storefront, where the product catalog, the brand story and the charitable mission are all the same system.',
+        'An apparel store for Nyes Neck, a brand named after the Cape Cod neighborhood where my fundraiser started.',
       context: [
-        'In 2013, at nine years old, I sold lemonade and bracelets in Nyes Neck and raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-        'With help from the neighborhood, that experiment kept expanding — movie nights, raffles, apparel, live music, community events — and over nine years it raised more than $20,000.',
-        'After Tufts I wanted to bring the idea back as something permanent instead of an annual event. Nyes Neck Clothing & Apparel is that: a brand inspired by Nyes Neck and Cape Cod, with a portion of proceeds supporting St. Jude Children’s Research Hospital and a long-term ambition to widen that impact.',
+        'In 2013, when I was nine, I sold lemonade and bracelets in Nyes Neck and raised $50 for Make-A-Wish Massachusetts and Rhode Island. With help from the neighborhood it became a yearly thing with movie nights, raffles, apparel and live music, and over nine years it raised more than $20,000.',
+        'In 2025 I started Nyes Neck Clothing & Apparel to keep it going all year instead of once a summer. Part of the proceeds go to St. Jude Children’s Research Hospital.',
       ],
       owned: [
-        'The brand itself — name, positioning, visual direction and the story the store tells.',
-        'Product design and the apparel line.',
-        'The full storefront implementation: routing, layout, catalog, product detail, cart-adjacent flows and contact.',
-        'The content model in Sanity, so the shop can be merchandised without a deploy.',
-        'The Printful integration boundary and the product data shape it feeds.',
-        'SEO foundations, deployment and ongoing maintenance.',
+        'The brand: the name, the look and the apparel designs.',
+        'The whole storefront, including the shop, product pages and contact form.',
+        'The Sanity setup, so I can change collections and photos without redeploying.',
+        'The Printful integration that keeps products, sizes, colors and prices in sync.',
+        'SEO, hosting on Vercel, and keeping it all running.',
       ],
       decisions: [
         {
-          title: 'Let the place do the branding',
-          body: 'The store is inspired by a specific neck of land on Cape Cod, so the design leans on coastline, light and texture rather than generic streetwear tropes. The result reads as a place before it reads as a shop.',
+          title: 'Borrow the look from the Cape',
+          body: 'The design uses the coastline, the light and the colors of the water around Nyes Neck. I wanted it to feel like the place it’s named after.',
         },
         {
-          title: 'Merchandising belongs to content, not code',
-          body: 'Collections, shop layout, imagery, crop and hotspot are all editable in Sanity. Rearranging the store is a content change, not a pull request — which is what makes it maintainable as a one-person operation.',
-        },
-        {
-          title: 'The mission is stated, not performed',
-          body: 'The charitable side is presented plainly — what the brand grew out of and where a portion of proceeds goes — without turning every page into an appeal.',
+          title: 'Mention the charity once',
+          body: 'The site explains where the brand came from and where part of the money goes. I didn’t want every page asking people to donate.',
         },
       ],
       architecture: [
         {
-          title: 'Storefront',
-          body: 'Next.js 16 App Router with React 19 and TypeScript. Server components render catalog and product pages; Tailwind CSS 4 carries a small, tokenized design system across breakpoints.',
+          title: 'Frontend',
+          body: 'Next.js 16 with the App Router, React 19 and TypeScript, styled with Tailwind CSS 4. Catalog and product pages render on the server.',
         },
         {
-          title: 'Content layer',
-          body: 'Sanity models products, collections and shop layout. The Sanity image pipeline handles derivatives, with crop and hotspot control so product photography stays composed at every aspect ratio the storefront uses.',
+          title: 'Content',
+          body: 'Sanity stores products, collections and the shop layout. Its image pipeline handles resizing, and crop and hotspot settings keep product photos framed well at every size the store uses.',
         },
         {
-          title: 'Product synchronization',
-          body: 'A Printful boundary keeps product metadata, variants, sizes, colors, pricing, availability and mockups in sync, so the fulfilment catalog and the storefront describe the same reality.',
+          title: 'Products',
+          body: 'Printful prints and ships the orders. Variants, sizes, colors, prices, stock and mockups sync from Printful so the store and the print shop always match.',
         },
         {
-          title: 'Platform',
-          body: 'A Formspree-backed contact route, SEO foundations — canonical URL, Open Graph metadata, robots and sitemap — and deployment on Vercel.',
+          title: 'Hosting',
+          body: 'Deployed on Vercel. The contact form goes through Formspree, and the site has a sitemap, canonical URLs and Open Graph tags.',
         },
       ],
       constraints: [
         {
-          title: 'Two sources of product truth',
-          body: 'Print-on-demand owns variants and availability; the CMS owns story, collections and layout. Most of the interesting work was deciding which system owns which field, and shaping one product type the storefront can render without knowing where each value came from.',
+          title: 'Two places own product data',
+          body: 'Printful knows about variants and stock. Sanity knows about the story, collections and layout. Most of the work was deciding which system owns each field, then combining them into one product type the pages can render.',
         },
       ],
       outcome: [
-        'The storefront is live at nyesneck.shop, designed and built end to end by me.',
-        'The brand continues the Nyes Neck fundraiser that raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
-        'A portion of proceeds supports St. Jude Children’s Research Hospital.',
-        'Merchandising, collections and imagery are editable without touching the codebase.',
-      ],
-      next: [
-        'Deeper collection storytelling — tying each drop to a specific place or moment on the Cape.',
-        'A clearer, public accounting of charitable impact as volume grows.',
-        'Richer product media, including lifestyle photography shot on location.',
+        'Live at nyesneck.shop.',
+        'Part of each sale goes to St. Jude Children’s Research Hospital.',
+        'I can update collections and photos without touching the code.',
       ],
     },
   },
@@ -124,9 +109,9 @@ export const projects: Project[] = [
     featured: true,
     order: 2,
     accent: 'amber',
-    tagline: 'A brewery’s website, taken from development to public launch.',
+    tagline: 'The website for a local brewery, from first build to launch.',
     summary:
-      'A production website and content platform for a growing local brewery: beer pages, events, taproom information and a location-aware beer finder, plus a CMS the team actually uses to keep it current.',
+      'The public website for Arlington Brewing Company, with pages for their beers, events and taproom, plus a map of where to buy their beer. The team keeps it up to date themselves through Sanity.',
     liveUrl: 'https://www.drinkarlingtonbeer.com',
     repoUrl: 'https://github.com/joeylandry/abco-site',
     highlights: ['Next.js 16', 'Sanity CMS', 'Leaflet', 'Geocoding'],
@@ -146,70 +131,55 @@ export const projects: Project[] = [
     },
     caseStudy: {
       statement:
-        'A website and content platform that lets a growing brewery publish its story, manage its catalog, promote events, and help people find its beer.',
+        'The website for Arlington Brewing Company: their beers, events, taproom info, and a map of where to buy their beer.',
       context: [
-        'Arlington Brewing Company needed a real website, not a placeholder — somewhere to tell its story, keep a beer catalog current, announce events and answer the question customers ask most: where can I actually get this?',
-        'Just as important, the team needed to run it themselves. A site that only I could update would start decaying the week after launch.',
+        'Arlington Brewing needed a proper website. It had to tell their story, keep a current list of beers, announce events, and answer the question customers ask most: where can I buy this?',
+        'They also needed to run it without me. If only I could update the site, it would be out of date within a week.',
       ],
       owned: [
-        'Design and full-stack implementation of the production site.',
-        'Beer catalog and beer detail pages.',
-        'Event pages and taproom information.',
-        'A location-aware beer finder built on Leaflet.',
-        'The content model and CMS setup the team uses to keep the site current.',
-        'Taking the project from development through public launch, working with the Arlington Brewing team.',
+        'Design and development of the whole site.',
+        'Beer pages, event pages and taproom info.',
+        'The beer finder map.',
+        'The Sanity setup the team uses to keep the site current.',
+        'Getting it from development to public launch with the Arlington team.',
       ],
       decisions: [
         {
-          title: 'The beer finder is the point',
-          body: '"Where can I buy this?" is the highest-intent question on a brewery site. Answering it on a map, in one interaction, matters more than any amount of homepage copy.',
+          title: 'Put the beer finder in the main nav',
+          body: 'The thing people most want to know is where to buy the beer, so the finder is one click from any page and answers that on a map.',
         },
         {
-          title: 'Model the catalog the way the brewery thinks',
-          body: 'Content types follow how the team already talks about their product — beers, events, places — so publishing feels like describing the business rather than filling in a developer’s schema.',
+          title: 'Organize content the way the team talks',
+          body: 'The CMS is built around beers, events and places, which is how the brewery already thinks about the business. Adding a new release means filling in one form.',
         },
         {
-          title: 'The age gate stays out of the way',
-          body: 'Alcohol sites need an age gate. It is built to be quick, accessible and keyboard-usable, and to not become the memorable part of visiting the site.',
-        },
-        {
-          title: 'Built to be handed over',
-          body: 'Every piece of the site that changes week to week — beers, events, taproom details, locations — is content. The deploy is for code, not for a new can release.',
+          title: 'Keep the age gate quick',
+          body: 'Beer sites need an age gate. I kept it to one step and made sure it works with a keyboard and a screen reader.',
         },
       ],
       architecture: [
         {
-          title: 'Application',
-          body: 'Next.js 16 with React 19 and TypeScript, styled with Tailwind CSS 4 and implemented responsively for phones first — the beer finder is used standing in a store aisle.',
+          title: 'Frontend',
+          body: 'Next.js 16, React 19 and TypeScript, styled with Tailwind CSS 4. I designed it for phones first, since people use the beer finder while standing in a store.',
         },
         {
           title: 'Content',
-          body: 'Sanity models beers, events, taproom details and locations, with Sanity Vision available for querying content during development and debugging.',
+          body: 'Sanity holds beers, events, taproom details and locations. I used Sanity Vision to query content while building and debugging.',
         },
         {
-          title: 'Location experience',
-          body: 'A Leaflet map renders the beer finder, backed by a data and geocoding workflow that turns the brewery’s list of accounts into coordinates the map can plot.',
-        },
-        {
-          title: 'Delivery',
-          body: 'Deployed on Vercel and shipped publicly with the Arlington Brewing team.',
-        },
-      ],
-      constraints: [
-        {
-          title: 'Addresses are messy',
-          body: 'Real distribution lists are not clean data. The geocoding workflow has to tolerate inconsistent address formatting and still produce a map that is trustworthy enough to send someone across town.',
+          title: 'Beer finder',
+          body: 'A Leaflet map plots the stores and bars that carry their beer. The brewery’s account list goes through a geocoding step to get coordinates, and since the addresses aren’t formatted consistently, that step has to cope with messy input.',
         },
       ],
       outcome: [
-        'The site is live at drinkarlingtonbeer.com and was taken from development through public launch.',
-        'The production experience includes an age gate, beer catalog and detail content, events, taproom information and location discovery.',
-        'The brewery team can publish and update content without developer involvement.',
+        'Live at drinkarlingtonbeer.com.',
+        'Includes the age gate, beer pages, events, taproom info and the beer finder.',
+        'The brewery team updates the content themselves.',
       ],
       next: [
-        'Richer availability signals on the finder, so a pin communicates freshness as well as location.',
-        'Event and release content that can be scheduled ahead of time.',
-        'Structured data for events, so listings surface properly in search.',
+        'Show on the map how recently each location was restocked.',
+        'Let the team schedule event and release posts ahead of time.',
+        'Add structured data for events so they show up properly in search results.',
       ],
     },
   },
@@ -222,13 +192,13 @@ export const projects: Project[] = [
     role: 'Designer & full-stack developer',
     year: '2026',
     status: 'live',
-    featured: true,
+    featured: false,
     order: 3,
     accent: 'gold',
-    tagline: 'The portfolio you are reading, which makes it a recursive project.',
-    recursionTrigger: 'recursive',
+    tagline: 'How this site is built.',
+    recursionTrigger: 'this site',
     summary:
-      'A personal site built like a product: one typed content layer feeding every page, card, sitemap entry and social image, a two-surface design system that clears WCAG AA by construction, a validated contact API, and a test suite that checks the copy as carefully as the code.',
+      'My personal site, built with Next.js and Tailwind. All the text lives in typed content files, the contact form runs through its own API route, and tests check every page for accessibility and color contrast.',
     highlights: ['Next.js 16', 'Tailwind 4', 'Vitest', 'Playwright'],
     stack: [
       { label: 'Framework', items: ['Next.js 16 (App Router)', 'React 19', 'TypeScript'] },
@@ -248,66 +218,33 @@ export const projects: Project[] = [
       illustrated: true,
     },
     caseStudy: {
-      statement:
-        'A personal site treated as a small product: typed content, a deliberate design system, honest imagery and a test suite, so it stays accurate as the work it describes keeps changing.',
+      statement: 'My personal site, the one you’re on now.',
       context: [
-        'A portfolio is usually the least maintained thing an engineer owns. It gets written once, drifts out of date, and quietly starts describing someone who no longer exists.',
-        'I wanted one that behaves like the rest of my work: every fact stored once, every page generated from it, and a build that fails when something stops being true.',
+        'I wanted a portfolio that’s easy to keep up to date. All the text lives in a few TypeScript files, and every page, the sitemap and the social preview images are generated from them.',
       ],
       owned: [
-        'Visual direction, typography and the two-surface design system.',
-        'The typed content layer and every word of copy in it.',
-        'Routing, metadata, structured data, sitemap and generated social images.',
-        'The contact endpoint: validation, spam resistance and rate limiting.',
-        'The authored project covers and the script that generates them.',
-        'Unit and end-to-end tests, including accessibility and contrast checks.',
-      ],
-      decisions: [
-        {
-          title: 'Copy is data, not markup',
-          body: 'Every sentence lives in typed modules under content/. Components never hardcode copy, so cards, case studies, the sitemap and structured data all read the same source and cannot disagree with each other.',
-        },
-        {
-          title: 'Illustrations that admit they are illustrations',
-          body: 'Project covers are authored artwork rather than screenshots, and the interface says so in a caption. A fabricated product capture would be a small lie on the first thing people look at.',
-        },
-        {
-          title: 'Complete without JavaScript',
-          body: 'Scroll reveals are opt-in: content is visible by default and only animates once a script has confirmed it can. With scripts disabled or reduced motion requested, the page is simply finished.',
-        },
+        'The design, the code and the writing.',
+        'The contact form API, including validation, spam checks and rate limiting.',
+        'The project cover art and the script that generates it.',
+        'Unit and end-to-end tests.',
       ],
       architecture: [
         {
-          title: 'Application',
-          body: 'Next.js 16 App Router with React 19 and TypeScript. Every page except the contact endpoint is statically prerendered, with per-project routes generated from the content layer.',
+          title: 'Pages',
+          body: 'Next.js 16 App Router, React 19 and TypeScript. Every page except the contact endpoint is prerendered at build time, and each project page is generated from the content files.',
         },
         {
-          title: 'Design system',
-          body: 'Two surfaces, midnight ink and warm paper, expressed as semantic custom properties declared through Tailwind 4 utilities. One class on a section swaps its entire colour context, and each project accent resolves to an AA-safe value on either surface.',
+          title: 'Styling',
+          body: 'Tailwind CSS 4 with a dark theme and a light theme. Each section picks one, and the colors in both are checked against WCAG AA contrast.',
         },
         {
-          title: 'Metadata',
-          body: 'Canonical URLs, JSON-LD, the sitemap and per-route Open Graph images are derived from the same project data the pages render, so adding a project updates all of them.',
-        },
-        {
-          title: 'Contact',
-          body: 'A server route validates independently of the client, carries a honeypot and minimum fill time, applies a per-IP rate limit, and reports honestly when no delivery provider is configured.',
-        },
-      ],
-      constraints: [
-        {
-          title: 'Base case',
-          body: 'Describing a site from inside that same site is, strictly speaking, recursion. The hard part was making sure it terminates.',
+          title: 'Contact form',
+          body: 'The API route validates input on the server, uses a honeypot field and a minimum fill time to catch bots, and rate limits by IP. Messages go out through Resend or Formspree.',
         },
       ],
       outcome: [
-        'The site you are reading: statically generated, accessible, and driven entirely by typed content.',
-        'Tests assert content integrity, heading order, keyboard operation, focus visibility and WCAG AA contrast on every route.',
-        'Adding or retiring a project is a single content change; routes, metadata and navigation follow.',
-      ],
-      next: [
-        'Real product captures to sit alongside the authored covers.',
-        'Short write-ups on individual engineering decisions, published from the same content layer.',
+        'Tests check every page for heading order, keyboard use, visible focus and WCAG AA contrast.',
+        'Adding a project means adding one entry to a content file.',
       ],
     },
   },
