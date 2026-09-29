@@ -140,7 +140,7 @@ export interface SocialLink {
   handle: string;
 }
 
-/** A photo from the Nyes Neck fundraiser years, shown on the About page. */
+/** A captioned photo (fundraiser archive, the cat). */
 export interface StoryPhoto {
   /** Path under /public. */
   src: string;
