@@ -1,14 +1,8 @@
-import { profile } from '@/content';
-import { Coastline } from './coastline';
+import Image from 'next/image';
+import Link from 'next/link';
+import { donny, profile } from '@/content';
 import { Cta } from './cta';
 import { Reveal } from './reveal';
-
-const specs = [
-  { key: 'Location', value: 'New Hampshire' },
-  { key: 'Hometown', value: 'Nyes Neck · Cape Cod' },
-  { key: 'Full-time', value: 'Associate SWE, Fidelity' },
-  { key: 'After hours', value: 'Independent products' },
-];
 
 export function Hero() {
   const { hero } = profile;
@@ -18,17 +12,21 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="surface-ink relative isolate overflow-hidden bg-ink text-fg"
     >
-      {/* Decorative field: fine grid above, contour survey below. */}
+      {/* Backdrop: fall foliage over a mountain lake, with a scrim on the copy side. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="grid-field absolute inset-0 opacity-70" />
-        <Coastline
-          className="absolute -right-[14%] -bottom-[6%] h-[68%] w-[130%] text-fog sm:-right-[6%] sm:w-[92%]"
-          opacity={0.38}
+        <Image
+          src="/images/hero-foliage.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[60%_center]"
         />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/55 to-ink/30 md:bg-gradient-to-r md:from-ink/80 md:via-ink/45 md:via-55% md:to-ink/10" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-16 md:grid-cols-12 md:pt-16 md:pb-24 lg:pt-20">
+      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-20 md:grid-cols-12 md:pt-16 md:pb-32 lg:pt-20">
         <div className="md:col-span-8">
           <Reveal>
             {/* An eyebrow over the headline, not a rival to it. The name is
@@ -74,30 +72,33 @@ export function Hero() {
           </Reveal>
         </div>
 
-        {/* Spec rail — the lab half of the identity. */}
-        <Reveal
-          delay={510}
-          className="md:col-span-4 md:self-end md:border-l md:border-rule md:pl-8"
-        >
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-1 md:gap-y-4">
-            {specs.map((spec) => (
-              <div key={spec.key} className="rule-t pt-3 md:border-t-0 md:pt-0">
-                <dt className="meta text-faint">{spec.key}</dt>
-                <dd className="mt-1.5 text-sm text-fg">{spec.value}</dd>
-              </div>
-            ))}
-          </dl>
+        {/* Meet Donny: the cat in the headline. */}
+        <Reveal delay={510} className="md:col-span-4 md:self-end">
+          <Link
+            href="/about#donny"
+            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
+          >
+            <span className="relative block aspect-square w-24 shrink-0 overflow-hidden border border-rule md:w-full">
+              <Image
+                src={donny.headshot.src}
+                alt={donny.headshot.alt}
+                fill
+                sizes="(min-width: 768px) 28vw, 96px"
+                className="object-cover object-[50%_35%]"
+              />
+            </span>
+            <span className="block">
+              <span className="meta block text-accent">The cat</span>
+              <span className="mt-2 block text-xl font-medium tracking-tight text-fg">
+                Meet {donny.name}.
+              </span>
+              <span className="mt-1.5 block text-sm leading-snug text-muted">
+                Coworker, code reviewer, professional napper.{' '}
+                <span className="whitespace-nowrap text-fg group-hover:text-accent">More →</span>
+              </span>
+            </span>
+          </Link>
         </Reveal>
-      </div>
-
-      <div className="wrap rule-t flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-5">
-        <p className="meta flex items-center gap-2.5 text-muted">
-          <span
-            aria-hidden="true"
-            className="status-dot inline-block h-1.5 w-1.5 rounded-full bg-accent"
-          />
-          {profile.statusLine}
-        </p>
       </div>
     </section>
   );

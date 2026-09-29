@@ -33,6 +33,7 @@ export const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || nul
 
 export const navLinks = [
   { label: 'Work', href: '/work' },
+  { label: 'Giving', href: '/giving' },
   { label: 'About', href: '/about' },
   { label: 'Experience', href: '/experience' },
   { label: 'Contact', href: '/contact' },
