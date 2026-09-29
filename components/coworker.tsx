@@ -3,7 +3,7 @@ import { catPhotos } from '@/content';
 import { Reveal } from './reveal';
 import { Section } from './section';
 
-/** A guy, a cat, alone in the woods building software — this is the cat. */
+/** A guy, a cat, alone in the woods building software — this is Donny, the cat. */
 export function Coworker() {
   return (
     <Section surface="ink" labelledBy="coworker-heading">
@@ -11,7 +11,7 @@ export function Coworker() {
         <Reveal>
           <p className="meta section-label">After hours</p>
           <h2 id="coworker-heading" className="mt-5 text-title font-medium">
-            The coworker.
+            The coworker: Donny.
           </h2>
           <p className="measure mt-5 text-lead text-muted">
             Every late-night build ships with a second opinion.

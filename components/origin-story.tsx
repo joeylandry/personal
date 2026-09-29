@@ -53,13 +53,13 @@ export function OriginStory() {
                 <div className="relative aspect-[3/4] overflow-hidden border border-rule bg-raised">
                   <Image
                     src="/images/story/the-cat.jpg"
-                    alt="An orange kitten peeking over a fuzzy gray blanket on a windowsill, only its ears and eyes showing, with a toy fish dangling above."
+                    alt="Donny as an orange kitten, peeking over a fuzzy gray blanket on a windowsill, only its ears and eyes showing, with a toy fish dangling above."
                     fill
                     sizes="128px"
                     className="object-cover"
                   />
                 </div>
-                <figcaption className="meta mt-2 text-faint">The coworker</figcaption>
+                <figcaption className="meta mt-2 text-faint">Donny, the coworker</figcaption>
               </figure>
             </div>
           </Reveal>
