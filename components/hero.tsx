@@ -5,7 +5,7 @@ import { Cta } from './cta';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
-const HEADLINE_DELAYS = [150, 250, 1000];
+const HEADLINE_DELAYS = [150, 500, 1000];
 
 export function Hero() {
   const { hero } = profile;
