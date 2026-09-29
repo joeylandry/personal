@@ -16,7 +16,7 @@ export const profile = {
   signature: 'midnight vibecoder',
 
   hero: {
-    eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
+    eyebrow: 'Joey Landry · Merrimack, NH',
     headline: ['Building software', 'alone in the woods', 'with a cat.'],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",

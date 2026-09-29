@@ -20,7 +20,7 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
         <SectionHeading
           id="work-heading"
           level={teaser ? 2 : 1}
-          label={teaser ? 'Recent work' : 'Work'}
+          label={teaser ? undefined : 'Work'}
           title="Current projects, all in production."
           lead="Every project here is live, built end to end, and actively maintained — from design and front end through backend and deployment."
           aside={
