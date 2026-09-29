@@ -11,7 +11,8 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="surface-ink relative isolate overflow-hidden bg-ink text-fg"
     >
-      {/* Backdrop: fall foliage over a mountain lake, with a scrim on the copy side. */}
+      {/* Backdrop: fall foliage over a mountain lake, desaturated and dimmed so
+          it sets a mood instead of shouting, with a scrim on the copy side. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <Image
           src="/images/hero-foliage.jpg"
@@ -19,9 +20,9 @@ export function Hero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[60%_center]"
+          className="object-cover object-[60%_center] saturate-[0.45] brightness-[0.8]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/55 to-ink/30 md:bg-gradient-to-r md:from-ink/80 md:via-ink/45 md:via-55% md:to-ink/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/85 via-ink/70 to-ink/50 md:bg-gradient-to-r md:from-ink/85 md:via-ink/60 md:via-55% md:to-ink/35" />
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
