@@ -1,0 +1,43 @@
+import type { StoryPhoto } from './types';
+
+/**
+ * Photos from the Nyes Neck fundraiser years, oldest first. Captions describe
+ * only what the photo shows; nobody else in frame is named.
+ */
+export const storyPhotos: StoryPhoto[] = [
+  {
+    src: '/images/story/lemonade-stand.jpg',
+    alt: 'Joey as a kid standing beside a hand-painted “Lemanade” sign and a striped table of bracelets strung with colored lights, on a lawn in front of a gray-shingled porch.',
+    width: 1024,
+    height: 768,
+    caption: '2013 — lemonade and bracelets. The first $50.',
+  },
+  {
+    src: '/images/story/games-night.jpg',
+    alt: 'Joey behind a small table by the water, with a hand-lettered whiteboard: Games Night tonight, $2, 7:30–8:30 pm at the Beach Field, profits to the Make-A-Wish Foundation.',
+    width: 768,
+    height: 1024,
+    caption: 'Games night at the Beach Field. $2 at the door.',
+  },
+  {
+    src: '/images/story/make-a-wish-booth.jpg',
+    alt: 'A white pop-up tent with a Make-A-Wish Massachusetts and Rhode Island banner over two striped tables, with the harbor behind it.',
+    width: 517,
+    height: 334,
+    caption: 'The table by the harbor.',
+  },
+  {
+    src: '/images/story/movie-night.jpg',
+    alt: 'Kids on blankets in a backyard at dusk, watching a movie projected onto a sheet hung on a wooden fence.',
+    width: 1024,
+    height: 768,
+    caption: 'Backyard movie nights.',
+  },
+  {
+    src: '/images/story/make-a-wish-tent.jpg',
+    alt: 'Joey and a friend under a white tent with Make-A-Wish banners, behind tables of folded T-shirts, a hung sweatshirt and rows of navy gift bags.',
+    width: 1024,
+    height: 768,
+    caption: 'Apparel and gift bags under the Make-A-Wish tent.',
+  },
+];

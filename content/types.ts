@@ -139,3 +139,13 @@ export interface SocialLink {
   href: string;
   handle: string;
 }
+
+/** A photo from the Nyes Neck fundraiser years, shown on the About page. */
+export interface StoryPhoto {
+  /** Path under /public. */
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption: string;
+}
