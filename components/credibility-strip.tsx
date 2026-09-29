@@ -1,6 +1,5 @@
 import { credibility } from '@/content';
 import { ExternalLink } from './external-link';
-import { Reveal } from './reveal';
 
 /**
  * Verified signals, read as one line. No invented numbers, no logo wall.
@@ -15,9 +14,8 @@ export function CredibilityStrip() {
           // In the two-column layout an odd final item spans the full row.
           const spansRow = count % 2 === 1 && index === count - 1;
           return (
-            <Reveal
+            <div
               key={signal.label}
-              delay={index * 70}
               className={[
                 'py-7 md:py-9',
                 spansRow ? 'col-span-2 lg:col-span-1' : '',
@@ -41,7 +39,7 @@ export function CredibilityStrip() {
                 )}
               </p>
               <p className="mt-2 text-sm leading-snug text-muted">{signal.label}</p>
-            </Reveal>
+            </div>
           );
         })}
       </div>

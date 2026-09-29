@@ -3,13 +3,12 @@ import type { CaseStudyBlock, Project } from '@/content';
 import { displayHost, statusLabels } from '@/content';
 import { ExternalLink, OutboundArrow } from './external-link';
 import { RecursionTrigger } from './recursion';
-import { Reveal } from './reveal';
 
 /** Masthead for a case study: identity, status and the two outbound links. */
 export function CaseStudyHeader({ project }: { project: Project }) {
   return (
     <div className="wrap relative pt-16 pb-14 md:pt-24 md:pb-20">
-      <Reveal>
+      <div>
         <nav aria-label="Breadcrumb" className="meta">
           <ol className="flex flex-wrap items-center gap-2 text-faint">
             <li>
@@ -29,9 +28,9 @@ export function CaseStudyHeader({ project }: { project: Project }) {
             </li>
           </ol>
         </nav>
-      </Reveal>
+      </div>
 
-      <Reveal delay={60}>
+      <div>
         <p className="meta mt-10 flex flex-wrap items-center gap-x-3 gap-y-1 text-faint">
           <span className="flex items-center gap-2 text-accent">
             <span
@@ -45,9 +44,9 @@ export function CaseStudyHeader({ project }: { project: Project }) {
         </p>
         <h1 className="mt-5 text-display font-medium">{project.name}</h1>
         <p className="measure mt-6 text-lead text-muted">{project.caseStudy.statement}</p>
-      </Reveal>
+      </div>
 
-      <Reveal delay={140}>
+      <div>
         <dl className="mt-12 grid gap-x-8 gap-y-6 border-t border-rule pt-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <dt className="meta text-faint">Role</dt>
@@ -87,7 +86,7 @@ export function CaseStudyHeader({ project }: { project: Project }) {
             </dd>
           </div>
         </dl>
-      </Reveal>
+      </div>
     </div>
   );
 }
@@ -109,15 +108,13 @@ export function CaseSection({
       aria-labelledby={id}
       className="rule-t grid gap-x-10 gap-y-6 py-12 md:grid-cols-12 md:py-16"
     >
-      <Reveal className="md:col-span-4">
+      <div className="md:col-span-4">
         <p className="meta section-label">{label}</p>
         <h2 id={id} className="mt-4 text-heading font-medium tracking-tight">
           {title}
         </h2>
-      </Reveal>
-      <Reveal delay={80} className="md:col-span-7 md:col-start-6">
-        {children}
-      </Reveal>
+      </div>
+      <div className="md:col-span-7 md:col-start-6">{children}</div>
     </section>
   );
 }
