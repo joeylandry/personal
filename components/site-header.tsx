@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { navLinks } from '@/lib/site';
 import { profile } from '@/content';
 import { Monogram } from './monogram';
-import { GitHubGlyph } from './glyphs';
+import { LinkedInGlyph } from './glyphs';
 
 /**
  * Sticky header.
@@ -112,13 +112,13 @@ export function SiteHeader() {
             );
           })}
           <a
-            href="https://github.com/joeylandry"
+            href="https://www.linkedin.com/in/josephlandry/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted transition-colors duration-200 hover:text-accent"
-            aria-label="Joey Landry on GitHub (opens in a new tab)"
+            aria-label="Joey Landry on LinkedIn (opens in a new tab)"
           >
-            <GitHubGlyph className="h-5 w-5" />
+            <LinkedInGlyph className="h-5 w-5" />
           </a>
         </nav>
 
@@ -163,14 +163,14 @@ export function SiteHeader() {
             </Link>
           ))}
           <a
-            href="https://github.com/joeylandry"
+            href="https://www.linkedin.com/in/josephlandry/"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
             className="flex items-center justify-between py-4 text-base text-fg"
           >
-            GitHub
-            <GitHubGlyph className="h-5 w-5" />
+            LinkedIn
+            <LinkedInGlyph className="h-5 w-5" />
           </a>
         </nav>
       </div>
