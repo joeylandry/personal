@@ -67,15 +67,20 @@ export const profile = {
 } as const;
 
 export const credibility: CredibilitySignal[] = [
-  { value: 'Fidelity SWE', label: 'Merrimack, NH' },
-  { value: 'Tufts Grad', label: 'B.S. Computer Science · cum laude' },
-  { value: 'Make-A-Wish®', label: '$20K+ raised' },
   {
+    kicker: 'Education',
+    value: 'Tufts Grad',
+    label: 'B.S. Computer Science · cum laude',
+    accent: 'sea',
+  },
+  { kicker: 'Impact', value: 'Make-A-Wish®', label: '$20K+ raised', accent: 'amber' },
+  {
+    kicker: 'Giving',
     value: 'St. Jude',
     label: 'Children’s Research Hospital®, supported through Nyes Neck',
     href: 'https://www.stjude.org',
+    accent: 'gold',
   },
-  { value: 'Live Sites', label: 'Production sites for organizations' },
 ];
 
 export const socials: SocialLink[] = [
