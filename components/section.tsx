@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { Reveal } from './reveal';
 
 /**
  * A full-bleed band of the page. Surface choice drives the entire color
@@ -75,17 +74,15 @@ export function SectionHeading({
   const Heading = level === 1 ? 'h1' : 'h2';
   return (
     <header className="grid gap-x-10 gap-y-6 md:grid-cols-12">
-      <Reveal className="md:col-span-8">
+      <div className="md:col-span-8">
         {label ? <p className="meta section-label">{label}</p> : null}
         <Heading id={id} className={`${label ? 'mt-5 ' : ''}text-title font-medium text-fg`}>
           {title}
         </Heading>
         {lead ? <p className="measure mt-5 text-lead text-muted">{lead}</p> : null}
-      </Reveal>
+      </div>
       {aside ? (
-        <Reveal delay={80} className="flex items-end md:col-span-4 md:justify-end md:pb-1.5">
-          {aside}
-        </Reveal>
+        <div className="flex items-end md:col-span-4 md:justify-end md:pb-1.5">{aside}</div>
       ) : null}
     </header>
   );

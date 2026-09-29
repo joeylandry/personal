@@ -1,5 +1,4 @@
 import { skillGroups } from '@/content';
-import { Reveal } from './reveal';
 import { Section, SectionHeading } from './section';
 
 /**
@@ -18,8 +17,8 @@ export function Toolbox() {
         />
 
         <div className="mt-14 grid gap-x-10 gap-y-0 md:mt-20 md:grid-cols-2">
-          {skillGroups.map((group, index) => (
-            <Reveal key={group.label} delay={index * 50} className="rule-t py-7 md:py-8">
+          {skillGroups.map((group) => (
+            <div key={group.label} className="rule-t py-7 md:py-8">
               <div className="grid gap-x-8 gap-y-3 sm:grid-cols-5">
                 <div className="sm:col-span-2">
                   <h3 className="text-base font-medium tracking-tight text-fg">{group.label}</h3>
@@ -35,7 +34,7 @@ export function Toolbox() {
                   ))}
                 </ul>
               </div>
-            </Reveal>
+            </div>
           ))}
         </div>
       </div>

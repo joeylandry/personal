@@ -13,7 +13,6 @@ import { Coastline } from '@/components/coastline';
 import { Cta, ctaClassName } from '@/components/cta';
 import { Frame } from '@/components/frame';
 import { RecursionTrigger } from '@/components/recursion';
-import { Reveal } from '@/components/reveal';
 import { Section } from '@/components/section';
 import { displayHost, getProject, getProjectNeighbors, projects } from '@/content';
 import { breadcrumbSchema, jsonLdString, projectSchema } from '@/lib/jsonld';
@@ -89,14 +88,14 @@ export default async function ProjectPage({ params }: Params) {
       {/* Lead visual */}
       <Section surface="paper" accent={project.accent} divider={false} className="py-14 md:py-20">
         <div className="wrap">
-          <Reveal>
+          <div>
             <Frame
               image={project.image}
               caption={project.liveUrl ? displayHost(project.liveUrl) : undefined}
               priority
               sizes="(min-width: 1280px) 1100px, 100vw"
             />
-          </Reveal>
+          </div>
         </div>
       </Section>
 

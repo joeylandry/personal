@@ -5,7 +5,6 @@ import { ExternalLink, OutboundArrow } from './external-link';
 import { Frame } from './frame';
 import { LivePreview } from './live-preview';
 import { RecursionTrigger } from './recursion';
-import { Reveal } from './reveal';
 
 /**
  * A featured project, presented as an editorial spread rather than a card in a
@@ -29,7 +28,7 @@ export function ProjectRow({
     <article
       className={`accent-${project.accent} group grid items-center gap-x-10 gap-y-8 md:grid-cols-12`}
     >
-      <Reveal
+      <div
         className={['md:col-span-7', flipped ? 'md:order-2 md:col-start-6' : 'md:order-1'].join(
           ' ',
         )}
@@ -59,10 +58,9 @@ export function ProjectRow({
             </Frame>
           </Link>
         )}
-      </Reveal>
+      </div>
 
-      <Reveal
-        delay={100}
+      <div
         className={['md:col-span-5', flipped ? 'md:order-1 md:col-start-1' : 'md:order-2'].join(
           ' ',
         )}
@@ -116,7 +114,7 @@ export function ProjectRow({
             </ExternalLink>
           ) : null}
         </div>
-      </Reveal>
+      </div>
     </article>
   );
 }
