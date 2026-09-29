@@ -1,4 +1,4 @@
-import type { CredibilitySignal, Exploration, SocialLink } from './types';
+import type { Exploration, SocialLink } from './types';
 
 export const profile = {
   name: 'Joey Landry',
@@ -65,19 +65,6 @@ export const profile = {
   footerNote:
     'Designed and built by Joey Landry. Independent projects are my own and are not affiliated with or endorsed by my employer.',
 } as const;
-
-export const credibility: CredibilitySignal[] = [
-  { value: 'Tufts ’26', label: 'B.S. Computer Science, graduated cum laude' },
-  {
-    value: '$20,000+',
-    label: 'Raised for Make-A-Wish® — it started as a $50 lemonade stand when I was nine',
-  },
-  {
-    value: 'St. Jude',
-    label: 'A portion of Nyes Neck proceeds goes to St. Jude Children’s Research Hospital®',
-    href: 'https://www.stjude.org',
-  },
-];
 
 export const socials: SocialLink[] = [
   { label: 'GitHub', href: 'https://github.com/joeylandry', handle: '@joeylandry' },

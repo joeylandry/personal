@@ -127,13 +127,6 @@ export interface Exploration {
   body: string;
 }
 
-export interface CredibilitySignal {
-  value: string;
-  label: string;
-  /** Off-site page for the organization the signal names. */
-  href?: string;
-}
-
 export interface SocialLink {
   label: string;
   href: string;
