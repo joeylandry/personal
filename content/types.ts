@@ -128,11 +128,8 @@ export interface Exploration {
 }
 
 export interface CredibilitySignal {
-  /** Short category line above the value. */
-  kicker: string;
   value: string;
   label: string;
-  accent: 'sea' | 'amber' | 'gold';
   /** Off-site page for the organization the signal names. */
   href?: string;
 }

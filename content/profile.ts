@@ -68,19 +68,15 @@ export const profile = {
 } as const;
 
 export const credibility: CredibilitySignal[] = [
+  { value: 'Tufts ’26', label: 'B.S. Computer Science, graduated cum laude' },
   {
-    kicker: 'Education',
-    value: 'Tufts Grad',
-    label: 'B.S. Computer Science · cum laude',
-    accent: 'sea',
+    value: '$20,000+',
+    label: 'Raised for Make-A-Wish® — it started as a $50 lemonade stand when I was nine',
   },
-  { kicker: 'Impact', value: 'Make-A-Wish®', label: '$20K+ raised', accent: 'amber' },
   {
-    kicker: 'Giving',
     value: 'St. Jude',
-    label: 'Children’s Research Hospital®, supported through Nyes Neck',
+    label: 'A portion of Nyes Neck proceeds goes to St. Jude Children’s Research Hospital®',
     href: 'https://www.stjude.org',
-    accent: 'gold',
   },
 ];
 
