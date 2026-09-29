@@ -5,7 +5,7 @@ import { Cta } from './cta';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
-const HEADLINE_DELAYS = [150, 1400, 2100];
+const HEADLINE_DELAYS = [150, 1100, 2100];
 
 export function Hero() {
   const { hero } = profile;
@@ -84,9 +84,8 @@ export function Hero() {
           </Reveal>
         </div>
 
-        {/* Meet Donny: the cat in the headline. It lands last, after a beat,
-            as the punchline. */}
-        <Reveal immediate delay={2800} className="md:col-span-4 md:self-end">
+        {/* Meet Donny: the cat in the headline. */}
+        <Reveal immediate delay={700} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
             className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
