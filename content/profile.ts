@@ -21,8 +21,7 @@ export const profile = {
     headline: [
       'Building software,',
       'designing web apps,',
-      'integrating AI,',
-      'and advancing what users can do.',
+      'and integrating AI.',
     ],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",

@@ -9,7 +9,7 @@ export default function Image() {
   return new ImageResponse(
     <OgCard
       eyebrow="Software Engineer & Independent Builder"
-      title="Building software, designing web apps, integrating AI, and advancing what users can do."
+      title="Building software, designing web apps, and integrating AI."
       meta="github.com/joeylandry"
     />,
     { ...size, fonts: ogFonts() },
