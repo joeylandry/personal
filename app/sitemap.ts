@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'monthly', priority: 1 },
-    ...['/work', '/about', '/experience', '/contact'].map((path) => ({
+    ...['/work', '/giving', '/about', '/experience', '/contact'].map((path) => ({
       url: absoluteUrl(path),
       lastModified: now,
       changeFrequency: 'monthly' as const,

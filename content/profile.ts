@@ -13,12 +13,11 @@ export const profile = {
   /** Neighbourhood-level coastal reference behind the brand. Decorative. */
   origin: 'Nyes Neck · Cape Cod',
   coordinates: '41.63° N · 70.36° W',
-  statusLine: 'Based in New Hampshire · Building after hours',
   signature: 'midnight vibecoder',
 
   hero: {
     eyebrow: 'Joey Landry · Software Engineer & Independent Builder',
-    headline: ['Building software,', 'designing web apps,', 'and integrating AI.'],
+    headline: ['Building software', 'alone in the woods', 'with a cat.'],
     support:
       "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
     primaryCta: { label: "See what I've built", href: '/work' },

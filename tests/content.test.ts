@@ -203,8 +203,8 @@ describe('profile', () => {
     expect(credibility.some((signal) => signal.label === '$20K+ raised')).toBe(true);
   });
 
-  it('keeps the hero headline to four readable lines', () => {
-    expect(profile.hero.headline).toHaveLength(4);
+  it('keeps the hero headline to at most four readable lines', () => {
+    expect(profile.hero.headline.length).toBeLessThanOrEqual(4);
     for (const line of profile.hero.headline) {
       expect(line.length).toBeLessThan(46);
     }

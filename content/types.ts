@@ -139,3 +139,13 @@ export interface SocialLink {
   href: string;
   handle: string;
 }
+
+/** A captioned photo (the Giving timeline, Donny). */
+export interface StoryPhoto {
+  /** Path under /public. */
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption: string;
+}
