@@ -127,16 +127,6 @@ export interface Exploration {
   body: string;
 }
 
-export interface CredibilitySignal {
-  /** Short category line above the value. */
-  kicker: string;
-  value: string;
-  label: string;
-  accent: 'sea' | 'amber' | 'gold';
-  /** Off-site page for the organization the signal names. */
-  href?: string;
-}
-
 export interface SocialLink {
   label: string;
   href: string;

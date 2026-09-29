@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { CredibilityStrip } from '@/components/credibility-strip';
 import { FeaturedWork } from '@/components/featured-work';
 import { Hero } from '@/components/hero';
 import { jsonLdString, profilePageSchema } from '@/lib/jsonld';
@@ -16,7 +15,6 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: jsonLdString(profilePageSchema()) }}
       />
       <Hero />
-      <CredibilityStrip />
       <FeaturedWork teaser />
     </>
   );

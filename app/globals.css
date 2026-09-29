@@ -655,33 +655,6 @@
   }
 }
 
-/* Credibility cards: an accent glow rises from the corner and the rule
-   stretches on hover. Static and fully legible without it. */
-.cred-card {
-  background-image: radial-gradient(
-    120% 90% at 100% 0%,
-    color-mix(in srgb, var(--accent) 16%, transparent),
-    transparent 60%
-  );
-  transition:
-    border-color 300ms var(--ease-out-soft),
-    translate 300ms var(--ease-out-soft),
-    box-shadow 300ms var(--ease-out-soft);
-}
-.cred-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  translate: 0 -3px;
-  box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--accent) 60%, transparent);
-}
-.cred-bar {
-  width: 2.5rem;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
-  transition: width 420ms var(--ease-out-soft);
-}
-.cred-card:hover .cred-bar {
-  width: 5.5rem;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

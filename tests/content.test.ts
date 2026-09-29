@@ -2,7 +2,6 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  credibility,
   displayHost,
   explorations,
   featuredProjects,
@@ -138,7 +137,7 @@ describe('portfolio boundary', () => {
 });
 
 describe('voice', () => {
-  const prose = JSON.stringify({ projects, profile, explorations, skillGroups, credibility });
+  const prose = JSON.stringify({ projects, profile, explorations, skillGroups });
 
   it.each([
     'passionate developer',
@@ -200,7 +199,6 @@ describe('experience', () => {
 describe('profile', () => {
   it('states the verified fundraising total', () => {
     expect(JSON.stringify(profile.impact)).toContain('$20,000+');
-    expect(credibility.some((signal) => signal.label === '$20K+ raised')).toBe(true);
   });
 
   it('keeps the hero headline to at most four readable lines', () => {
