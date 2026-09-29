@@ -5,7 +5,7 @@ import { Cta } from './cta';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
-const HEADLINE_DELAYS = [150, 1100, 2100];
+const HEADLINE_DELAYS = [150, 250, 1000];
 
 export function Hero() {
   const { hero } = profile;
@@ -46,9 +46,8 @@ export function Hero() {
             </p>
           </Reveal>
 
-          {/* The first headline line lands with the rest of the hero. The
-              other two follow on their own once everything has settled, so
-              they read as the reveal. */}
+          {/* "with a cat." is held back to land last, after the rest of the
+              hero has come in. */}
           <h1 id="hero-heading" className="mt-6 text-display font-medium md:mt-8">
             {hero.headline.map((line, index) => (
               <Reveal
@@ -85,7 +84,7 @@ export function Hero() {
         </div>
 
         {/* Meet Donny: the cat in the headline. */}
-        <Reveal immediate delay={700} className="md:col-span-4 md:self-end">
+        <Reveal immediate delay={600} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
             className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
