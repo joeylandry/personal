@@ -91,9 +91,11 @@ hidden-then-revealed. Content is therefore complete without JavaScript. Everythi
 disabled under `prefers-reduced-motion`.
 
 One exception, on purpose: this site lists itself as project 03, so its "live site" link
-(and the word _recursive_ in its tagline) opens `components/recursion.tsx`. It snapshots the
-page you are on, fakes a reload, opens that page in a browser window inside itself (and again,
-and again), then zooms in forever for about ten seconds before apologising. Without
+(its live preview, and the word _recursive_ in its tagline) opens `components/recursion.tsx`.
+It snapshots the page you are on and loads it into the site's own preview box, whose preview
+box loads it again (and again), then zooms into the box forever for about ten seconds before
+apologising. Where there is no preview box, or it is nearly screen-wide (phones), the copies
+open in stacked browser windows instead. Without
 JavaScript it is a plain link back to the page you are already on. Under reduced motion the
 zoom holds still.
 

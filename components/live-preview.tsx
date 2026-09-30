@@ -42,7 +42,7 @@ export function LivePreview({
   name: string;
   fallback: ProjectImage;
   /** Replaces the new-tab link for plain clicks (modified clicks still open a tab). */
-  onOpen?: () => void;
+  onOpen?: (link: HTMLAnchorElement) => void;
 }) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(0);
@@ -80,7 +80,7 @@ export function LivePreview({
     if (!onOpen) return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    onOpen();
+    onOpen(event.currentTarget);
   };
 
   return (
@@ -96,6 +96,7 @@ export function LivePreview({
       <div
         ref={viewportRef}
         aria-hidden="true"
+        data-recursion-portal
         className="relative overflow-hidden"
         style={{ aspectRatio: `${VIEWPORT.width} / ${VIEWPORT.height}` }}
       >
