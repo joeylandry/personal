@@ -19,9 +19,7 @@ test.describe('homepage', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Building software');
 
     // A recent-work teaser follows the hero and points on to the work page.
-    await expect(
-      page.getByRole('heading', { level: 2, name: 'Recent Work' }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Recent Work' })).toBeVisible();
     await expect(
       page.getByRole('heading', { level: 3, name: 'Nyes Neck Clothing & Apparel' }),
     ).toBeVisible();
@@ -70,7 +68,7 @@ test.describe('homepage', () => {
     for (const name of [
       'Nyes Neck Clothing & Apparel',
       'Arlington Brewing Company',
-      'joeylandry.com',
+      'joeylandry.org',
     ]) {
       await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     }
@@ -121,7 +119,7 @@ test.describe('project case studies', () => {
     const errors = trackErrors(page);
     await page.goto('/work');
 
-    await page.getByRole('link', { name: 'Nyes Neck Clothing & Apparel' }).click();
+    await page.getByRole('link', { name: 'Nyes Neck Clothing & Apparel', exact: true }).click();
     await expect(page).toHaveURL(/\/work\/nyes-neck$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       'Nyes Neck Clothing & Apparel',
@@ -167,10 +165,26 @@ test.describe('project case studies', () => {
     await expect(page).toHaveURL(/\/work$/);
   });
 
+  test("reloads home from this site's preview, then recurses", async ({ page }) => {
+    await page.goto('/work');
+    const preview = page.getByRole('link', { name: 'Open joeylandry.org (joeylandry.org)' });
+    await expect(preview).toHaveAttribute('href', '/');
+    await preview.click();
+    await expect(page).toHaveURL(/\/$/);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    const dialog = page.getByRole('dialog', { name: 'Recursion' });
+    await expect(dialog).toBeVisible({ timeout: 10_000 });
+    await expect(dialog.getByText("You didn't break the site!")).toBeVisible({
+      timeout: 20_000,
+    });
+    await dialog.getByRole('button', { name: /Back to the/ }).click();
+    await expect(dialog).toBeHidden();
+  });
+
   test('wraps previous/next navigation around the set', async ({ page }) => {
     await page.goto('/work/nyes-neck');
     const nav = page.getByRole('navigation', { name: 'More work' });
-    await expect(nav.getByText('joeylandry.com')).toBeVisible();
+    await expect(nav.getByText('joeylandry.org')).toBeVisible();
     await nav.getByRole('link', { name: /Arlington Brewing Company/ }).click();
     await expect(page).toHaveURL(/\/work\/arlington-brewing-company$/);
   });
