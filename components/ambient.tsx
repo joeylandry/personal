@@ -3,22 +3,11 @@
 import { useEffect } from 'react';
 
 /**
- * Two ambient behaviours, both strictly optional to the experience:
- *
- * 1. A day-to-night accent shift driven by the visitor's local clock.
- * 2. A few pixels of parallax on elements marked `.parallax`.
- *
- * Both bail out entirely under `prefers-reduced-motion`, and neither is
- * required to read the page.
+ * A few pixels of parallax on elements marked `.parallax`. Strictly optional
+ * to the experience: it bails out entirely under `prefers-reduced-motion`.
  */
 export function Ambient() {
   useEffect(() => {
-    const root = document.documentElement;
-
-    const hour = new Date().getHours();
-    const night = hour >= 19 || hour < 6;
-    root.dataset.daypart = night ? 'night' : 'day';
-
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reduced.matches) return;
 
