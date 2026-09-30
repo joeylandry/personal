@@ -64,6 +64,62 @@ export function RecursionTrigger({
 
 /* -------------------------------------------------------------------------- */
 
+const RELOAD_KEY = 'recursion:after-reload';
+
+/** Long enough for the home hero's staggered intro to finish. */
+const HERO_SETTLE = 3000;
+
+/**
+ * The live-preview version of the joke: really reload the home page at the
+ * top, let it come in as it does on any fresh visit, then recurse from there.
+ * `RecursionAfterReload` on the home page picks it up.
+ */
+export function recurseAfterReload() {
+  try {
+    sessionStorage.setItem(RELOAD_KEY, '1');
+  } catch {
+    // No storage, no joke: it is still an honest reload of the home page.
+  }
+  window.scrollTo(0, 0);
+  // A real, full reload is the point here, not a client-side route change.
+  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+  window.location.assign('/');
+}
+
+export function RecursionAfterReload() {
+  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
+  // Read once per mount, so Strict Mode's second effect pass sees the same answer.
+  const pending = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    // Previews of this page load it in a frame; only the real tab recurses.
+    if (window.self !== window.top) return;
+    if (pending.current === null) {
+      try {
+        pending.current = sessionStorage.getItem(RELOAD_KEY) === '1';
+        sessionStorage.removeItem(RELOAD_KEY);
+      } catch {
+        pending.current = false;
+      }
+    }
+    if (!pending.current) return;
+    window.scrollTo(0, 0);
+    const timer = window.setTimeout(() => setSnapshot(takeSnapshot()), HERO_SETTLE);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const close = useCallback(() => {
+    pending.current = false;
+    setSnapshot(null);
+  }, []);
+
+  return snapshot
+    ? createPortal(<RecursionOverlay snapshot={snapshot} onClose={close} reloaded />, document.body)
+    : null;
+}
+
+/* -------------------------------------------------------------------------- */
+
 type Line = {
   at: number;
   text: string;
@@ -111,6 +167,8 @@ const PANIC_AT = 8200;
 const OVERFLOW_AT = 12000;
 const COLLAPSE_AT = 12700;
 const FACE_AT = 13300;
+/** Length of the fake reload beat, skipped when the page really just reloaded. */
+const RELOAD_BEAT = 1100;
 
 /** Each nested page is the previous one at this scale. */
 const RATIO = 0.62;
@@ -125,7 +183,17 @@ const sizes: Record<Line['size'], string> = {
 
 type Stage = 'spiral' | 'collapse' | 'face';
 
-function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: () => void }) {
+function RecursionOverlay({
+  snapshot,
+  onClose,
+  reloaded = false,
+}: {
+  snapshot: Snapshot;
+  onClose: () => void;
+  /** The page really did just reload, so start past the fake reload beat. */
+  reloaded?: boolean;
+}) {
+  const lead = reloaded ? RELOAD_BEAT : 0;
   const [elapsed, setElapsed] = useState(0);
   const [stage, setStage] = useState<Stage>('spiral');
   const tunnelRef = useRef<HTMLDivElement>(null);
@@ -139,7 +207,7 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
   // clock then only has to steer their speed and drive the captions.
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const began = performance.now();
+    const began = performance.now() - lead;
     let frame = 0;
     let zoom: Animation | undefined;
     let wobble: Animation | undefined;
@@ -163,7 +231,7 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
       });
       wobble = spin.animate(keyframes, {
         duration: length * 1000,
-        delay: ZOOM_AT,
+        delay: ZOOM_AT - lead,
         fill: 'both',
       });
     }
@@ -182,8 +250,8 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
     // ~15 updates a second is plenty for captions and the counter.
     frame = window.setTimeout(() => tick(performance.now()), 0);
 
-    const collapse = window.setTimeout(() => setStage('collapse'), COLLAPSE_AT);
-    const face = window.setTimeout(() => setStage('face'), FACE_AT);
+    const collapse = window.setTimeout(() => setStage('collapse'), COLLAPSE_AT - lead);
+    const face = window.setTimeout(() => setStage('face'), FACE_AT - lead);
 
     return () => {
       window.clearTimeout(frame);
@@ -192,7 +260,7 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
       zoom?.cancel();
       wobble?.cancel();
     };
-  }, []);
+  }, [lead]);
 
   // Modal housekeeping: lock scroll, Escape closes, focus stays inside.
   useEffect(() => {
@@ -240,11 +308,11 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
               stage === 'collapse' ? 'recursion-collapse' : ''
             }`}
           >
-            <Tunnel ref={tunnelRef} snapshot={snapshot} />
+            <Tunnel ref={tunnelRef} snapshot={snapshot} lead={lead} />
           </div>
 
           {/* A plain navigation progress bar: the "it's just reloading" beat. */}
-          <div aria-hidden="true" className="recursion-nav-progress" />
+          {reloaded ? null : <div aria-hidden="true" className="recursion-nav-progress" />}
 
           <div
             aria-hidden="true"
@@ -383,9 +451,12 @@ function geometry({ width: w, height: h }: Snapshot): Geometry {
  */
 const Tunnel = memo(function Tunnel({
   snapshot,
+  lead,
   ref,
 }: {
   snapshot: Snapshot;
+  /** Milliseconds of the timeline already behind us. */
+  lead: number;
   ref: Ref<HTMLDivElement>;
 }) {
   const geo = geometry(snapshot);
@@ -401,16 +472,26 @@ const Tunnel = memo(function Tunnel({
       style={{ width: geo.w, height: geo.h, transformOrigin: origin }}
     >
       <div
-        className="recursion-reload will-change-transform"
+        className={`${lead ? '' : 'recursion-reload '}will-change-transform`}
         style={{ width: geo.w, height: geo.h, transformOrigin: origin }}
       >
-        <Level snapshot={snapshot} geo={geo} depth={0} />
+        <Level snapshot={snapshot} geo={geo} depth={0} lead={lead} />
       </div>
     </div>
   );
 });
 
-function Level({ snapshot, geo, depth }: { snapshot: Snapshot; geo: Geometry; depth: number }) {
+function Level({
+  snapshot,
+  geo,
+  depth,
+  lead,
+}: {
+  snapshot: Snapshot;
+  geo: Geometry;
+  depth: number;
+  lead: number;
+}) {
   const pageRef = useRef<HTMLDivElement>(null);
 
   // Open every copy at the scroll position the visitor was actually at.
@@ -435,7 +516,7 @@ function Level({ snapshot, geo, depth }: { snapshot: Snapshot; geo: Geometry; de
               top: geo.y - geo.bar,
               width: geo.w * RATIO,
               // Every window mounts at once, so each delay is absolute, not relative.
-              '--delay': `${FIRST_WINDOW + depth * LOAD_STEP}ms`,
+              '--delay': `${FIRST_WINDOW - lead + depth * LOAD_STEP}ms`,
             } as CSSProperties
           }
         >
@@ -455,7 +536,7 @@ function Level({ snapshot, geo, depth }: { snapshot: Snapshot; geo: Geometry; de
               className="origin-top-left"
               style={{ width: geo.w, height: geo.h, transform: `scale(${RATIO})` }}
             >
-              <Level snapshot={snapshot} geo={geo} depth={depth + 1} />
+              <Level snapshot={snapshot} geo={geo} depth={depth + 1} lead={lead} />
             </div>
           </div>
         </div>
