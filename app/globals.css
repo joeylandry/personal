@@ -124,9 +124,9 @@
   --accent-sea: var(--color-sea);
   --accent-amber: var(--color-amber);
   --accent-gold: var(--color-gold);
-  --accent: var(--color-sea);
+  --accent: var(--color-amber);
   --accent-graphic: var(--color-sea);
-  /* Readable ON the accent: ink on a bright sea-glass fill. */
+  /* Readable ON the accent: ink on a bright amber fill. */
   --accent-fg: var(--color-ink);
   --shadow-key: rgb(0 0 0 / 0.5);
   color-scheme: dark;
@@ -168,18 +168,6 @@
 .accent-gold {
   --accent: var(--accent-gold);
   --accent-graphic: var(--accent-gold);
-}
-
-/* Day-to-night shift: set on <html> from the visitor's local clock. Subtle —
-   the accent warms after dark, nothing moves or flashes. */
-:root[data-daypart='night'] {
-  --accent: var(--color-amber);
-  --accent-sea: var(--color-sea);
-}
-/* A project accent on the same element wins: the shift only warms the
-   default accent, never a project's own colour. */
-:root[data-daypart='night'] .surface-ink:not(.accent-sea, .accent-amber, .accent-gold) {
-  --accent: var(--color-amber);
 }
 
 /* --------------------------------------------------------------------------
