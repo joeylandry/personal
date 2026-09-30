@@ -20,27 +20,32 @@ export function ctaClassName(variant: Variant = 'solid', className = ''): string
   return `${base} ${variants[variant]} ${className}`.trim();
 }
 
+/** The CTA arrow; nudges right when its `group` ancestor is hovered. */
+export function CtaArrow({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      width={size}
+      height={size}
+      fill="none"
+      aria-hidden="true"
+      className="shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+    >
+      <path
+        d="M2 8h11M9 4l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+}
+
 function Inner({ children, arrow }: { children: ReactNode; arrow: boolean }) {
   return (
     <>
       {children}
-      {arrow ? (
-        <svg
-          viewBox="0 0 16 16"
-          width="14"
-          height="14"
-          fill="none"
-          aria-hidden="true"
-          className="transition-transform duration-200 group-hover:translate-x-1"
-        >
-          <path
-            d="M2 8h11M9 4l4 4-4 4"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="square"
-          />
-        </svg>
-      ) : null}
+      {arrow ? <CtaArrow /> : null}
     </>
   );
 }

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { donny, profile } from '@/content';
-import { Cta } from './cta';
+import { Cta, CtaArrow } from './cta';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
@@ -100,8 +100,9 @@ export function Hero() {
             </span>
             <span className="block">
               <span className="meta block text-accent">The cat</span>
-              <span className="mt-2 block text-xl font-medium tracking-tight text-fg transition-colors group-hover:text-accent">
-                Meet {donny.name} →
+              <span className="mt-2 flex items-center gap-2.5 text-xl font-medium tracking-tight text-fg transition-colors duration-200 group-hover:text-accent">
+                Meet {donny.name}
+                <CtaArrow size={18} />
               </span>
               <span className="mt-1.5 block text-sm leading-snug text-muted">
                 Coworker, code reviewer, professional napper.
