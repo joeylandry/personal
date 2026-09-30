@@ -108,6 +108,8 @@ export function LivePreview({
               tabIndex={-1}
               aria-hidden="true"
               loading="lazy"
+              scrolling="no"
+              inert
               sandbox={SANDBOX}
               onLoad={() => setLoaded(true)}
               className={[
@@ -121,6 +123,9 @@ export function LivePreview({
               }}
             />
           ) : null}
+          {/* Sits over the iframe so wheel and touch gestures scroll the page,
+              never the thumbnail (Safari ignores pointer-events on iframes). */}
+          <span aria-hidden="true" className="absolute inset-0" />
           <span className="meta pointer-events-none absolute right-3 bottom-3 bg-ink/86 px-2.5 py-1.5 text-fog opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover/preview:opacity-100 group-focus-visible/preview:opacity-100">
             Live · click to open
           </span>
