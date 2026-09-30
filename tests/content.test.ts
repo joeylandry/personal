@@ -42,7 +42,7 @@ describe('projects', () => {
   it.each(projects.map((p) => [p.slug, p] as const))(
     '%s has valid external links',
     (_slug, project) => {
-      for (const url of [project.liveUrl, project.repoUrl].filter(Boolean) as string[]) {
+      for (const url of [project.liveUrl].filter(Boolean) as string[]) {
         expect(() => new URL(url)).not.toThrow();
         expect(new URL(url).protocol).toBe('https:');
       }

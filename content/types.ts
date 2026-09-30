@@ -79,7 +79,6 @@ export interface Project {
   /** Two to three sentences for cards and meta descriptions. */
   summary: string;
   liveUrl?: string;
-  repoUrl?: string;
   /** Domain shown as a mono caption. Derived from liveUrl at build. */
   stack: StackGroup[];
   /** Compact stack chips for cards — a subset of `stack`. */

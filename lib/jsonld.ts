@@ -67,7 +67,6 @@ export function projectSchema(project: Project) {
     description: project.summary,
     url: absoluteUrl(`/work/${project.slug}`),
     ...(project.liveUrl ? { sameAs: [project.liveUrl] } : {}),
-    ...(project.repoUrl ? { codeRepository: project.repoUrl } : {}),
     creator: { '@id': personId },
     author: { '@id': personId },
     keywords: project.stack.flatMap((group) => group.items).join(', '),

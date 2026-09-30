@@ -22,7 +22,6 @@ export function ProjectRow({
 }) {
   const Heading = headingLevel === 3 ? 'h3' : 'h2';
   const flipped = index % 2 === 1;
-  const number = String(index + 1).padStart(2, '0');
 
   return (
     <article
@@ -65,13 +64,7 @@ export function ProjectRow({
           ' ',
         )}
       >
-        <p className="meta flex items-center gap-3 text-faint">
-          <span className="text-accent">{number}</span>
-          <span aria-hidden="true" className="h-px w-6 bg-rule-strong" />
-          {project.kind}
-        </p>
-
-        <Heading className="mt-5 text-heading font-medium tracking-tight">
+        <Heading className="text-heading font-medium tracking-tight">
           <Link href={`/work/${project.slug}`} className="link-on">
             {project.name}
           </Link>
@@ -107,11 +100,6 @@ export function ProjectRow({
               {project.name}
               <OutboundArrow />
             </RecursionTrigger>
-          ) : null}
-          {project.repoUrl ? (
-            <ExternalLink href={project.repoUrl} className="link text-muted hover:text-fg" arrow>
-              Source
-            </ExternalLink>
           ) : null}
         </div>
       </div>

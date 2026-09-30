@@ -158,11 +158,6 @@ export default async function ProjectPage({ params }: Params) {
             {project.recursionTrigger ? (
               <RecursionTrigger className={ctaClassName()}>Visit {project.name}</RecursionTrigger>
             ) : null}
-            {project.repoUrl ? (
-              <Cta href={project.repoUrl} variant="outline" arrow={false} external>
-                View source
-              </Cta>
-            ) : null}
           </div>
         </div>
       </Section>
