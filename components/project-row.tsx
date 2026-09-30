@@ -101,11 +101,6 @@ export function ProjectRow({
               <OutboundArrow />
             </RecursionTrigger>
           ) : null}
-          {project.repoUrl ? (
-            <ExternalLink href={project.repoUrl} className="link text-muted hover:text-fg" arrow>
-              Source
-            </ExternalLink>
-          ) : null}
         </div>
       </div>
     </article>

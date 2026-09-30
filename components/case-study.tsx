@@ -47,7 +47,7 @@ export function CaseStudyHeader({ project }: { project: Project }) {
       </div>
 
       <div>
-        <dl className="mt-12 grid gap-x-8 gap-y-6 border-t border-rule pt-8 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-12 grid gap-x-8 gap-y-6 border-t border-rule pt-8 sm:grid-cols-3">
           <div>
             <dt className="meta text-faint">Role</dt>
             <dd className="mt-2 text-sm text-fg">{project.role}</dd>
@@ -70,18 +70,6 @@ export function CaseStudyHeader({ project }: { project: Project }) {
                 </RecursionTrigger>
               ) : (
                 <span className="text-muted">—</span>
-              )}
-            </dd>
-          </div>
-          <div>
-            <dt className="meta text-faint">Source</dt>
-            <dd className="mt-2 text-sm">
-              {project.repoUrl ? (
-                <ExternalLink href={project.repoUrl} className="link-on text-accent" arrow>
-                  GitHub
-                </ExternalLink>
-              ) : (
-                <span className="text-muted">Private</span>
               )}
             </dd>
           </div>
