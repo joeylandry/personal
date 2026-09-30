@@ -68,7 +68,7 @@ test.describe('homepage', () => {
     for (const name of [
       'Nyes Neck Clothing & Apparel',
       'Arlington Brewing Company',
-      'joeylandry.com',
+      'joeylandry.org',
     ]) {
       await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
     }
@@ -167,7 +167,7 @@ test.describe('project case studies', () => {
 
   test("reloads home from this site's preview, then recurses", async ({ page }) => {
     await page.goto('/work');
-    const preview = page.getByRole('link', { name: 'Open joeylandry.com (joeylandry.com)' });
+    const preview = page.getByRole('link', { name: 'Open joeylandry.org (joeylandry.org)' });
     await expect(preview).toHaveAttribute('href', '/');
     await preview.click();
     await expect(page).toHaveURL(/\/$/);
@@ -184,7 +184,7 @@ test.describe('project case studies', () => {
   test('wraps previous/next navigation around the set', async ({ page }) => {
     await page.goto('/work/nyes-neck');
     const nav = page.getByRole('navigation', { name: 'More work' });
-    await expect(nav.getByText('joeylandry.com')).toBeVisible();
+    await expect(nav.getByText('joeylandry.org')).toBeVisible();
     await nav.getByRole('link', { name: /Arlington Brewing Company/ }).click();
     await expect(page).toHaveURL(/\/work\/arlington-brewing-company$/);
   });

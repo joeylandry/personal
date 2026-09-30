@@ -214,7 +214,7 @@ export const projects: Project[] = [
 
   {
     slug: 'joeylandry-com',
-    name: 'joeylandry.com',
+    name: 'joeylandry.org',
     shortName: 'This site',
     kind: 'Personal site · Engineering',
     role: 'Designer & full-stack developer',
@@ -240,7 +240,7 @@ export const projects: Project[] = [
     ],
     image: {
       src: '/images/projects/joeylandry-com.svg',
-      alt: 'Illustrated cover for joeylandry.com: a browser window containing a smaller copy of the same browser window, nested again and again toward a vanishing point, in gold on midnight ink.',
+      alt: 'Illustrated cover for joeylandry.org: a browser window containing a smaller copy of the same browser window, nested again and again toward a vanishing point, in gold on midnight ink.',
       width: 1600,
       height: 1000,
       illustrated: true,

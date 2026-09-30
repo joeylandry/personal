@@ -192,7 +192,7 @@ function arlington() {
 </svg>`;
 }
 
-/* ----------------------------------------------------------- joeylandry.com */
+/* ----------------------------------------------------------- joeylandry.org */
 
 function recursiveSite() {
   // A browser window showing this site, which shows a browser window showing
@@ -211,7 +211,7 @@ function recursiveSite() {
     const pill = `<rect x="${round(x + w * 0.3)}" y="${round(y + bar * 0.24)}" width="${round(w * 0.4)}" height="${round(bar * 0.52)}" rx="${round(bar * 0.26)}" fill="none" stroke="${GOLD}" stroke-width="${round(stroke * 0.6)}" opacity="0.55"/>`;
     const url =
       depth < 4
-        ? `<text x="${round(x + w / 2)}" y="${round(y + bar * 0.62)}" fill="${GOLD}" font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace" font-size="${round(bar * 0.3)}" letter-spacing="${round(bar * 0.03)}" text-anchor="middle">joeylandry.com</text>`
+        ? `<text x="${round(x + w / 2)}" y="${round(y + bar * 0.62)}" fill="${GOLD}" font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace" font-size="${round(bar * 0.3)}" letter-spacing="${round(bar * 0.03)}" text-anchor="middle">joeylandry.org</text>`
         : '';
     windows.push(`<g opacity="${opacity}">
       <rect x="${round(x)}" y="${round(y)}" width="${round(w)}" height="${round(h)}" fill="#0A141C" stroke="${GOLD}" stroke-width="${stroke}"/>
@@ -241,7 +241,7 @@ function recursiveSite() {
   ${windows.join('')}
   ${corners(96, 96, W - 192, H - 192, GOLD)}
   ${monoText(150, 940, 'NEXT.JS · TAILWIND · TYPED CONTENT', { size: 17, fill: FOG })}
-  ${monoText(W - 150, 940, 'SEE: JOEYLANDRY.COM', { size: 17, fill: GOLD, anchor: 'end' })}
+  ${monoText(W - 150, 940, 'SEE: JOEYLANDRY.ORG', { size: 17, fill: GOLD, anchor: 'end' })}
 </svg>`;
 }
 

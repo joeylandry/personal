@@ -525,7 +525,7 @@ function Level({
             <span className="recursion-dot" />
             <span className="recursion-dot" />
             <span className="recursion-spinner" />
-            <span className="recursion-url">joeylandry.com</span>
+            <span className="recursion-url">joeylandry.org</span>
             <span className="recursion-progress" />
           </div>
           <div

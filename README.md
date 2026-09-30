@@ -1,4 +1,4 @@
-# joeylandry.com
+# joeylandry.org
 
 Personal brand site for **Joey Landry** — software engineer at Fidelity, Tufts CS graduate,
 and independent builder. Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4.

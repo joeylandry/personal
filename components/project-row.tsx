@@ -7,7 +7,7 @@ import { LivePreview } from './live-preview';
 import { RecursionTrigger, recurseAfterReload } from './recursion';
 
 /** This site's own card previews its home page, and clicking it recurses. */
-const SELF_PREVIEW = { url: '/', host: 'joeylandry.com' };
+const SELF_PREVIEW = { url: '/', host: 'joeylandry.org' };
 
 /**
  * A featured project, presented as an editorial spread rather than a card in a
