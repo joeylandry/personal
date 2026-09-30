@@ -98,12 +98,11 @@ export function Hero() {
             </span>
             <span className="block">
               <span className="meta block text-accent">The cat</span>
-              <span className="mt-2 block text-xl font-medium tracking-tight text-fg">
-                Meet {donny.name}.
+              <span className="mt-2 block text-xl font-medium tracking-tight text-fg transition-colors group-hover:text-accent">
+                Meet {donny.name} →
               </span>
               <span className="mt-1.5 block text-sm leading-snug text-muted">
-                Coworker, code reviewer, professional napper.{' '}
-                <span className="whitespace-nowrap text-fg group-hover:text-accent">More →</span>
+                Coworker, code reviewer, professional napper.
               </span>
             </span>
           </Link>
