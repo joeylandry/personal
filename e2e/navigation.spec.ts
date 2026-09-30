@@ -20,7 +20,7 @@ test.describe('homepage', () => {
 
     // A recent-work teaser follows the hero and points on to the work page.
     await expect(
-      page.getByRole('heading', { level: 2, name: 'Current projects, all in production.' }),
+      page.getByRole('heading', { level: 2, name: 'Recent Work' }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { level: 3, name: 'Nyes Neck Clothing & Apparel' }),

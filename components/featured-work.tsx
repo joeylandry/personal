@@ -14,15 +14,15 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
       surface="paper"
       divider={teaser}
       labelledBy="work-heading"
-      className={teaser ? 'py-20 md:py-28' : 'py-16 md:py-24'}
+      className={teaser ? 'pt-12 pb-20 md:pt-16 md:pb-28' : 'py-16 md:py-24'}
     >
       <div className="wrap">
         <SectionHeading
           id="work-heading"
           level={teaser ? 2 : 1}
           label={teaser ? undefined : 'Work'}
-          title="Current projects, all in production."
-          lead="Every project here is live, built end to end, and actively maintained — from design and front end through backend and deployment."
+          title="Recent Work"
+          lead="Every project here is live, built end to end, and actively maintained."
           aside={
             teaser ? (
               <Link href="/work" className="link-on text-sm font-medium text-fg">
