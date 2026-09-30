@@ -44,19 +44,6 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
             />
           ))}
         </div>
-
-        <p className="meta mt-20 border-t border-rule pt-6 text-faint">
-          More on my background and experience lives on{' '}
-          <a
-            href="https://www.linkedin.com/in/josephlandry/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link text-accent"
-          >
-            LinkedIn
-          </a>
-          .
-        </p>
       </div>
     </Section>
   );

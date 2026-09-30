@@ -45,7 +45,7 @@ export function Hero() {
           </Reveal>
 
           {/* "with a cat." is held back to land last, after the rest of the
-              hero has come in. */}
+              hero has come in, and eases in more slowly than the rest. */}
           <h1 id="hero-heading" className="mt-6 text-display font-medium md:mt-8">
             {hero.headline.map((line, index) => (
               <Reveal
@@ -53,7 +53,9 @@ export function Hero() {
                 as="span"
                 key={line}
                 delay={HEADLINE_DELAYS[index] ?? 0}
-                className="block"
+                className={
+                  index === hero.headline.length - 1 ? 'block [--reveal-duration:1800ms]' : 'block'
+                }
               >
                 {index === hero.headline.length - 1 ? (
                   <>
