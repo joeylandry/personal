@@ -34,7 +34,7 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
           }
         />
 
-        <div className="mt-16 space-y-20 md:mt-24 md:space-y-28">
+        <div className="mt-10 space-y-20 md:mt-14 md:space-y-28">
           {featuredProjects.map((project, index) => (
             <ProjectRow
               key={project.slug}
