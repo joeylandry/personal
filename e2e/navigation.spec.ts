@@ -165,20 +165,21 @@ test.describe('project case studies', () => {
     await expect(page).toHaveURL(/\/work$/);
   });
 
-  test("reloads home from this site's preview, then recurses", async ({ page }) => {
+  test('loads this site into its own preview, then recurses', async ({ page }) => {
     await page.goto('/work');
     const preview = page.getByRole('link', { name: 'Open joeylandry.org (joeylandry.org)' });
     await expect(preview).toHaveAttribute('href', '/');
     await preview.click();
-    await expect(page).toHaveURL(/\/$/);
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    // No navigation: the page loads into the preview box, in place.
+    await expect(page).toHaveURL(/\/work$/);
     const dialog = page.getByRole('dialog', { name: 'Recursion' });
-    await expect(dialog).toBeVisible({ timeout: 10_000 });
+    await expect(dialog).toBeVisible();
     await expect(dialog.getByText("You didn't break the site!")).toBeVisible({
       timeout: 20_000,
     });
     await dialog.getByRole('button', { name: /Back to the/ }).click();
     await expect(dialog).toBeHidden();
+    await expect(preview).toBeFocused();
   });
 
   test('wraps previous/next navigation around the set', async ({ page }) => {

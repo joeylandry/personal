@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -13,15 +14,19 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import type { ProjectImage } from '@/content';
+import { LivePreview } from './live-preview';
 
 /**
  * The recursion easter egg.
  *
- * This site lists itself as a project, so its "live site" link points back
- * here. Clicking it (or the word "recursive" in its tagline) snapshots the
- * page you are actually looking at, opens it inside a browser window on top
- * of itself, which opens it again, and again — then zooms in forever, gets
- * increasingly upset about it, and finally admits it was a joke.
+ * This site lists itself as a project, so its live preview and "live site"
+ * link point back here. Clicking either snapshots the page you are actually
+ * looking at and loads it into the site's own preview box, whose preview box
+ * then loads the page, and so on — a hall of mirrors — then zooms into it
+ * forever, gets increasingly upset about it, and finally admits it was a joke.
+ * Where there is no preview box on the page, the copies open in browser
+ * windows stacked on top of the page instead.
  *
  * Without JavaScript the trigger is an ordinary link to `href`, which is the
  * honest version of the same joke: it takes you to the page you are already on.
@@ -35,14 +40,50 @@ export function RecursionTrigger({
   href?: string;
   className?: string;
 }) {
-  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const triggerRef = useRef<HTMLAnchorElement>(null);
+  const { start, overlay } = useRecursion();
 
-  const start = (event: MouseEvent<HTMLAnchorElement>) => {
+  const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
     // Let modified clicks (new tab, etc.) behave like a normal link.
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    setSnapshot(takeSnapshot());
+    const link = event.currentTarget;
+    // The project's own preview box, when it sits beside this link.
+    start(link, link.closest('article')?.querySelector<HTMLElement>('[data-recursion-portal]'));
+  };
+
+  return (
+    <>
+      <a href={href} onClick={onClick} aria-haspopup="dialog" className={className}>
+        {children}
+      </a>
+      {overlay}
+    </>
+  );
+}
+
+/** This site's live preview of itself: clicking it loads the page into the box. */
+export function RecursionPreview({ name, fallback }: { name: string; fallback: ProjectImage }) {
+  const { start, overlay } = useRecursion();
+
+  const open = (link: HTMLAnchorElement) =>
+    start(link, link.querySelector<HTMLElement>('[data-recursion-portal]'));
+
+  return (
+    <>
+      <LivePreview url="/" host="joeylandry.org" name={name} fallback={fallback} onOpen={open} />
+      {overlay}
+    </>
+  );
+}
+
+function useRecursion() {
+  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  /** `trigger` gets focus back afterwards; `portal` is the box to nest into. */
+  const start = (trigger: HTMLElement, portal?: HTMLElement | null) => {
+    triggerRef.current = trigger;
+    setSnapshot(takeSnapshot(portal ?? null));
   };
 
   const close = useCallback(() => {
@@ -50,72 +91,11 @@ export function RecursionTrigger({
     triggerRef.current?.focus();
   }, []);
 
-  return (
-    <>
-      <a ref={triggerRef} href={href} onClick={start} aria-haspopup="dialog" className={className}>
-        {children}
-      </a>
-      {snapshot
-        ? createPortal(<RecursionOverlay snapshot={snapshot} onClose={close} />, document.body)
-        : null}
-    </>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-
-const RELOAD_KEY = 'recursion:after-reload';
-
-/** Long enough for the home hero's staggered intro to finish. */
-const HERO_SETTLE = 3000;
-
-/**
- * The live-preview version of the joke: really reload the home page at the
- * top, let it come in as it does on any fresh visit, then recurse from there.
- * `RecursionAfterReload` on the home page picks it up.
- */
-export function recurseAfterReload() {
-  try {
-    sessionStorage.setItem(RELOAD_KEY, '1');
-  } catch {
-    // No storage, no joke: it is still an honest reload of the home page.
-  }
-  window.scrollTo(0, 0);
-  // A real, full reload is the point here, not a client-side route change.
-  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-  window.location.assign('/');
-}
-
-export function RecursionAfterReload() {
-  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  // Read once per mount, so Strict Mode's second effect pass sees the same answer.
-  const pending = useRef<boolean | null>(null);
-
-  useEffect(() => {
-    // Previews of this page load it in a frame; only the real tab recurses.
-    if (window.self !== window.top) return;
-    if (pending.current === null) {
-      try {
-        pending.current = sessionStorage.getItem(RELOAD_KEY) === '1';
-        sessionStorage.removeItem(RELOAD_KEY);
-      } catch {
-        pending.current = false;
-      }
-    }
-    if (!pending.current) return;
-    window.scrollTo(0, 0);
-    const timer = window.setTimeout(() => setSnapshot(takeSnapshot()), HERO_SETTLE);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  const close = useCallback(() => {
-    pending.current = false;
-    setSnapshot(null);
-  }, []);
-
-  return snapshot
-    ? createPortal(<RecursionOverlay snapshot={snapshot} onClose={close} reloaded />, document.body)
+  const overlay = snapshot
+    ? createPortal(<RecursionOverlay snapshot={snapshot} onClose={close} />, document.body)
     : null;
+
+  return { start, overlay };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -154,25 +134,33 @@ const SCRIPT: Line[] = [
 const VISIBLE_LINES = 6;
 
 /*
- * Timeline, in ms. The first beat is meant to be believable: the page just
- * looks like it reloaded. Then one browser window opens on top of it, then
- * another inside that, and only once they are all loaded does it start to
- * zoom and the captions, counter and stop button appear. The reload flash
- * itself is pure CSS (.recursion-reload, 1.1s).
+ * Timeline, in ms. The first beat is meant to be believable. With a preview
+ * box, the box starts loading as if you had followed its link, and the page
+ * it loads is this one, whose box loads it again, and again. Without one, the
+ * page just looks like it reloaded (a pure CSS flash, .recursion-reload, 1.1s),
+ * then one browser window opens on top of it, then another inside that. Only
+ * once every copy has loaded does it start to zoom and the captions, counter
+ * and stop button appear.
  */
 const FIRST_WINDOW = 1700;
+const FIRST_LOAD = 750;
 const LOAD_STEP = 420;
 const ZOOM_AT = 3700;
 const PANIC_AT = 8200;
 const OVERFLOW_AT = 12000;
 const COLLAPSE_AT = 12700;
 const FACE_AT = 13300;
-/** Length of the fake reload beat, skipped when the page really just reloaded. */
-const RELOAD_BEAT = 1100;
 
-/** Each nested page is the previous one at this scale. */
+/** Each window of the page is the previous one at this scale. */
 const RATIO = 0.62;
 const DEPTH = 6;
+/**
+ * A preview box wider than this share of the screen (phones) nests too
+ * slowly to read as a tunnel; the windows are used instead.
+ */
+const MAX_PORTAL = 0.7;
+/** Nest until the innermost copy is about this share of the screen. */
+const SMALLEST = 0.02;
 
 const sizes: Record<Line['size'], string> = {
   sm: 'text-2xl md:text-4xl',
@@ -183,17 +171,8 @@ const sizes: Record<Line['size'], string> = {
 
 type Stage = 'spiral' | 'collapse' | 'face';
 
-function RecursionOverlay({
-  snapshot,
-  onClose,
-  reloaded = false,
-}: {
-  snapshot: Snapshot;
-  onClose: () => void;
-  /** The page really did just reload, so start past the fake reload beat. */
-  reloaded?: boolean;
-}) {
-  const lead = reloaded ? RELOAD_BEAT : 0;
+function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: () => void }) {
+  const geo = useMemo(() => geometry(snapshot), [snapshot]);
   const [elapsed, setElapsed] = useState(0);
   const [stage, setStage] = useState<Stage>('spiral');
   const tunnelRef = useRef<HTMLDivElement>(null);
@@ -203,11 +182,11 @@ function RecursionOverlay({
 
   // Timeline. The zoom and wobble run as Web Animations so the compositor can
   // scale the already-painted pages; driving the transform from script makes
-  // the browser repaint all seven copies of the site every frame. A single
+  // the browser repaint every copy of the site every frame. A single
   // clock then only has to steer their speed and drive the captions.
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const began = performance.now() - lead;
+    const began = performance.now();
     let frame = 0;
     let zoom: Animation | undefined;
     let wobble: Animation | undefined;
@@ -215,11 +194,13 @@ function RecursionOverlay({
     const spin = tunnelRef.current;
     const tunnel = spin?.firstElementChild;
     if (!reduced && spin && tunnel) {
-      zoom = tunnel.animate([{ transform: 'scale(1)' }, { transform: `scale(${1 / RATIO})` }], {
-        duration: 1000,
-        iterations: Infinity,
-        easing: 'linear',
-      });
+      // Scale geometrically, not linearly, so the zoom keeps a steady pace
+      // through each level instead of lurching every time it wraps.
+      const steps = 16;
+      const frames = Array.from({ length: steps + 1 }, (_, i) => ({
+        transform: `scale(${(1 / geo.ratio) ** (i / steps)})`,
+      }));
+      zoom = tunnel.animate(frames, { duration: 1000, iterations: Infinity, easing: 'linear' });
       zoom.pause();
 
       // A wobble that grows as it loses control: sampled, then handed off.
@@ -231,7 +212,7 @@ function RecursionOverlay({
       });
       wobble = spin.animate(keyframes, {
         duration: length * 1000,
-        delay: ZOOM_AT - lead,
+        delay: ZOOM_AT,
         fill: 'both',
       });
     }
@@ -250,8 +231,8 @@ function RecursionOverlay({
     // ~15 updates a second is plenty for captions and the counter.
     frame = window.setTimeout(() => tick(performance.now()), 0);
 
-    const collapse = window.setTimeout(() => setStage('collapse'), COLLAPSE_AT - lead);
-    const face = window.setTimeout(() => setStage('face'), FACE_AT - lead);
+    const collapse = window.setTimeout(() => setStage('collapse'), COLLAPSE_AT);
+    const face = window.setTimeout(() => setStage('face'), FACE_AT);
 
     return () => {
       window.clearTimeout(frame);
@@ -260,7 +241,7 @@ function RecursionOverlay({
       zoom?.cancel();
       wobble?.cancel();
     };
-  }, [lead]);
+  }, [geo]);
 
   // Modal housekeeping: lock scroll, Escape closes, focus stays inside.
   useEffect(() => {
@@ -308,11 +289,12 @@ function RecursionOverlay({
               stage === 'collapse' ? 'recursion-collapse' : ''
             }`}
           >
-            <Tunnel ref={tunnelRef} snapshot={snapshot} lead={lead} />
+            <Tunnel ref={tunnelRef} snapshot={snapshot} geo={geo} />
           </div>
 
-          {/* A plain navigation progress bar: the "it's just reloading" beat. */}
-          {reloaded ? null : <div aria-hidden="true" className="recursion-nav-progress" />}
+          {/* A plain navigation progress bar: the "it's just reloading" beat.
+              With a preview box, the loading happens in the box instead. */}
+          {geo.portal ? null : <div aria-hidden="true" className="recursion-nav-progress" />}
 
           <div
             aria-hidden="true"
@@ -349,7 +331,7 @@ function RecursionOverlay({
           ) : null}
 
           <p className="sr-only" aria-live="polite">
-            The site opens itself inside itself, then starts zooming in, forever.
+            The site loads itself inside itself, then starts zooming in, forever.
           </p>
 
           <button
@@ -401,6 +383,8 @@ type Snapshot = {
   scrollY: number;
   width: number;
   height: number;
+  /** Where the preview box's viewport sits on screen, if there is one. */
+  portal: { x: number; y: number; width: number } | null;
 };
 
 /**
@@ -408,8 +392,27 @@ type Snapshot = {
  * technology, and never hydrated — they are pictures of the site made of the
  * site, which is the whole joke.
  */
-function takeSnapshot(): Snapshot {
+function takeSnapshot(portal: HTMLElement | null): Snapshot {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  // For the copies to nest into the box exactly, the box has to have the
+  // screen's shape. Reshape it just long enough to measure and copy it; the
+  // overlay covers the page before the browser paints again.
+  let frame: Snapshot['portal'] = null;
+  let restore = () => {};
+  if (portal && portal.getBoundingClientRect().width / width <= MAX_PORTAL) {
+    const { aspectRatio } = portal.style;
+    portal.style.aspectRatio = `${width} / ${height}`;
+    restore = () => {
+      portal.style.aspectRatio = aspectRatio;
+    };
+    const rect = portal.getBoundingClientRect();
+    if (rect.width > 0) frame = { x: rect.left, y: rect.top, width: rect.width };
+  }
+
   const clone = document.body.cloneNode(true) as HTMLElement;
+  restore();
   clone.querySelectorAll('script, noscript, iframe').forEach((node) => node.remove());
   clone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
   // Anything still waiting to scroll into view would otherwise stay invisible.
@@ -418,14 +421,21 @@ function takeSnapshot(): Snapshot {
     html: clone.innerHTML,
     bodyClass: document.body.className,
     scrollY: window.scrollY,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width,
+    height,
+    portal: frame,
   };
 }
 
 type Geometry = {
   w: number;
   h: number;
+  /** Each nested page is its parent at this scale. */
+  ratio: number;
+  /** How many copies deep the tunnel goes. */
+  depth: number;
+  /** Nesting into the page's own preview box, rather than into windows. */
+  portal: boolean;
   /** Height of a nested window's title bar, in the parent's pixels. */
   bar: number;
   /** Where the nested page's top-left corner sits inside its parent. */
@@ -433,37 +443,37 @@ type Geometry = {
   y: number;
 };
 
-function geometry({ width: w, height: h }: Snapshot): Geometry {
+function geometry({ width: w, height: h, portal }: Snapshot): Geometry {
+  if (portal) {
+    const ratio = portal.width / w;
+    const depth = Math.min(Math.max(Math.ceil(Math.log(SMALLEST) / Math.log(ratio)), 3), 8);
+    return { w, h, ratio, depth, portal: true, bar: 0, x: portal.x, y: portal.y };
+  }
   const bar = Math.round(Math.max(26, h * 0.045));
   const x = (w * (1 - RATIO)) / 2;
   const y = (h - (bar + h * RATIO)) / 2 + bar;
-  return { w, h, bar, x, y };
+  return { w, h, ratio: RATIO, depth: DEPTH, portal: false, bar, x, y };
 }
 
 /**
- * The page, containing a window of the page, containing… Each level maps onto
- * the next by `p → (x, y) + RATIO·p`, whose fixed point is `(x, y) / (1 −
- * RATIO)`. Zooming by 1/RATIO about that point lands exactly on the next
+ * The page, containing a copy of the page, containing… Each level maps onto
+ * the next by `p → (x, y) + ratio·p`, whose fixed point is `(x, y) / (1 −
+ * ratio)`. Zooming by 1/ratio about that point lands exactly on the next
  * level, so the zoom can wrap forever without a seam.
  *
- * Memoised: the overlay re-renders every frame for its captions, and seven
- * copies of the site should not be reconciled sixty times a second.
+ * Memoised: the overlay re-renders every frame for its captions, and every
+ * copy of the site should not be reconciled sixty times a second.
  */
 const Tunnel = memo(function Tunnel({
   snapshot,
-  lead,
+  geo,
   ref,
 }: {
   snapshot: Snapshot;
-  /** Milliseconds of the timeline already behind us. */
-  lead: number;
+  geo: Geometry;
   ref: Ref<HTMLDivElement>;
 }) {
-  const geo = geometry(snapshot);
-  const originX = geo.x / (1 - RATIO);
-  const originY = geo.y / (1 - RATIO);
-
-  const origin = `${originX}px ${originY}px`;
+  const origin = `${geo.x / (1 - geo.ratio)}px ${geo.y / (1 - geo.ratio)}px`;
 
   return (
     <div
@@ -472,32 +482,31 @@ const Tunnel = memo(function Tunnel({
       style={{ width: geo.w, height: geo.h, transformOrigin: origin }}
     >
       <div
-        className={`${lead ? '' : 'recursion-reload '}will-change-transform`}
+        className={`${geo.portal ? '' : 'recursion-reload '}will-change-transform`}
         style={{ width: geo.w, height: geo.h, transformOrigin: origin }}
       >
-        <Level snapshot={snapshot} geo={geo} depth={0} lead={lead} />
+        <Level snapshot={snapshot} geo={geo} depth={0} />
       </div>
     </div>
   );
 });
 
-function Level({
-  snapshot,
-  geo,
-  depth,
-  lead,
-}: {
-  snapshot: Snapshot;
-  geo: Geometry;
-  depth: number;
-  lead: number;
-}) {
+function Level({ snapshot, geo, depth }: { snapshot: Snapshot; geo: Geometry; depth: number }) {
   const pageRef = useRef<HTMLDivElement>(null);
 
   // Open every copy at the scroll position the visitor was actually at.
   useLayoutEffect(() => {
     if (pageRef.current) pageRef.current.scrollTop = snapshot.scrollY;
   }, [snapshot.scrollY]);
+
+  const inner = (
+    <div
+      className="origin-top-left"
+      style={{ width: geo.w, height: geo.h, transform: `scale(${geo.ratio})` }}
+    >
+      <Level snapshot={snapshot} geo={geo} depth={depth + 1} />
+    </div>
+  );
 
   return (
     <div className="recursion-level" style={{ width: geo.w, height: geo.h }}>
@@ -507,16 +516,35 @@ function Level({
         className={`recursion-page ${snapshot.bodyClass}`}
         dangerouslySetInnerHTML={{ __html: snapshot.html }}
       />
-      {depth < DEPTH ? (
+      {depth >= geo.depth ? null : geo.portal ? (
+        <div
+          className="recursion-portal"
+          style={
+            {
+              left: geo.x,
+              top: geo.y,
+              width: geo.w * geo.ratio,
+              height: geo.h * geo.ratio,
+              // Every copy mounts at once, so each time is absolute: this box
+              // starts loading when its own page appears and finishes a step later.
+              '--start': `${depth === 0 ? 0 : FIRST_LOAD + (depth - 1) * LOAD_STEP}ms`,
+              '--ready': `${FIRST_LOAD + depth * LOAD_STEP}ms`,
+            } as CSSProperties
+          }
+        >
+          <span className="recursion-portal-progress" />
+          <div className="recursion-portal-page">{inner}</div>
+        </div>
+      ) : (
         <div
           className="recursion-window"
           style={
             {
               left: geo.x,
               top: geo.y - geo.bar,
-              width: geo.w * RATIO,
+              width: geo.w * geo.ratio,
               // Every window mounts at once, so each delay is absolute, not relative.
-              '--delay': `${FIRST_WINDOW - lead + depth * LOAD_STEP}ms`,
+              '--delay': `${FIRST_WINDOW + depth * LOAD_STEP}ms`,
             } as CSSProperties
           }
         >
@@ -530,17 +558,12 @@ function Level({
           </div>
           <div
             className="relative overflow-hidden"
-            style={{ width: geo.w * RATIO, height: geo.h * RATIO }}
+            style={{ width: geo.w * geo.ratio, height: geo.h * geo.ratio }}
           >
-            <div
-              className="origin-top-left"
-              style={{ width: geo.w, height: geo.h, transform: `scale(${RATIO})` }}
-            >
-              <Level snapshot={snapshot} geo={geo} depth={depth + 1} lead={lead} />
-            </div>
+            {inner}
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

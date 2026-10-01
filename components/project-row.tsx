@@ -4,10 +4,7 @@ import { displayHost } from '@/content';
 import { ExternalLink, OutboundArrow } from './external-link';
 import { Frame } from './frame';
 import { LivePreview } from './live-preview';
-import { RecursionTrigger, recurseAfterReload } from './recursion';
-
-/** This site's own card previews its home page, and clicking it recurses. */
-const SELF_PREVIEW = { url: '/', host: 'joeylandry.org' };
+import { RecursionPreview, RecursionTrigger } from './recursion';
 
 /**
  * A featured project, presented as an editorial spread rather than a card in a
@@ -43,13 +40,8 @@ export function ProjectRow({
             fallback={project.image}
           />
         ) : project.recursionTrigger ? (
-          <LivePreview
-            url={SELF_PREVIEW.url}
-            host={SELF_PREVIEW.host}
-            name={project.name}
-            fallback={project.image}
-            onOpen={recurseAfterReload}
-          />
+          // This site's own card previews its home page, and clicking it recurses.
+          <RecursionPreview name={project.name} fallback={project.image} />
         ) : (
           <Link href={`/work/${project.slug}`} tabIndex={-1} aria-hidden="true" className="block">
             <Frame
