@@ -73,7 +73,7 @@ export function SiteFooter() {
           © {year} {profile.name}
         </p>
         <p className="meta text-faint">
-          <span className="text-accent">build</span> {buildStamp} UTC ·{' '}
+          <span className="text-detail">build</span> {buildStamp} UTC ·{' '}
           <span className="normal-case tracking-normal italic">{profile.signature}</span>
         </p>
       </div>

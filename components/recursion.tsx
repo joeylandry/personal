@@ -322,7 +322,7 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
           {zooming ? (
             <p
               aria-hidden="true"
-              className="recursion-fade-in meta absolute bottom-6 left-4 bg-ink/90 px-2 py-1 font-mono text-accent md:left-8"
+              className="recursion-fade-in meta absolute bottom-6 left-4 bg-ink/90 px-2 py-1 font-mono text-detail md:left-8"
             >
               {elapsed >= OVERFLOW_AT
                 ? 'RangeError: Maximum call stack size exceeded'

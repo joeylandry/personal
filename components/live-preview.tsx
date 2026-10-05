@@ -74,7 +74,7 @@ export function LivePreview({
       target="_blank"
       rel="noopener noreferrer"
       onClick={open}
-      className="group/preview block w-full border border-rule bg-raised text-left transition-colors hover:border-accent focus-visible:border-accent"
+      className="group/preview block w-full border border-rule bg-raised text-left transition-colors hover:border-detail focus-visible:border-detail"
       aria-label={`Open ${name} (${host})`}
     >
       <div

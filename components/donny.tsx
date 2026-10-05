@@ -45,7 +45,7 @@ export function DonnySection() {
         <div className="mt-12 space-y-12">
           {rows.map((row) => (
             <div key={row.label} className="grid gap-x-6 gap-y-6 md:grid-cols-12">
-              <p className="meta text-accent md:col-span-1 md:pt-1">{row.label}</p>
+              <p className="meta text-detail md:col-span-1 md:pt-1">{row.label}</p>
               <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:col-span-11">
                 {row.photos.map((photo) => (
                   <Tile key={photo.src} photo={photo} />

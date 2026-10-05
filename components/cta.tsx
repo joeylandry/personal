@@ -10,7 +10,7 @@ const variants = {
    *  Both the fill and its text flip per surface so the pair always clears AA. */
   solid: 'bg-accent text-accent-fg hover:bg-fg hover:text-bg',
   /** Hairline outline for secondary actions. */
-  outline: 'border border-rule-strong text-fg hover:border-accent hover:text-accent',
+  outline: 'border border-rule-strong text-fg hover:border-detail hover:text-accent',
 } as const;
 
 type Variant = keyof typeof variants;

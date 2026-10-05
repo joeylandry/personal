@@ -70,7 +70,7 @@ export function GivingIntro() {
               </div>
             ))}
           </dl>
-          <blockquote className="mt-10 border-l border-accent pl-6">
+          <blockquote className="mt-10 border-l border-detail pl-6">
             <p className="text-lg leading-snug text-fg">“{intro.quote}”</p>
           </blockquote>
         </div>
@@ -124,7 +124,7 @@ export function GivingTimeline() {
             >
               <div className="md:col-span-4">
                 <div className="md:sticky md:top-28">
-                  <p className="meta text-accent">{chapter.year ?? 'Early years'}</p>
+                  <p className="meta text-detail">{chapter.year ?? 'Early years'}</p>
                   <h3 className="mt-3 text-heading font-medium tracking-tight">{chapter.title}</h3>
                   <p className="mt-4 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
                 </div>

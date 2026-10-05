@@ -35,7 +35,7 @@ export function Hero() {
             {/* An eyebrow over the headline, not a rival to it. The name is
                 already in the header, so small screens drop it and keep the
                 location. */}
-            <p className="meta section-label text-[0.8125rem] tracking-[0.12em] text-accent sm:text-sm md:whitespace-nowrap">
+            <p className="meta section-label text-[0.8125rem] tracking-[0.12em] sm:text-sm md:whitespace-nowrap">
               <span className="text-muted">
                 <span className="hidden whitespace-nowrap text-fg sm:inline">{profile.name}</span>
                 <span className="hidden sm:inline"> · </span>
@@ -83,12 +83,11 @@ export function Hero() {
           </Reveal>
         </div>
 
-        {/* Meet Donny: the cat in the headline. Sea for the label and hover frame
-            so the card stands off the amber foliage; only the name warms to amber. */}
+        {/* Meet Donny: the cat in the headline. */}
         <Reveal immediate delay={600} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
-            className="accent-sea group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
+            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-detail md:flex-col md:items-start md:p-5"
           >
             <span className="relative block aspect-square w-24 shrink-0 overflow-hidden border border-rule md:w-full">
               <Image
@@ -100,8 +99,8 @@ export function Hero() {
               />
             </span>
             <span className="block">
-              <span className="meta block text-accent">The cat</span>
-              <span className="accent-amber mt-2 flex items-center gap-2.5 text-xl font-medium tracking-tight text-fg transition-colors duration-200 group-hover:text-accent">
+              <span className="meta block text-detail">The cat</span>
+              <span className="mt-2 flex items-center gap-2.5 text-xl font-medium tracking-tight text-fg transition-colors duration-200 group-hover:text-accent">
                 Meet {donny.name}
                 <CtaArrow size={18} />
               </span>

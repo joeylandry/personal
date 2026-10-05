@@ -66,6 +66,11 @@
 @utility bg-accent {
   background-color: var(--accent);
 }
+/* Detail accent: the cool counterpart to --accent, for small labels, hairline
+   rules and frames. Headlines, actions and hover text stay on --accent. */
+@utility bg-detail {
+  background-color: var(--accent-detail);
+}
 @utility bg-rule {
   background-color: var(--rule);
 }
@@ -87,6 +92,9 @@
 @utility text-accent {
   color: var(--accent);
 }
+@utility text-detail {
+  color: var(--accent-detail);
+}
 /* Foreground for text sitting on an accent fill. */
 @utility text-accent-fg {
   color: var(--accent-fg);
@@ -103,9 +111,12 @@
 @utility border-accent {
   border-color: var(--accent);
 }
-/* Softened accent border for corner ticks and quiet outlines. */
+@utility border-detail {
+  border-color: var(--accent-detail);
+}
+/* Softened detail border for corner ticks and quiet outlines. */
 @utility border-tick {
-  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  border-color: color-mix(in srgb, var(--accent-detail) 62%, transparent);
 }
 
 /* --------------------------------------------------------------------------
@@ -125,6 +136,7 @@
   --accent-amber: var(--color-amber);
   --accent-gold: var(--color-gold);
   --accent: var(--color-amber);
+  --accent-detail: var(--color-sea);
   --accent-graphic: var(--color-sea);
   /* Readable ON the accent: ink on a bright amber fill. */
   --accent-fg: var(--color-ink);
@@ -149,6 +161,7 @@
   --accent-amber: #8a5a10;
   --accent-gold: #6e5412;
   --accent: #0b6d60;
+  --accent-detail: #0b6d60;
   --accent-graphic: #0b6d60;
   /* The paper accents are dark, so the fill needs light text on it. */
   --accent-fg: var(--color-paper);
@@ -159,14 +172,17 @@
 /* Project accents pick the variant that belongs to the surrounding surface. */
 .accent-sea {
   --accent: var(--accent-sea);
+  --accent-detail: var(--accent-sea);
   --accent-graphic: var(--accent-sea);
 }
 .accent-amber {
   --accent: var(--accent-amber);
+  --accent-detail: var(--accent-amber);
   --accent-graphic: var(--accent-amber);
 }
 .accent-gold {
   --accent: var(--accent-gold);
+  --accent-detail: var(--accent-gold);
   --accent-graphic: var(--accent-gold);
 }
 
@@ -261,7 +277,7 @@
     content: '';
     width: 1.5rem;
     height: 1px;
-    background-color: var(--accent);
+    background-color: var(--accent-detail);
     flex: none;
   }
 
