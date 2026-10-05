@@ -431,6 +431,25 @@
   transition: opacity 0.5s ease;
 }
 
+/* Hovering swaps the live frame for a full-length capture and glides slowly
+   down it; leaving returns to the top briskly, then fades back to live. */
+.preview-glide {
+  opacity: 0;
+  transform: translateY(0);
+  transition:
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease 0.9s;
+}
+
+.group\/preview:hover .preview-glide,
+.group\/preview:focus-visible .preview-glide {
+  opacity: 1;
+  transform: translateY(var(--preview-travel, 0%));
+  transition:
+    transform 9s cubic-bezier(0.45, 0, 0.55, 1) 0.3s,
+    opacity 0.3s ease;
+}
+
 @keyframes pulse-dot {
   0%,
   100% {
@@ -791,6 +810,11 @@
 
   [data-js='on'] .parallax {
     transform: none;
+  }
+
+  .group\/preview:hover .preview-glide,
+  .group\/preview:focus-visible .preview-glide {
+    opacity: 0;
   }
 }
 

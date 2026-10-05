@@ -25,12 +25,15 @@ export function LivePreview({
   host,
   name,
   fallback,
+  page,
   onOpen,
 }: {
   url: string;
   host: string;
   name: string;
   fallback: ProjectImage;
+  /** A full-length capture of the page, glided down on hover. */
+  page?: Pick<ProjectImage, 'src' | 'width' | 'height'>;
   /** Replaces the new-tab link for plain clicks (modified clicks still open a tab). */
   onOpen?: (link: HTMLAnchorElement) => void;
 }) {
@@ -117,6 +120,26 @@ export function LivePreview({
                 width: VIEWPORT.width,
                 height: VIEWPORT.height,
                 '--preview-scale': scale,
+              } as CSSProperties
+            }
+          />
+        ) : null}
+        {page ? (
+          // Fades in over the live frame on hover and glides to the bottom of
+          // the page. The travel is a share of the image's own height: all of
+          // it except the one window-height the frame shows.
+          <Image
+            src={page.src}
+            alt=""
+            width={page.width}
+            height={page.height}
+            sizes="(min-width: 768px) 58vw, 100vw"
+            className="preview-glide pointer-events-none absolute top-0 left-0 h-auto w-full max-w-none"
+            style={
+              {
+                '--preview-travel': `${
+                  -(1 - (VIEWPORT.height / VIEWPORT.width) * (page.width / page.height)) * 100
+                }%`,
               } as CSSProperties
             }
           />

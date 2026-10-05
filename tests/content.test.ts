@@ -61,6 +61,16 @@ describe('projects', () => {
     },
   );
 
+  it.each(projects.filter((p) => p.pageCapture).map((p) => [p.slug, p] as const))(
+    '%s ships a full-length page capture taller than one window',
+    (_slug, project) => {
+      const page = project.pageCapture!;
+      expect(project.liveUrl).toBeDefined();
+      expect(existsSync(join(ROOT, 'public', page.src))).toBe(true);
+      expect(page.height / page.width).toBeGreaterThan(900 / 1440);
+    },
+  );
+
   it.each(projects.map((p) => [p.slug, p] as const))(
     '%s has a complete case study',
     (_slug, project) => {

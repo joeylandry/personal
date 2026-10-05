@@ -84,6 +84,12 @@ export interface Project {
   /** Compact stack chips for cards — a subset of `stack`. */
   highlights: string[];
   image: ProjectImage;
+  /**
+   * A full-length capture of the live home page (a 1440px-wide window, scrolled
+   * top to bottom). Hovering the live preview glides down it, since a framed
+   * cross-origin site can't be scrolled from outside.
+   */
+  pageCapture?: Pick<ProjectImage, 'src' | 'width' | 'height'>;
   /** Accent token name applied to this project's sections. */
   accent: 'sea' | 'amber' | 'gold';
   caseStudy: CaseStudy;
