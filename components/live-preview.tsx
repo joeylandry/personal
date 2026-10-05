@@ -5,11 +5,12 @@ import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from
 import type { ProjectImage } from '@/content';
 import { Corners } from './frame';
 
-/** Desktop viewport the thumbnail renders the live site at before scaling down. */
+/**
+ * Desktop viewport the thumbnail renders the live site at before scaling down.
+ * The iframe is exactly this size: sites size heroes in viewport units, so a
+ * taller frame blows them up instead of revealing more of the page.
+ */
 const VIEWPORT = { width: 1440, height: 900 };
-
-/** The iframe is this tall so hovering can glide down the page below the fold. */
-const PAGE_HEIGHT = VIEWPORT.height * 3;
 
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
 
@@ -24,12 +25,15 @@ export function LivePreview({
   host,
   name,
   fallback,
+  page,
   onOpen,
 }: {
   url: string;
   host: string;
   name: string;
   fallback: ProjectImage;
+  /** A full-length capture of the page, glided down on hover. */
+  page?: Pick<ProjectImage, 'src' | 'width' | 'height'>;
   /** Replaces the new-tab link for plain clicks (modified clicks still open a tab). */
   onOpen?: (link: HTMLAnchorElement) => void;
 }) {
@@ -114,9 +118,28 @@ export function LivePreview({
             style={
               {
                 width: VIEWPORT.width,
-                height: PAGE_HEIGHT,
+                height: VIEWPORT.height,
                 '--preview-scale': scale,
-                '--preview-travel': `${VIEWPORT.height - PAGE_HEIGHT}px`,
+              } as CSSProperties
+            }
+          />
+        ) : null}
+        {page ? (
+          // Fades in over the live frame on hover and glides to the bottom of
+          // the page. The travel is a share of the image's own height: all of
+          // it except the one window-height the frame shows.
+          <Image
+            src={page.src}
+            alt=""
+            width={page.width}
+            height={page.height}
+            sizes="(min-width: 768px) 58vw, 100vw"
+            className="preview-glide pointer-events-none absolute top-0 left-0 h-auto w-full max-w-none"
+            style={
+              {
+                '--preview-travel': `${
+                  -(1 - (VIEWPORT.height / VIEWPORT.width) * (page.width / page.height)) * 100
+                }%`,
               } as CSSProperties
             }
           />
