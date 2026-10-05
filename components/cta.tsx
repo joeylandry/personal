@@ -11,8 +11,8 @@ const variants = {
   solid:
     'border border-transparent bg-accent text-accent-fg hover:bg-action-hover hover:text-action-hover-fg',
   /** The hairline outline with a sea border, warming to amber on hover: the
-   *  solid action's opposite at rest and on hover, while staying clear. */
-  sea: 'border border-sea text-fg hover:border-amber hover:text-amber',
+   *  solid action's opposite at rest and on hover. The text stays put. */
+  sea: 'border border-sea text-fg hover:border-amber',
   /** Hairline outline for secondary actions. */
   outline: 'border border-rule-strong text-fg hover:border-detail hover:text-accent',
 } as const;
