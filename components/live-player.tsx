@@ -1,23 +1,56 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { formatDuration, timeAgo } from '@/lib/format';
 import type { Track } from '@/lib/spotify';
 import { refreshListening, useListening } from '@/lib/use-listening';
 import { ExternalLink } from './external-link';
 
-/** Three bars bouncing out of phase; frozen under reduced motion. */
+/*
+ * The Dynamic Island's music waveform, ported from anaclumos/dynamic-island
+ * (MIT, src/MusicEqualizer.tsx + MusicEqualizerStick.tsx): six 2px sticks with
+ * base lengths of 50/60/90/100/90/60%, each looping every 1.1s through five
+ * random lengths around its base. Lengths are in 28ths of the box, as there.
+ */
+const EQ_BASES = [50, 60, 90, 100, 90, 60];
+const EQ_SPAN = 28;
+
+/** Five random lengths around `base` (0-100), as fractions of the box. */
+function eqLoop(base: number): number[] {
+  return Array.from({ length: 5 }, () => {
+    const length = (Math.floor(Math.random() * EQ_SPAN) - EQ_SPAN) / 2 + (base / 100) * EQ_SPAN;
+    return Math.max(length / EQ_SPAN, 0.1);
+  });
+}
+
+/** The Dynamic Island's six-stick waveform; frozen under reduced motion. */
 export function EqBars({ playing }: { playing: boolean }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  // Lengths are rolled after hydration, straight onto the sticks, so the
+  // server markup stays deterministic. Until then the sticks rest.
+  useEffect(() => {
+    const box = ref.current;
+    if (!box) return;
+    Array.from(box.children).forEach((stick, i) => {
+      eqLoop(EQ_BASES[i]!).forEach((length, step) =>
+        (stick as HTMLElement).style.setProperty(`--eq-${step}`, `${length * 100}%`),
+      );
+    });
+    box.dataset.rolled = 'true';
+  }, []);
+
   return (
     <span
+      ref={ref}
       aria-hidden="true"
-      className="eq inline-flex h-3 items-end gap-[2px]"
+      className="eq inline-flex h-3.5 items-center gap-[2.5px]"
       data-playing={playing}
     >
-      <span />
-      <span />
-      <span />
+      {EQ_BASES.map((base, i) => (
+        <span key={i} style={{ '--eq-rest': `${base - 25}%` } as CSSProperties} />
+      ))}
     </span>
   );
 }
