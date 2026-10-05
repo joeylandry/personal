@@ -45,27 +45,32 @@ interface Streak {
 }
 
 const STREAKS: Streak[] = [
-  { x: 1300, y: 96, angle: 26, length: 150, cycle: 12, offset: 3 },
+  // From the left, heading right: falling, level, and climbing.
   { x: 760, y: 70, angle: 24, length: 110, cycle: 17, offset: 10 },
-  { x: 1230, y: 400, angle: 28, length: 130, cycle: 15, offset: 7 },
-  { x: 520, y: 650, angle: 24, length: 120, cycle: 19, offset: 14 },
-  { x: 1080, y: 180, angle: 22, length: 170, cycle: 13, offset: 9 },
-  { x: 380, y: 260, angle: 27, length: 100, cycle: 16, offset: 1 },
-  { x: 1400, y: 300, angle: 25, length: 140, cycle: 11, offset: 6 },
-  { x: 960, y: 520, angle: 29, length: 115, cycle: 18, offset: 4 },
-  { x: 640, y: 380, angle: 23, length: 135, cycle: 14, offset: 12 },
-  { x: 220, y: 480, angle: 26, length: 95, cycle: 21, offset: 17 },
-  { x: 1180, y: 620, angle: 24, length: 125, cycle: 16, offset: 11 },
-  // Behind the intro's second paragraph, so the left column gets its share.
-  { x: 340, y: 470, angle: 24, length: 130, cycle: 15, offset: 2 },
-  { x: 600, y: 520, angle: 26, length: 150, cycle: 18, offset: 8 },
-  { x: 800, y: 440, angle: 23, length: 120, cycle: 13, offset: 5 },
-  { x: 470, y: 580, angle: 27, length: 110, cycle: 20, offset: 13 },
-  { x: 720, y: 600, angle: 25, length: 140, cycle: 17, offset: 15 },
-  // A little shower: three near-parallel streaks a beat apart.
-  { x: 1020, y: 40, angle: 25, length: 160, cycle: 23, offset: 20 },
-  { x: 1060, y: 110, angle: 25, length: 120, cycle: 23, offset: 19.6 },
-  { x: 980, y: 150, angle: 25, length: 100, cycle: 23, offset: 19.2 },
+  { x: 380, y: 260, angle: 40, length: 100, cycle: 16, offset: 1 },
+  { x: 220, y: 480, angle: 12, length: 95, cycle: 21, offset: 17 },
+  { x: 600, y: 520, angle: 30, length: 150, cycle: 18, offset: 8 },
+  { x: 520, y: 650, angle: -20, length: 120, cycle: 19, offset: 14 },
+  { x: 960, y: 520, angle: -35, length: 115, cycle: 18, offset: 4 },
+  { x: 470, y: 580, angle: -25, length: 110, cycle: 20, offset: 13 },
+  // From the right, heading left.
+  { x: 1300, y: 96, angle: 155, length: 150, cycle: 12, offset: 3 },
+  { x: 1080, y: 180, angle: 135, length: 170, cycle: 13, offset: 9 },
+  { x: 1400, y: 300, angle: 168, length: 140, cycle: 11, offset: 6 },
+  { x: 340, y: 470, angle: 150, length: 130, cycle: 15, offset: 2 },
+  { x: 720, y: 600, angle: 160, length: 140, cycle: 17, offset: 15 },
+  { x: 1230, y: 400, angle: 200, length: 130, cycle: 15, offset: 7 },
+  { x: 640, y: 380, angle: 212, length: 135, cycle: 14, offset: 12 },
+  { x: 800, y: 440, angle: 190, length: 120, cycle: 13, offset: 5 },
+  { x: 1180, y: 620, angle: 220, length: 125, cycle: 16, offset: 11 },
+  // Straight down and straight up, now and then.
+  { x: 900, y: 220, angle: 82, length: 120, cycle: 22, offset: 18 },
+  { x: 280, y: 160, angle: 100, length: 105, cycle: 24, offset: 6.5 },
+  { x: 1120, y: 560, angle: -78, length: 110, cycle: 25, offset: 21 },
+  // A little shower from the right: three near-parallel streaks a beat apart.
+  { x: 1020, y: 120, angle: 148, length: 160, cycle: 23, offset: 20 },
+  { x: 1080, y: 170, angle: 148, length: 120, cycle: 23, offset: 19.6 },
+  { x: 1000, y: 210, angle: 148, length: 100, cycle: 23, offset: 19.2 },
 ];
 
 /** Faint points of light: x, y, radius, and a twinkle offset in seconds. */
