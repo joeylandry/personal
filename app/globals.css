@@ -1203,3 +1203,157 @@
   }
 }
 /* End music section. */
+
+/* --------------------------------------------------------------------------
+   Giving page (components/giving.tsx, giving-timeline.tsx, shooting-stars.tsx,
+   photo-lightbox.tsx)
+   --------------------------------------------------------------------------
+   Shooting stars streak now and then; at rest, and under reduced motion, each
+   streak sits at its drawn position. The timeline spine and nodes start drawn
+   and lit; only a page with JavaScript ties them to scroll.
+   -------------------------------------------------------------------------- */
+
+.giving-twinkle {
+  opacity: 0.55;
+  animation: giving-twinkle 4.8s ease-in-out infinite;
+}
+@keyframes giving-twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.giving-shoot {
+  animation: giving-shoot 14s cubic-bezier(0.3, 0.6, 0.4, 1) infinite;
+}
+@keyframes giving-shoot {
+  0% {
+    opacity: 0;
+    transform: translateX(-280px);
+  }
+  1.5% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0;
+    transform: translateX(170px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(170px);
+  }
+}
+
+/* The spine runs down the left edge on phones and the center from md up. */
+.giving-track {
+  position: relative;
+  --spine-x: 0.4375rem;
+  --node-y: 22px;
+}
+@media (min-width: 48rem) {
+  .giving-track {
+    --spine-x: 50%;
+  }
+}
+.giving-spine {
+  position: absolute;
+  top: var(--node-y);
+  bottom: 0;
+  left: var(--spine-x);
+  width: 1px;
+  transform: translateX(-50%);
+  background-color: var(--rule-strong);
+  mask-image: linear-gradient(to bottom, #000 88%, transparent);
+}
+.giving-spine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent-detail);
+  transform-origin: 50% 0;
+}
+[data-js='on'] .giving-spine::before {
+  transform: scaleY(var(--spine-progress, 0));
+}
+/* A bright head riding the end of the fill. */
+[data-js='on'] .giving-spine::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--spine-progress, 0) * 100%);
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background-color: var(--accent-detail);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--accent-detail) 55%, transparent);
+}
+
+.giving-node {
+  position: absolute;
+  top: var(--node-y);
+  left: var(--spine-x);
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--accent-detail);
+  background-color: var(--accent-detail);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent-detail) 16%, transparent);
+  transition:
+    background-color 450ms var(--ease-out-soft),
+    border-color 450ms var(--ease-out-soft),
+    box-shadow 450ms var(--ease-out-soft);
+}
+/* Hairline from the node to the card it belongs to (md and up). */
+.giving-link {
+  position: absolute;
+  top: var(--node-y);
+  width: 2.5rem;
+  height: 1px;
+  background-color: var(--accent-detail);
+  transition: background-color 450ms var(--ease-out-soft);
+}
+.giving-year {
+  color: var(--accent-detail);
+  transition: color 450ms var(--ease-out-soft);
+}
+[data-js='on'] .giving-step:not([data-reached='true']) .giving-node {
+  border-color: var(--rule-strong);
+  background-color: var(--bg);
+  box-shadow: 0 0 0 5px transparent;
+}
+[data-js='on'] .giving-step:not([data-reached='true']) .giving-link {
+  background-color: var(--rule-strong);
+}
+[data-js='on'] .giving-step:not([data-reached='true']) .giving-year {
+  color: var(--faint);
+}
+
+/* Full-size photo viewer: a native modal dialog. */
+.giving-lightbox {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  max-width: min(72rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  background: transparent;
+  overflow: visible;
+}
+.giving-lightbox::backdrop {
+  background-color: rgb(7 16 24 / 0.9);
+  backdrop-filter: blur(6px);
+}
+.giving-lightbox[open] {
+  animation: giving-lightbox-in 320ms var(--ease-out-soft);
+}
+@keyframes giving-lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
