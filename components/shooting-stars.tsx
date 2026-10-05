@@ -56,6 +56,12 @@ const STREAKS: Streak[] = [
   { x: 640, y: 380, angle: 23, length: 135, cycle: 14, offset: 12 },
   { x: 220, y: 480, angle: 26, length: 95, cycle: 21, offset: 17 },
   { x: 1180, y: 620, angle: 24, length: 125, cycle: 16, offset: 11 },
+  // Behind the intro's second paragraph, so the left column gets its share.
+  { x: 340, y: 470, angle: 24, length: 130, cycle: 15, offset: 2 },
+  { x: 600, y: 520, angle: 26, length: 150, cycle: 18, offset: 8 },
+  { x: 800, y: 440, angle: 23, length: 120, cycle: 13, offset: 5 },
+  { x: 470, y: 580, angle: 27, length: 110, cycle: 20, offset: 13 },
+  { x: 720, y: 600, angle: 25, length: 140, cycle: 17, offset: 15 },
   // A little shower: three near-parallel streaks a beat apart.
   { x: 1020, y: 40, angle: 25, length: 160, cycle: 23, offset: 20 },
   { x: 1060, y: 110, angle: 25, length: 120, cycle: 23, offset: 19.6 },
@@ -82,6 +88,12 @@ const POINTS: [number, number, number, number][] = [
   [200, 300, 1, 1.7],
   [1100, 720, 0.9, 3.8],
   [620, 30, 1.1, 2],
+  [250, 440, 1, 0.8],
+  [470, 495, 1.2, 2.7],
+  [690, 470, 0.9, 1.5],
+  [380, 560, 1, 3.4],
+  [610, 580, 1.1, 0.2],
+  [150, 520, 0.9, 2.1],
 ];
 
 /** A four-point sparkle, the head of a wishing star. */
