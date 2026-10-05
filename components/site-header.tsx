@@ -73,10 +73,10 @@ export function SiteHeader() {
     <header
       data-site-header
       className={[
-        'surface-ink sticky top-0 z-50 text-fg transition-colors duration-300',
+        'surface-ink sticky top-0 z-50 text-fg transition-[background-color,border-color,backdrop-filter] duration-300',
         scrolled || open || !onHome
           ? 'border-b border-rule bg-ink/96 backdrop-blur-md supports-[backdrop-filter]:bg-ink/88'
-          : 'border-b border-transparent bg-transparent',
+          : 'border-b border-transparent bg-transparent backdrop-blur-[0px]',
       ].join(' ')}
     >
       <div className="wrap flex h-16 items-center justify-between gap-6 md:h-[4.5rem]">

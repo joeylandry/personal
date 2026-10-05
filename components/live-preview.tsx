@@ -1,11 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import type { ProjectImage } from '@/content';
+import { Corners } from './frame';
 
 /** Desktop viewport the thumbnail renders the live site at before scaling down. */
 const VIEWPORT = { width: 1440, height: 900 };
+
+/** The iframe is this tall so hovering can glide down the page below the fold. */
+const PAGE_HEIGHT = VIEWPORT.height * 3;
 
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
 
@@ -74,9 +78,10 @@ export function LivePreview({
       target="_blank"
       rel="noopener noreferrer"
       onClick={open}
-      className="group/preview block w-full border border-rule bg-raised text-left transition-colors hover:border-detail focus-visible:border-detail"
+      className="group/preview relative block w-full border border-rule bg-raised text-left transition-colors hover:border-detail focus-visible:border-detail"
       aria-label={`Open ${name} (${host})`}
     >
+      <Corners className="z-10 transition-[width,height,border-color] duration-500 ease-out group-hover/preview:h-5 group-hover/preview:w-5 group-hover/preview:border-detail group-focus-visible/preview:h-5 group-focus-visible/preview:w-5 group-focus-visible/preview:border-detail" />
       <div
         ref={viewportRef}
         aria-hidden="true"
@@ -103,14 +108,17 @@ export function LivePreview({
             sandbox={SANDBOX}
             onLoad={() => setLoaded(true)}
             className={[
-              'pointer-events-none absolute top-0 left-0 origin-top-left border-0 bg-white transition-opacity duration-500',
+              'preview-page pointer-events-none absolute top-0 left-0 origin-top-left border-0 bg-white',
               loaded ? 'opacity-100' : 'opacity-0',
             ].join(' ')}
-            style={{
-              width: VIEWPORT.width,
-              height: VIEWPORT.height,
-              transform: `scale(${scale})`,
-            }}
+            style={
+              {
+                width: VIEWPORT.width,
+                height: PAGE_HEIGHT,
+                '--preview-scale': scale,
+                '--preview-travel': `${VIEWPORT.height - PAGE_HEIGHT}px`,
+              } as CSSProperties
+            }
           />
         ) : null}
         {/* Sits over the iframe so wheel and touch gestures scroll the page,

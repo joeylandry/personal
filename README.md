@@ -106,12 +106,34 @@ zoom holds still.
 Copy `.env.example` to `.env.local`. Every value is optional; the site builds and runs
 with none of them set.
 
-| Variable                                                   | Purpose                                                                                                                         |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`                                     | Canonical origin for metadata, sitemap, robots, JSON-LD, OG images. Falls back to the Vercel URL, then localhost.               |
-| `NEXT_PUBLIC_CONTACT_EMAIL`                                | When set, the contact section shows a direct email button. When empty, it falls back to LinkedIn — no dead control is rendered. |
-| `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL` | Contact delivery via Resend. All three required together.                                                                       |
-| `FORMSPREE_ENDPOINT`                                       | Contact delivery via Formspree (used if Resend is not configured).                                                              |
+| Variable                                                              | Purpose                                                                                                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`                                                | Canonical origin for metadata, sitemap, robots, JSON-LD, OG images. Falls back to the Vercel URL, then localhost.               |
+| `NEXT_PUBLIC_CONTACT_EMAIL`                                           | When set, the contact section shows a direct email button. When empty, it falls back to LinkedIn — no dead control is rendered. |
+| `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`            | Contact delivery via Resend. All three required together.                                                                       |
+| `FORMSPREE_ENDPOINT`                                                  | Contact delivery via Formspree (used if Resend is not configured).                                                              |
+| `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN` | Live "Now playing" on /about and the footer. All three together; mint the token with `npm run spotify:token`.                   |
+
+## Listening and notes
+
+**Pinned song.** `content/listening.ts` holds the "My mind currently" track id; swap it for any
+`open.spotify.com/track/<id>`. It renders with Spotify's embed, so it needs no setup.
+
+**Live player.** `GET /api/now-playing` reads your currently-playing track and recent plays
+from Spotify (CDN-cached for 10s), and the About page polls it every 20s while the tab is
+visible. One-time setup:
+
+1. Create an app at <https://developer.spotify.com/dashboard>, redirect URI
+   `http://127.0.0.1:8888/callback`.
+2. `SPOTIFY_CLIENT_ID=… SPOTIFY_CLIENT_SECRET=… npm run spotify:token`, open the link, approve.
+3. Put all three `SPOTIFY_*` values in `.env.local` and in Vercel.
+
+Without them the live card simply doesn't render.
+
+**Notes.** `content/notes.ts` — add a `Note` to the list. `draft: true` shows it in dev and on
+Vercel previews only.
+
+---
 
 **With no provider configured**, `POST /api/contact` returns `503 not_configured` and the
 form shows a fallback pointing at LinkedIn. It never reports a message as sent when

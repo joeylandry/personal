@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { projects } from '@/content';
+import { projects, publishedNotes } from '@/content';
 import { absoluteUrl } from '@/lib/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'monthly', priority: 1 },
-    ...['/work', '/giving', '/about', '/experience', '/contact'].map((path) => ({
+    ...['/work', '/giving', '/about', '/notes', '/experience', '/contact'].map((path) => ({
       url: absoluteUrl(path),
       lastModified: now,
       changeFrequency: 'monthly' as const,
@@ -19,5 +19,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly' as const,
       priority: 0.7,
     })),
+    ...publishedNotes
+      .filter((note) => !note.draft)
+      .map((note) => ({
+        url: absoluteUrl(`/notes/${note.slug}`),
+        lastModified: new Date(`${note.date}T12:00:00Z`),
+        changeFrequency: 'yearly' as const,
+        priority: 0.6,
+      })),
   ];
 }

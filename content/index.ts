@@ -4,3 +4,5 @@ export * from './projects';
 export * from './experience';
 export * from './donny';
 export * from './giving';
+export * from './listening';
+export * from './notes';

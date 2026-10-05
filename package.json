@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build",
-    "covers": "node scripts/generate-covers.mjs"
+    "covers": "node scripts/generate-covers.mjs",
+    "spotify:token": "node scripts/spotify-token.mjs"
   },
   "dependencies": {
     "geist": "^1.6.1",
