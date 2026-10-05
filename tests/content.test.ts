@@ -5,6 +5,7 @@ import {
   displayHost,
   explorations,
   featuredProjects,
+  giving,
   getProject,
   getProjectNeighbors,
   profile,
@@ -198,7 +199,7 @@ describe('experience', () => {
 
 describe('profile', () => {
   it('states the verified fundraising total', () => {
-    expect(JSON.stringify(profile.impact)).toContain('$20,000+');
+    expect(JSON.stringify(giving)).toContain('$20,000+');
   });
 
   it('keeps the hero headline to at most four readable lines', () => {

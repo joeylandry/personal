@@ -26,8 +26,8 @@ export default function NotFound() {
           Off the map<span className="text-accent">.</span>
         </h1>
         <p className="measure mt-6 text-lead text-muted">
-          This page doesn&apos;t exist — or it did, and it moved. The work below is a better place
-          to land.
+          This page doesn&apos;t exist. Or it did, and it moved. The work below is a better place to
+          land.
         </p>
 
         <div className="mt-10 flex flex-wrap gap-4">

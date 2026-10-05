@@ -21,7 +21,7 @@ export function NowPlayingTicker() {
       <EqBars playing />
       <span className="shrink-0 text-detail">Now playing</span>
       <span className="truncate normal-case tracking-normal">
-        {current.track.title} — {current.track.artist}
+        {current.track.title} · {current.track.artist}
       </span>
     </Link>
   );

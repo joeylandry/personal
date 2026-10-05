@@ -90,7 +90,7 @@ export function ContactForm({
   if (status === 'sent') {
     return (
       <div role="status" className="border border-tick p-6">
-        <p className="text-lead text-fg">Message received — thank you.</p>
+        <p className="text-lead text-fg">Message received. Thank you.</p>
         <p className="mt-2 text-sm text-muted">
           I read everything that comes through here and reply to anything that needs one.
         </p>
@@ -204,7 +204,7 @@ export function ContactForm({
               >
                 {fallbackLabel}
               </a>{' '}
-              instead — it reaches me just as fast.
+              instead. It reaches me just as fast.
             </p>
           </div>
         ) : null}

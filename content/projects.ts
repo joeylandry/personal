@@ -14,14 +14,14 @@ export const projects: Project[] = [
     shortName: 'Nyes Neck',
     kind: 'E-commerce · Brand',
     role: 'Founder, designer & full-stack developer',
-    year: '2025—present',
+    year: '2025 to present',
     status: 'live',
     featured: true,
     order: 1,
     accent: 'sea',
     tagline: 'My childhood fundraiser, rebuilt as a modern storefront.',
     summary:
-      'A Cape Cod lifestyle and apparel brand that grew out of nine years of fundraising for Make-A-Wish, now a mission-driven store with a portion of proceeds supporting St. Jude Children’s Research Hospital. I own the brand, the design and the whole stack — Next.js storefront, Sanity content operations, and a Printful product boundary.',
+      'A Cape Cod lifestyle and apparel brand that grew out of nine years of fundraising for Make-A-Wish, now a mission-driven store with a portion of proceeds supporting St. Jude Children’s Research Hospital. I own the brand, the design and the whole stack: Next.js storefront, Sanity content operations, and a Printful product boundary.',
     liveUrl: 'https://www.nyesneck.shop',
     highlights: ['Next.js 16', 'Sanity CMS', 'Printful', 'Tailwind 4'],
     stack: [
@@ -49,11 +49,11 @@ export const projects: Project[] = [
         'A Cape Cod lifestyle and apparel brand built as a real storefront, where the product catalog, the brand story and the charitable mission are all the same system.',
       context: [
         'In 2013, at nine years old, I sold lemonade and bracelets in Nyes Neck and raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-        'With help from the neighborhood, that experiment kept expanding — movie nights, raffles, apparel, live music, community events — and over nine years it raised more than $20,000.',
+        'With help from the neighborhood, that experiment kept expanding into movie nights, raffles, apparel, live music and community events, and over nine years it raised more than $20,000.',
         'After Tufts I wanted to bring the idea back as something permanent instead of an annual event. Nyes Neck Clothing & Apparel is that: a brand inspired by Nyes Neck and Cape Cod, with a portion of proceeds supporting St. Jude Children’s Research Hospital and a long-term ambition to widen that impact.',
       ],
       owned: [
-        'The brand itself — name, positioning, visual direction and the story the store tells.',
+        'The brand itself: name, positioning, visual direction and the story the store tells.',
         'Product design and the apparel line.',
         'The full storefront implementation: routing, layout, catalog, product detail, cart-adjacent flows and contact.',
         'The content model in Sanity, so the shop can be merchandised without a deploy.',
@@ -67,11 +67,11 @@ export const projects: Project[] = [
         },
         {
           title: 'Merchandising belongs to content, not code',
-          body: 'Collections, shop layout, imagery, crop and hotspot are all editable in Sanity. Rearranging the store is a content change, not a pull request — which is what makes it maintainable as a one-person operation.',
+          body: 'Collections, shop layout, imagery, crop and hotspot are all editable in Sanity. Rearranging the store is a content change, not a pull request, which is what makes it maintainable as a one-person operation.',
         },
         {
           title: 'The mission is stated, not performed',
-          body: 'The charitable side is presented plainly — what the brand grew out of and where a portion of proceeds goes — without turning every page into an appeal.',
+          body: 'The charitable side is presented plainly (what the brand grew out of and where a portion of proceeds goes) without turning every page into an appeal.',
         },
       ],
       architecture: [
@@ -89,7 +89,7 @@ export const projects: Project[] = [
         },
         {
           title: 'Platform',
-          body: 'A Formspree-backed contact route, SEO foundations — canonical URL, Open Graph metadata, robots and sitemap — and deployment on Vercel.',
+          body: 'A Formspree-backed contact route, SEO foundations (canonical URL, Open Graph metadata, robots and sitemap) and deployment on Vercel.',
         },
       ],
       constraints: [
@@ -105,7 +105,7 @@ export const projects: Project[] = [
         'Merchandising, collections and imagery are editable without touching the codebase.',
       ],
       next: [
-        'Deeper collection storytelling — tying each drop to a specific place or moment on the Cape.',
+        'Deeper collection storytelling, tying each drop to a specific place or moment on the Cape.',
         'A clearer, public accounting of charitable impact as volume grows.',
         'Richer product media, including lifestyle photography shot on location.',
       ],
@@ -146,7 +146,7 @@ export const projects: Project[] = [
       statement:
         'A website and content platform that lets a growing brewery publish its story, manage its catalog, promote events, and help people find its beer.',
       context: [
-        'Arlington Brewing Company needed a real website, not a placeholder — somewhere to tell its story, keep a beer catalog current, announce events and answer the question customers ask most: where can I actually get this?',
+        'Arlington Brewing Company needed a real website, not a placeholder: somewhere to tell its story, keep a beer catalog current, announce events and answer the question customers ask most: where can I actually get this?',
         'Just as important, the team needed to run it themselves. A site that only I could update would start decaying the week after launch.',
       ],
       owned: [
@@ -164,7 +164,7 @@ export const projects: Project[] = [
         },
         {
           title: 'Model the catalog the way the brewery thinks',
-          body: 'Content types follow how the team already talks about their product — beers, events, places — so publishing feels like describing the business rather than filling in a developer’s schema.',
+          body: 'Content types follow how the team already talks about their product (beers, events, places), so publishing feels like describing the business rather than filling in a developer’s schema.',
         },
         {
           title: 'The age gate stays out of the way',
@@ -172,13 +172,13 @@ export const projects: Project[] = [
         },
         {
           title: 'Built to be handed over',
-          body: 'Every piece of the site that changes week to week — beers, events, taproom details, locations — is content. The deploy is for code, not for a new can release.',
+          body: 'Every piece of the site that changes week to week (beers, events, taproom details, locations) is content. The deploy is for code, not for a new can release.',
         },
       ],
       architecture: [
         {
           title: 'Application',
-          body: 'Next.js 16 with React 19 and TypeScript, styled with Tailwind CSS 4 and implemented responsively for phones first — the beer finder is used standing in a store aisle.',
+          body: 'Next.js 16 with React 19 and TypeScript, styled with Tailwind CSS 4 and implemented responsively for phones first. The beer finder is used standing in a store aisle.',
         },
         {
           title: 'Content',

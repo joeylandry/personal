@@ -16,9 +16,8 @@ export function SiteFooter() {
           <p className="measure-tight mt-6 text-sm leading-relaxed text-muted">
             {profile.footerNote}
           </p>
-          <p className="meta mt-6 text-faint">
-            {profile.origin} · {profile.coordinates}
-          </p>
+          <p className="meta mt-6 text-faint">{profile.origin}</p>
+          <p className="meta mt-1.5 whitespace-nowrap text-faint">{profile.coordinates}</p>
         </div>
 
         <nav aria-label="Footer" className="md:col-span-3">

@@ -19,23 +19,22 @@ export const profile = {
     eyebrow: 'Joey Landry · Merrimack, NH',
     headline: ['Building software', 'alone in the woods', 'with a cat.'],
     support:
-      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
+      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products, from community-powered commerce and local-business discovery to tools that make giving back easier.",
     primaryCta: { label: "See what I've built", href: '/work' },
     secondaryCta: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/josephlandry/' },
   },
 
   /** Short bio used for meta descriptions and structured data. */
   metaDescription:
-    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms and location tools.',
+    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours: e-commerce, content platforms and location tools.',
 
   about: {
-    kicker: 'Where it started',
-    title: 'I like the moment an idea stops being hypothetical.',
+    kicker: 'About me',
+    title: 'A New Englander who is usually making something.',
     body: [
-      'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-      'The neighborhood kept showing up. Over nine years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
-      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools, event systems and security games.',
-      'The thread is ownership. I like the whole path — from a rough idea to something real people can actually use.',
+      'I’m New England from start to finish. I spent my summers in Nyes Neck on Cape Cod, went to Tufts just outside Boston, and now call southern New Hampshire home. I love places with a little history and character: an old neighborhood, a diner that hasn’t changed in decades, or anywhere near the water.',
+      'Outside of work, you will usually find me cooking, at the gym, out on a hike or in the water. I love good food, a good cocktail and any excuse to have people over (and yes, I put way too much thought into the details of a party). There is almost always music playing somewhere in the background, and Donny, my orange cat, is never far away.',
+      'I am happiest when I am making something or chasing down a new idea. I care a lot about my family, my friends and the places that made me. I’m curious by nature, a little obsessive about the projects I love, and rarely bored.',
     ],
     /** Pull-quote rendered as an editorial aside. */
     aside: {
@@ -44,16 +43,13 @@ export const profile = {
     },
   },
 
-  /** Milestones for the origin/impact story. Verified facts only. */
-  impact: [
-    { year: '2013', label: 'A lemonade stand and bracelets in Nyes Neck', value: '$50 raised' },
-    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '9 years' },
-    {
-      year: 'Total',
-      label: 'Raised for Make-A-Wish Massachusetts and Rhode Island',
-      value: '$20,000+',
-    },
-    { year: 'Today', label: 'Nyes Neck Clothing & Apparel supports St. Jude', value: 'Ongoing' },
+  /** Off-the-clock list beside the About intro. From Joey's own writing. */
+  offClock: [
+    { label: 'In the kitchen', detail: 'Cooking, baking and feeding whoever shows up' },
+    { label: 'Outside somewhere', detail: 'Hiking, swimming, or anywhere near the water' },
+    { label: 'Playing host', detail: 'Good food, cocktails, music and a full house' },
+    { label: 'Cape Cod bound', detail: 'Nyes Neck will always feel like home' },
+    { label: 'Donny duty', detail: 'Life with one very involved orange cat' },
   ],
 
   contact: {
@@ -78,7 +74,7 @@ export const explorations: Exploration[] = [
   {
     index: '01',
     title: 'AI-assisted development',
-    body: 'How much of the distance between an idea and a working product AI actually removes — and which parts of engineering judgement it does not.',
+    body: 'How much of the distance between an idea and a working product AI actually removes, and which parts of engineering judgement it does not.',
   },
   {
     index: '02',
@@ -88,6 +84,6 @@ export const explorations: Exploration[] = [
   {
     index: '03',
     title: 'Small products, real communities',
-    body: 'Focused digital products that make a specific group of people better off — a neighborhood, a taproom, a table of friends — rather than software built for everyone and no one.',
+    body: 'Focused digital products that make a specific group of people better off (a neighborhood, a taproom, a table of friends) rather than software built for everyone and no one.',
   },
 ];

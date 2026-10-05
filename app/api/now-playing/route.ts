@@ -10,6 +10,10 @@ export const dynamic = 'force-dynamic';
  * Every visitor polls this, so the CDN holds each answer for a few seconds:
  * Spotify sees at most a handful of requests a minute however busy the site
  * is, and "live" still means live to anyone watching the progress bar.
+ *
+ * With `SPOTIFY_MOCK=1` set (local preview only), `getListening` returns a
+ * fixed sample payload instead: a song that is always playing plus a few
+ * recent plays, so the player can be designed without Spotify credentials.
  */
 export async function GET() {
   const listening = await getListening();

@@ -72,7 +72,7 @@ export function validateContact(input: unknown, now: number = Date.now()): Valid
 
   const renderedAt = typeof raw.renderedAt === 'number' ? raw.renderedAt : undefined;
   if (renderedAt !== undefined && now - renderedAt < LIMITS.minFillMs) {
-    return { ok: false, errors: { form: 'That was too quick — please try again.' } };
+    return { ok: false, errors: { form: 'That was too quick. Please try again.' } };
   }
 
   const name = normalizeText(asString(raw.name));
@@ -90,7 +90,7 @@ export function validateContact(input: unknown, now: number = Date.now()): Valid
   }
 
   if (message.length < LIMITS.message.min) {
-    errors.message = `A little more detail helps — at least ${LIMITS.message.min} characters.`;
+    errors.message = `A little more detail helps: at least ${LIMITS.message.min} characters.`;
   } else if (message.length > LIMITS.message.max) {
     errors.message = `Please keep it under ${LIMITS.message.max} characters.`;
   }

@@ -5,11 +5,22 @@
  * account that authorised the app, so this runs on a long-lived refresh token
  * minted once with `npm run spotify:token`. With any of the three variables
  * unset, every call resolves to "not configured" and the UI quietly falls back
- * to the pinned track — it never renders a broken player.
+ * to the pinned track; it never renders a broken player.
+ *
+ * Set `SPOTIFY_MOCK=1` to preview everything locally with fixed sample data
+ * (see `lib/spotify-mock.ts`); no credentials or network needed.
  */
+
+import { mockListening } from './spotify-mock';
 
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const API = 'https://api.spotify.com/v1';
+const OEMBED = 'https://open.spotify.com/oembed';
+
+/** True when `SPOTIFY_MOCK=1`: every reader returns sample data instead of calling Spotify. */
+export function spotifyMock(): boolean {
+  return process.env.SPOTIFY_MOCK?.trim() === '1';
+}
 
 export interface Track {
   id: string;
@@ -37,6 +48,32 @@ export interface Listening {
   configured: boolean;
   nowPlaying: NowPlaying | null;
   recent: RecentPlay[];
+}
+
+/** Enough of one song to label a record: from the Web API when configured, else oEmbed. */
+export interface TrackPreview {
+  title: string;
+  /** Null when only oEmbed answered, which doesn't name the artist. */
+  artist: string | null;
+  art: string | null;
+  url: string;
+}
+
+export interface Playlist {
+  id: string;
+  name: string;
+  cover: string | null;
+  url: string;
+  /** Null when Spotify leaves the count out. */
+  tracks: number | null;
+}
+
+export interface SpotifyProfile {
+  name: string;
+  avatar: string | null;
+  url: string;
+  followers: number | null;
+  playlists: Playlist[];
 }
 
 function credentials() {
@@ -133,6 +170,91 @@ export function toRecent(raw: unknown): RecentPlay[] {
   return plays;
 }
 
+/** Parses `/v1/tracks/{id}` into a record label. */
+export function toTrackPreview(raw: unknown): TrackPreview | null {
+  const data = raw as Partial<SpotifyTrack> | null;
+  if (!data?.name || !data.artists || !data.album?.images || !data.external_urls?.spotify) {
+    return null;
+  }
+  const track = toTrack(data as SpotifyTrack);
+  return { title: track.title, artist: track.artist || null, art: track.art, url: track.url };
+}
+
+/**
+ * Parses Spotify's oEmbed answer for a track. It carries the song title and
+ * cover but not the artist, so `artist` stays null.
+ */
+export function parseOEmbed(raw: unknown, url: string): TrackPreview | null {
+  const data = raw as { title?: unknown; thumbnail_url?: unknown } | null;
+  const title = typeof data?.title === 'string' ? data.title.trim() : '';
+  if (!title) return null;
+  const art =
+    typeof data?.thumbnail_url === 'string' && data.thumbnail_url.startsWith('https://')
+      ? data.thumbnail_url
+      : null;
+  return { title, artist: null, art, url };
+}
+
+interface SpotifyPlaylist {
+  id: string;
+  name: string;
+  public?: boolean | null;
+  images?: SpotifyImage[] | null;
+  owner?: { id?: string } | null;
+  external_urls?: { spotify?: string };
+  /** `tracks` until early 2026, `items` after; read whichever is there. */
+  tracks?: { total?: number } | null;
+  items?: { total?: number } | null;
+}
+
+/**
+ * Parses `/v1/users/{id}/playlists`: public playlists the user owns, in
+ * Spotify's order, skipping empty ones (they have no cover worth showing).
+ */
+export function toPlaylists(raw: unknown, ownerId: string, limit = 6): Playlist[] {
+  const items = (raw as { items?: (SpotifyPlaylist | null)[] } | null)?.items ?? [];
+  const playlists: Playlist[] = [];
+  for (const item of items) {
+    if (!item?.id || !item.name) continue;
+    if (item.public === false) continue;
+    if (item.owner?.id && item.owner.id !== ownerId) continue;
+    const tracks = item.tracks?.total ?? item.items?.total ?? null;
+    if (tracks === 0) continue;
+    playlists.push({
+      id: item.id,
+      name: item.name,
+      cover: pickArt(item.images ?? []),
+      url: item.external_urls?.spotify ?? `https://open.spotify.com/playlist/${item.id}`,
+      tracks,
+    });
+    if (playlists.length === limit) break;
+  }
+  return playlists;
+}
+
+/** Parses `/v1/users/{id}` plus its playlists into the profile card. */
+export function toProfile(
+  rawUser: unknown,
+  rawPlaylists: unknown,
+  userId: string,
+): SpotifyProfile | null {
+  const user = rawUser as {
+    id?: string;
+    display_name?: string | null;
+    images?: SpotifyImage[] | null;
+    followers?: { total?: number | null } | null;
+    external_urls?: { spotify?: string };
+  } | null;
+  if (!user?.id) return null;
+  return {
+    name: user.display_name?.trim() || user.id,
+    avatar: pickArt(user.images ?? []),
+    url: user.external_urls?.spotify ?? `https://open.spotify.com/user/${user.id}`,
+    followers: typeof user.followers?.total === 'number' ? user.followers.total : null,
+    playlists: toPlaylists(rawPlaylists, userId),
+  };
+}
+
 async function get(path: string, token: string): Promise<unknown | null> {
   const response = await fetch(`${API}${path}`, {
     cache: 'no-store',
@@ -143,7 +265,50 @@ async function get(path: string, token: string): Promise<unknown | null> {
   return response.json();
 }
 
+/**
+ * The pinned song's title, artist and art. Tries the Web API (which names the
+ * artist) when configured, then oEmbed (no credentials). Throws when neither
+ * answers, so a caching caller doesn't keep a miss for a day; the caller
+ * supplies the neutral fallback.
+ */
+export async function fetchTrackPreview(id: string): Promise<TrackPreview> {
+  const url = `https://open.spotify.com/track/${id}`;
+  const token = await accessToken().catch(() => null);
+  if (token) {
+    const preview = toTrackPreview(await get(`/tracks/${id}`, token).catch(() => null));
+    if (preview) return preview;
+  }
+  const response = await fetch(`${OEMBED}?url=${encodeURIComponent(url)}`, {
+    next: { revalidate: 86_400 },
+  });
+  if (!response.ok) throw new Error(`Spotify oEmbed answered ${response.status}`);
+  const preview = parseOEmbed(await response.json(), url);
+  if (!preview) throw new Error('Spotify oEmbed had no title');
+  return preview;
+}
+
+/**
+ * A public profile and its public playlists. Null when Spotify isn't
+ * configured; throws when it is but doesn't answer, for the same reason as above.
+ */
+export async function fetchProfile(userId: string): Promise<SpotifyProfile | null> {
+  const token = await accessToken().catch(() => null);
+  if (!token) {
+    if (credentials()) throw new Error('Spotify token refresh failed');
+    return null;
+  }
+  const id = encodeURIComponent(userId);
+  const [user, playlists] = await Promise.all([
+    get(`/users/${id}`, token),
+    get(`/users/${id}/playlists?limit=20`, token).catch(() => null),
+  ]);
+  const profile = toProfile(user, playlists, userId);
+  if (!profile) throw new Error('Spotify profile unavailable');
+  return profile;
+}
+
 export async function getListening(recentLimit = 6): Promise<Listening> {
+  if (spotifyMock()) return mockListening(Date.now());
   const token = await accessToken().catch(() => null);
   if (!token) return { configured: credentials() !== null, nowPlaying: null, recent: [] };
 

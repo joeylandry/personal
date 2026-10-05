@@ -1,11 +1,21 @@
-import { listening, spotifyEmbedUrl } from '@/content';
+import { listening, spotifyEmbedUrl, spotifyTrackUrl } from '@/content';
+import { getSpotifyProfile, getTrackPreview } from '@/lib/spotify-cache';
 import { ExternalLink } from './external-link';
 import { LivePlayer } from './live-player';
+import { RecordPlayer } from './record-player';
 import { Section, SectionHeading } from './section';
+import { SpotifyProfileCard } from './spotify-profile';
 
-/** About page: the pinned song, and the live player beside it. */
-export function ListeningSection() {
-  const { pinned } = listening;
+/**
+ * About page music: the pinned song as a spinning record, the live player on
+ * glass below it, then a preview of the public Spotify profile.
+ */
+export async function ListeningSection() {
+  const { pinned, profile } = listening;
+  const [preview, spotifyProfile] = await Promise.all([
+    getTrackPreview(pinned.spotifyId),
+    getSpotifyProfile(listening.profileId),
+  ]);
 
   return (
     <Section id="listening" surface="ink" labelledBy="listening-heading">
@@ -26,21 +36,27 @@ export function ListeningSection() {
           }
         />
 
-        <div className="mt-12 grid items-start gap-8 md:mt-16 md:grid-cols-2 md:gap-10">
-          <div>
-            <p className="meta text-detail">{pinned.label}</p>
-            {/* Spotify's own embed plays a preview without any setup, and works without JavaScript. */}
-            <iframe
-              title={`${pinned.label} — Spotify player`}
-              src={spotifyEmbedUrl(pinned.spotifyId)}
-              width="100%"
-              height="152"
-              loading="lazy"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              className="mt-5 block rounded-xl border-0"
-            />
-          </div>
+        <div className="mt-12 md:mt-16">
+          <RecordPlayer
+            trackId={pinned.spotifyId}
+            eyebrow={pinned.label}
+            preview={preview}
+            embedUrl={spotifyEmbedUrl(pinned.spotifyId)}
+            trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
+          />
+        </div>
+
+        <div className="mt-16 space-y-6 md:mt-24 md:space-y-8">
           <LivePlayer />
+          <SpotifyProfileCard
+            profile={spotifyProfile}
+            url={listening.profileUrl}
+            username={listening.profileId}
+            fallbackName={profile.name}
+            label={profile.label}
+            blurb={profile.blurb}
+            cta={profile.cta}
+          />
         </div>
       </div>
     </Section>

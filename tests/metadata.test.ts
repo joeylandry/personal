@@ -25,11 +25,11 @@ describe('site urls', () => {
   });
 
   it('uses a descriptive default title', () => {
-    expect(siteTitle).toBe('Joey Landry — Software Engineer & Builder');
+    expect(siteTitle).toBe('Joey Landry | Software Engineer & Builder');
   });
 
   it('points every nav link at a real destination', () => {
-    const routes = ['/work', '/giving', '/about', '/notes', '/experience', '/contact'];
+    const routes = ['/work', '/giving', '/about', '/blog', '/contact'];
     expect(navLinks.map((link) => link.href)).toEqual(routes);
   });
 });
