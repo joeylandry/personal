@@ -92,7 +92,7 @@ export function LivePlayer() {
     <div className="border border-rule bg-raised p-5 sm:p-6">
       <div className="flex items-center gap-2.5">
         {current ? <EqBars playing={playing} /> : null}
-        <p className="meta text-accent">
+        <p className="meta text-detail">
           {playing ? 'Now playing' : current ? 'Paused' : 'Last played'}
         </p>
         {!current && data.recent[0] ? (

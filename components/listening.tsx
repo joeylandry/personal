@@ -28,7 +28,7 @@ export function ListeningSection() {
 
         <div className="mt-12 grid items-start gap-8 md:mt-16 md:grid-cols-2 md:gap-10">
           <div>
-            <p className="meta text-accent">{pinned.label}</p>
+            <p className="meta text-detail">{pinned.label}</p>
             {/* Spotify's own embed plays a preview without any setup, and works without JavaScript. */}
             <iframe
               title={`${pinned.label} — Spotify player`}

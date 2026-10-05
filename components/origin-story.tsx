@@ -38,7 +38,7 @@ export function OriginStory() {
           </div>
 
           <div>
-            <blockquote className="mt-12 border-l border-accent pl-6">
+            <blockquote className="mt-12 border-l border-detail pl-6">
               <p className="text-heading font-medium tracking-tight text-fg">
                 “{about.aside.quote}”
               </p>
@@ -53,7 +53,7 @@ export function OriginStory() {
           <ol className="mt-6 space-y-0">
             {impact.map((entry) => (
               <li key={entry.year} className="rule-t py-5 first:border-t-0 first:pt-0">
-                <p className="meta text-accent">{entry.year}</p>
+                <p className="meta text-detail">{entry.year}</p>
                 <p className="mt-2 text-xl font-medium tracking-tight text-fg">{entry.value}</p>
                 <p className="mt-1.5 text-sm leading-snug text-muted">{entry.label}</p>
               </li>

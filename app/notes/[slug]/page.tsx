@@ -43,7 +43,7 @@ function Block({ block }: { block: NoteBlock }) {
       return <h2 className="pt-6 text-heading font-medium text-fg">{block.text}</h2>;
     case 'quote':
       return (
-        <figure className="border-l-2 border-accent py-1 pl-6">
+        <figure className="border-l-2 border-detail py-1 pl-6">
           <blockquote className="text-lead text-fg">“{block.text}”</blockquote>
           {block.cite ? (
             <figcaption className="meta mt-3 text-faint">{block.cite}</figcaption>
@@ -55,7 +55,7 @@ function Block({ block }: { block: NoteBlock }) {
         <ul className="space-y-4">
           {block.items.map((item) => (
             <li key={item} className="relative pl-6">
-              <span aria-hidden="true" className="absolute left-0 text-accent">
+              <span aria-hidden="true" className="absolute left-0 text-detail">
                 →
               </span>
               {item}

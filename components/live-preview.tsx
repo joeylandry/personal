@@ -78,10 +78,10 @@ export function LivePreview({
       target="_blank"
       rel="noopener noreferrer"
       onClick={open}
-      className="group/preview relative block w-full border border-rule bg-raised text-left transition-colors hover:border-accent focus-visible:border-accent"
+      className="group/preview relative block w-full border border-rule bg-raised text-left transition-colors hover:border-detail focus-visible:border-detail"
       aria-label={`Open ${name} (${host})`}
     >
-      <Corners className="z-10 transition-[width,height,border-color] duration-500 ease-out group-hover/preview:h-5 group-hover/preview:w-5 group-hover/preview:border-accent group-focus-visible/preview:h-5 group-focus-visible/preview:w-5 group-focus-visible/preview:border-accent" />
+      <Corners className="z-10 transition-[width,height,border-color] duration-500 ease-out group-hover/preview:h-5 group-hover/preview:w-5 group-hover/preview:border-detail group-focus-visible/preview:h-5 group-focus-visible/preview:w-5 group-focus-visible/preview:border-detail" />
       <div
         ref={viewportRef}
         aria-hidden="true"

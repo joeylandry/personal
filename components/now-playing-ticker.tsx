@@ -19,7 +19,7 @@ export function NowPlayingTicker() {
       className="group meta flex min-w-0 items-center gap-2.5 text-faint hover:text-fg"
     >
       <EqBars playing />
-      <span className="shrink-0 text-accent">Now playing</span>
+      <span className="shrink-0 text-detail">Now playing</span>
       <span className="truncate normal-case tracking-normal">
         {current.track.title} — {current.track.artist}
       </span>

@@ -123,7 +123,7 @@ export function RuledList({ items }: { items: string[] }) {
     <ul className="measure space-y-0">
       {items.map((item) => (
         <li key={item.slice(0, 28)} className="rule-t flex gap-4 py-4 first:border-t-0 first:pt-0">
-          <span aria-hidden="true" className="mt-2.5 h-px w-4 flex-none bg-accent" />
+          <span aria-hidden="true" className="mt-2.5 h-px w-4 flex-none bg-detail" />
           <span className="text-[0.95rem] leading-relaxed text-muted">{item}</span>
         </li>
       ))}

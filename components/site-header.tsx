@@ -85,7 +85,7 @@ export function SiteHeader() {
           className="group flex items-center gap-3 focus-visible:outline-offset-4"
           aria-label={`${profile.name} — home`}
         >
-          <Monogram className="h-6 w-8 text-fg transition-colors duration-200 group-hover:text-accent" />
+          <Monogram className="h-6 w-8 text-fg transition-colors duration-200 group-hover:text-detail" />
           <span className="flex flex-col leading-none">
             <span className="text-sm font-medium tracking-tight">{profile.name}</span>
             <span className="meta mt-1 hidden text-[0.625rem] text-faint sm:block">
@@ -102,7 +102,10 @@ export function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 aria-current={current ? 'page' : undefined}
-                className={`link link-sea text-sm ${current ? 'text-accent' : 'text-muted'}`}
+                className={[
+                  'link link-nav text-sm',
+                  current ? 'text-fg' : 'text-muted',
+                ].join(' ')}
               >
                 {link.label}
               </Link>

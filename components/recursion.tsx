@@ -322,7 +322,7 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
           {zooming ? (
             <p
               aria-hidden="true"
-              className="recursion-fade-in meta absolute bottom-6 left-4 bg-ink/90 px-2 py-1 font-mono text-accent md:left-8"
+              className="recursion-fade-in meta absolute bottom-6 left-4 bg-ink/90 px-2 py-1 font-mono text-detail md:left-8"
             >
               {elapsed >= OVERFLOW_AT
                 ? 'RangeError: Maximum call stack size exceeded'
@@ -363,7 +363,7 @@ function RecursionOverlay({ snapshot, onClose }: { snapshot: Snapshot; onClose: 
               ref={closeRef}
               type="button"
               onClick={onClose}
-              className="mt-10 inline-flex items-center justify-center bg-accent px-6 py-3.5 text-sm font-medium tracking-tight text-accent-fg transition-colors hover:bg-fg hover:text-bg"
+              className="mt-10 inline-flex items-center justify-center bg-accent px-6 py-3.5 text-sm font-medium tracking-tight text-accent-fg transition-colors hover:bg-action-hover hover:text-action-hover-fg"
             >
               Back to the (non-recursive) site
             </button>

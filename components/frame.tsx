@@ -44,7 +44,7 @@ export function Frame({
       </div>
       {(caption || image.illustrated) && (
         <figcaption className="meta mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-          {caption ? <span className="text-accent">{caption}</span> : <span />}
+          {caption ? <span className="text-detail">{caption}</span> : <span />}
           {image.illustrated ? (
             <span className="text-faint normal-case tracking-normal">
               Illustrated cover — not a screenshot
