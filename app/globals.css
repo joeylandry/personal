@@ -95,6 +95,13 @@
 @utility text-detail {
   color: var(--accent-detail);
 }
+/* Hover fill for solid actions, and the text that sits on it. */
+@utility bg-action-hover {
+  background-color: var(--action-hover);
+}
+@utility text-action-hover-fg {
+  color: var(--action-hover-fg);
+}
 /* Foreground for text sitting on an accent fill. */
 @utility text-accent-fg {
   color: var(--accent-fg);
@@ -140,6 +147,9 @@
   --accent-graphic: var(--color-sea);
   /* Readable ON the accent: ink on a bright amber fill. */
   --accent-fg: var(--color-ink);
+  /* Solid actions warm-to-cool on hover: amber fill, sea on hover. */
+  --action-hover: var(--color-sea);
+  --action-hover-fg: var(--color-ink);
   --shadow-key: rgb(0 0 0 / 0.5);
   color-scheme: dark;
 }
@@ -165,6 +175,9 @@
   --accent-graphic: #0b6d60;
   /* The paper accents are dark, so the fill needs light text on it. */
   --accent-fg: var(--color-paper);
+  /* The paper accent is already teal, so actions invert to ink on hover. */
+  --action-hover: var(--fg);
+  --action-hover-fg: var(--bg);
   --shadow-key: rgb(7 16 24 / 0.14);
   color-scheme: light;
 }
@@ -174,6 +187,9 @@
   --accent: var(--accent-sea);
   --accent-detail: var(--accent-sea);
   --accent-graphic: var(--accent-sea);
+  /* A sea fill can't hover to sea, so it inverts instead. */
+  --action-hover: var(--fg);
+  --action-hover-fg: var(--bg);
 }
 .accent-amber {
   --accent: var(--accent-amber);
