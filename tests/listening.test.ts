@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { notes } from '@/content';
 import { formatDate, formatDuration, timeAgo } from '@/lib/format';
-import { toNowPlaying, toRecent } from '@/lib/spotify';
+import {
+  parseOEmbed,
+  toNowPlaying,
+  toPlaylists,
+  toProfile,
+  toRecent,
+  toTrackPreview,
+} from '@/lib/spotify';
+import { canOptimizeImage } from '@/lib/spotify-images';
+import { mockListening, mockProfile } from '@/lib/spotify-mock';
 
 const track = (id: string, name = `Song ${id}`) => ({
   id,
@@ -51,6 +60,141 @@ describe('spotify parsing', () => {
     });
     expect(recent.map((play) => play.track.id)).toEqual(['a', 'b', 'a']);
     expect(toRecent(null)).toEqual([]);
+  });
+});
+
+describe('pinned track label', () => {
+  const url = 'https://open.spotify.com/track/x';
+
+  it('reads title and art from oEmbed, which has no artist', () => {
+    expect(
+      parseOEmbed(
+        { title: ' My Song ', thumbnail_url: 'https://image-cdn-ak.spotifycdn.com/image/abc' },
+        url,
+      ),
+    ).toEqual({
+      title: 'My Song',
+      artist: null,
+      art: 'https://image-cdn-ak.spotifycdn.com/image/abc',
+      url,
+    });
+  });
+
+  it('rejects an oEmbed answer without a title, and drops non-https art', () => {
+    expect(parseOEmbed(null, url)).toBeNull();
+    expect(parseOEmbed({ title: '' }, url)).toBeNull();
+    expect(parseOEmbed({ title: 'T', thumbnail_url: 'http://x' }, url)?.art).toBeNull();
+  });
+
+  it('reads the full label from the Web API track', () => {
+    expect(toTrackPreview(track('x'))).toEqual({
+      title: 'Song x',
+      artist: 'A, B',
+      art: 'mid',
+      url: 'https://open.spotify.com/track/x',
+    });
+    expect(toTrackPreview({ error: { status: 404 } })).toBeNull();
+    expect(toTrackPreview(null)).toBeNull();
+  });
+});
+
+describe('spotify profile', () => {
+  const playlist = (id: string, extra: Record<string, unknown> = {}) => ({
+    id,
+    name: `List ${id}`,
+    public: true,
+    owner: { id: 'me' },
+    images: [{ url: `cover-${id}`, width: 300 }],
+    external_urls: { spotify: `https://open.spotify.com/playlist/${id}` },
+    tracks: { total: 12 },
+    ...extra,
+  });
+
+  it('keeps public, non-empty playlists the user owns, up to the limit', () => {
+    const lists = toPlaylists(
+      {
+        items: [
+          playlist('a'),
+          playlist('private', { public: false }),
+          playlist('followed', { owner: { id: 'someone-else' } }),
+          playlist('empty', { tracks: { total: 0 } }),
+          null,
+          playlist('renamed', { tracks: undefined, items: { total: 7 }, images: [] }),
+          playlist('c'),
+        ],
+      },
+      'me',
+      2,
+    );
+    expect(lists).toEqual([
+      {
+        id: 'a',
+        name: 'List a',
+        cover: 'cover-a',
+        url: 'https://open.spotify.com/playlist/a',
+        tracks: 12,
+      },
+      {
+        id: 'renamed',
+        name: 'List renamed',
+        cover: null,
+        url: 'https://open.spotify.com/playlist/renamed',
+        tracks: 7,
+      },
+    ]);
+    expect(toPlaylists(null, 'me')).toEqual([]);
+  });
+
+  it('reads the user, falling back to the id for a missing name', () => {
+    const profile = toProfile(
+      {
+        id: 'me',
+        display_name: 'Joey',
+        images: [
+          { url: 'small', width: 64 },
+          { url: 'large', width: 300 },
+        ],
+        followers: { total: 42 },
+        external_urls: { spotify: 'https://open.spotify.com/user/me' },
+      },
+      { items: [playlist('a')] },
+      'me',
+    );
+    expect(profile).toMatchObject({
+      name: 'Joey',
+      avatar: 'large',
+      followers: 42,
+      url: 'https://open.spotify.com/user/me',
+    });
+    expect(profile?.playlists).toHaveLength(1);
+
+    expect(toProfile({ id: 'me', display_name: null }, null, 'me')).toEqual({
+      name: 'me',
+      avatar: null,
+      url: 'https://open.spotify.com/user/me',
+      followers: null,
+      playlists: [],
+    });
+    expect(toProfile(null, null, 'me')).toBeNull();
+  });
+
+  it('only optimizes images from configured hosts', () => {
+    expect(canOptimizeImage('https://i.scdn.co/image/abc')).toBe(true);
+    expect(canOptimizeImage('https://image-cdn-fa.spotifycdn.com/image/abc')).toBe(true);
+    expect(canOptimizeImage('https://example.com/i.scdn.co/abc')).toBe(false);
+    expect(canOptimizeImage('data:image/svg+xml,abc')).toBe(false);
+  });
+});
+
+describe('mock data', () => {
+  it('always has a song playing within its length, and some history', () => {
+    const now = Date.parse('2026-10-05T12:00:00Z');
+    const mock = mockListening(now);
+    expect(mock.configured).toBe(true);
+    expect(mock.nowPlaying?.isPlaying).toBe(true);
+    expect(mock.nowPlaying!.progressMs).toBeLessThan(mock.nowPlaying!.track.durationMs);
+    expect(mock.recent.length).toBeGreaterThan(0);
+    expect(mockProfile.playlists.length).toBe(6);
   });
 });
 
