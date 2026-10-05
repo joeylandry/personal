@@ -83,11 +83,12 @@ export function Hero() {
           </Reveal>
         </div>
 
-        {/* Meet Donny: the cat in the headline. */}
+        {/* Meet Donny: the cat in the headline. Sea for the label and hover frame
+            so the card stands off the amber foliage; only the name warms to amber. */}
         <Reveal immediate delay={600} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
-            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
+            className="accent-sea group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
           >
             <span className="relative block aspect-square w-24 shrink-0 overflow-hidden border border-rule md:w-full">
               <Image
@@ -100,7 +101,7 @@ export function Hero() {
             </span>
             <span className="block">
               <span className="meta block text-accent">The cat</span>
-              <span className="mt-2 flex items-center gap-2.5 text-xl font-medium tracking-tight text-fg transition-colors duration-200 group-hover:text-accent">
+              <span className="accent-amber mt-2 flex items-center gap-2.5 text-xl font-medium tracking-tight text-fg transition-colors duration-200 group-hover:text-accent">
                 Meet {donny.name}
                 <CtaArrow size={18} />
               </span>
