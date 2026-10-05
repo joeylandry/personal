@@ -32,7 +32,7 @@ export const profile = {
     kicker: 'About me',
     title: 'A New Englander who is usually making something.',
     body: [
-      'I’m New England from start to finish. I spent my summers in Nyes Neck on Cape Cod, went to Tufts just outside Boston, and now call Manchester, New Hampshire home. I love places with a little history and character: an old neighborhood, a diner that hasn’t changed in decades, or anywhere near the water.',
+      'I’m New England from start to finish. I spent my summers in Nyes Neck on Cape Cod, went to Tufts just outside Boston, and now call southern New Hampshire home. I love places with a little history and character: an old neighborhood, a diner that hasn’t changed in decades, or anywhere near the water.',
       'Outside of work, you will usually find me cooking, at the gym, out on a hike or in the water. I love good food, a good cocktail and any excuse to have people over (and yes, I put way too much thought into the details of a party). There is almost always music playing somewhere in the background, and Donny, my orange cat, is never far away.',
       'I am happiest when I am making something or chasing down a new idea. I care a lot about my family, my friends and the places that made me. I’m curious by nature, a little obsessive about the projects I love, and rarely bored.',
     ],
