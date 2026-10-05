@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { formatDuration, timeAgo } from '@/lib/format';
-import type { Track } from '@/lib/spotify';
+import type { NowPlaying, RecentPlay, Track } from '@/lib/spotify';
+import { canOptimizeImage } from '@/lib/spotify-images';
 import { refreshListening, useListening } from '@/lib/use-listening';
-import { ExternalLink } from './external-link';
 
 /** Three bars bouncing out of phase; frozen under reduced motion. */
 export function EqBars({ playing }: { playing: boolean }) {
@@ -22,19 +22,6 @@ export function EqBars({ playing }: { playing: boolean }) {
   );
 }
 
-function Art({ track, size }: { track: Track; size: number }) {
-  return (
-    <div
-      className="relative shrink-0 overflow-hidden border border-rule bg-ink-high"
-      style={{ width: size, height: size }}
-    >
-      {track.art ? (
-        <Image src={track.art} alt="" fill sizes={`${size}px`} className="object-cover" />
-      ) : null}
-    </div>
-  );
-}
-
 /**
  * Ticks once a second while a song plays, so the bar moves between polls, and
  * twice a minute otherwise to keep "12m ago" honest.
@@ -48,13 +35,25 @@ function useNow(active: boolean): number {
   return now;
 }
 
+interface PlayerState {
+  current: NowPlaying | null;
+  playing: boolean;
+  /** Extrapolated position of `current`, in ms. */
+  progress: number;
+  now: number;
+  /** The song in the big slot: what's on, or the last thing played. */
+  lead: Track;
+  /** When `lead` came from history, when it played. */
+  leadPlayedAt: string | null;
+  history: RecentPlay[];
+}
+
 /**
- * Sonos-style "now playing" card: the song on right now with a running
- * progress bar, or the last thing played, then a short history. Renders
- * nothing until Spotify is connected, so an unconfigured deploy just shows the
- * pinned track.
+ * Everything the player variants share: the polled data, a progress estimate
+ * that runs between polls, and an early re-poll when the song should have
+ * ended. Null while loading (`undefined`) or when there's nothing to show.
  */
-export function LivePlayer() {
+function usePlayer(): PlayerState | null | undefined {
   const { data, receivedAt } = useListening();
   const playing = data?.nowPlaying?.isPlaying ?? false;
   const now = useNow(playing);
@@ -76,89 +75,305 @@ export function LivePlayer() {
     refreshListening();
   }, [current, progress]);
 
-  if (data === null) {
-    return (
-      <div aria-hidden="true" className="h-[22rem] animate-pulse border border-rule bg-raised" />
-    );
-  }
+  if (data === null) return undefined;
   if (!data.configured || (!current && data.recent.length === 0)) return null;
 
   const lead = current?.track ?? data.recent[0]!.track;
   const history = (current ? data.recent : data.recent.slice(1)).filter(
     (play) => play.track.id !== current?.track.id,
   );
+  return {
+    current,
+    playing,
+    progress,
+    now,
+    lead,
+    leadPlayedAt: current ? null : (data.recent[0]?.playedAt ?? null),
+    history,
+  };
+}
 
+/* ---------------------------------------------------------------------------
+   Building blocks, shared by the full and compact players
+   --------------------------------------------------------------------------- */
+
+/** Rounded album art with a soft drop shadow, like Apple Music's. */
+export function Artwork({
+  track,
+  className = '',
+  sizes,
+  shadow = true,
+}: {
+  track: Track;
+  className?: string;
+  /** `sizes` for next/image; the art is rendered at the box's size. */
+  sizes: string;
+  shadow?: boolean;
+}) {
   return (
-    <div className="border border-rule bg-raised p-5 sm:p-6">
-      <div className="flex items-center gap-2.5">
-        {current ? <EqBars playing={playing} /> : null}
-        <p className="meta text-detail">
-          {playing ? 'Now playing' : current ? 'Paused' : 'Last played'}
-        </p>
-        {!current && data.recent[0] ? (
-          <p className="meta ml-auto text-faint">{timeAgo(data.recent[0].playedAt, now)}</p>
-        ) : null}
-      </div>
+    <div
+      className={`relative shrink-0 overflow-hidden bg-white/10 ${shadow ? 'glass-art-shadow' : ''} ${className}`}
+    >
+      {track.art ? (
+        <Image
+          src={track.art}
+          alt=""
+          fill
+          sizes={sizes}
+          unoptimized={!canOptimizeImage(track.art)}
+          className="object-cover"
+        />
+      ) : (
+        <span className="absolute inset-0 grid place-items-center text-white/40">
+          <NoteGlyph />
+        </span>
+      )}
+    </div>
+  );
+}
 
-      <div className="mt-5 flex items-center gap-5">
-        <Art track={lead} size={96} />
-        <div className="min-w-0">
-          <ExternalLink
-            href={lead.url}
-            className="link block truncate text-lg font-medium tracking-tight text-fg"
-          >
-            {lead.title}
-          </ExternalLink>
-          <p className="mt-1 truncate text-sm text-muted">{lead.artist}</p>
-          <p className="mt-0.5 truncate text-sm text-faint">{lead.album}</p>
-        </div>
-      </div>
+function NoteGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="40%" height="40%" fill="currentColor" aria-hidden="true">
+      <path d="M17 3.5v10.8a3.2 3.2 0 1 1-1.6-2.77V7.3L9.6 8.6v7.7a3.2 3.2 0 1 1-1.6-2.77V5.5a1 1 0 0 1 .78-.98l7.2-1.6A1 1 0 0 1 17 3.5Z" />
+    </svg>
+  );
+}
 
-      {current ? (
-        <div className="mt-5">
-          <div
-            role="progressbar"
-            aria-label="Song progress"
-            aria-valuemin={0}
-            aria-valuemax={Math.round(current.track.durationMs / 1000)}
-            aria-valuenow={Math.round(progress / 1000)}
-            aria-valuetext={`${formatDuration(progress)} of ${formatDuration(current.track.durationMs)}`}
-            className="h-1 overflow-hidden bg-rule"
-          >
-            <div
-              className="h-full bg-accent transition-[width] duration-1000 ease-linear"
-              style={{ width: `${(progress / current.track.durationMs) * 100}%` }}
+/** The album art again, blown up and blurred into a coloured glow behind the glass. */
+function Ambient({ track }: { track: Track }) {
+  return (
+    <div aria-hidden="true" className="glass-ambient">
+      {track.art ? (
+        <>
+          {['glass-ambient-a', 'glass-ambient-b'].map((layer) => (
+            <Image
+              key={layer}
+              src={track.art!}
+              alt=""
+              fill
+              sizes="96px"
+              unoptimized={!canOptimizeImage(track.art!)}
+              className={`${layer} object-cover`}
             />
-          </div>
-          <div className="meta mt-2 flex justify-between text-faint">
-            <span>{formatDuration(progress)}</span>
-            <span>{formatDuration(current.track.durationMs)}</span>
-          </div>
-        </div>
-      ) : null}
+          ))}
+        </>
+      ) : (
+        <div className="glass-ambient-fallback" />
+      )}
+      <div className="glass-ambient-tint" />
+    </div>
+  );
+}
 
-      {history.length > 0 ? (
-        <div className="mt-7">
-          <p className="meta text-faint">Recently played</p>
-          <ol className="mt-3">
-            {history.slice(0, 5).map((play) => (
-              <li key={play.playedAt} className="rule-t flex items-center gap-3 py-2.5">
-                <Art track={play.track} size={36} />
-                <div className="min-w-0 flex-1">
-                  <ExternalLink
-                    href={play.track.url}
-                    className="link block truncate text-sm text-fg"
-                  >
-                    {play.track.title}
-                  </ExternalLink>
-                  <p className="truncate text-xs text-muted">{play.track.artist}</p>
-                </div>
-                <p className="meta shrink-0 text-faint">{timeAgo(play.playedAt, now)}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+/** The small capsule in the corner: equaliser plus state. */
+function StatusPill({ state }: { state: PlayerState }) {
+  const label = state.playing ? 'Now playing' : state.current ? 'Paused' : 'Last played';
+  return (
+    <p className="glass-pill">
+      {state.current ? <EqBars playing={state.playing} /> : null}
+      <span>{label}</span>
+    </p>
+  );
+}
+
+/** Rounded progress capsule with elapsed time and time remaining, Apple style. */
+function ProgressCapsule({ current, progress }: { current: NowPlaying; progress: number }) {
+  const duration = current.track.durationMs;
+  return (
+    <div>
+      <div
+        role="progressbar"
+        aria-label="Song progress"
+        aria-valuemin={0}
+        aria-valuemax={Math.round(duration / 1000)}
+        aria-valuenow={Math.round(progress / 1000)}
+        aria-valuetext={`${formatDuration(progress)} of ${formatDuration(duration)}`}
+        className="glass-progress"
+      >
+        <div
+          className="glass-progress-fill"
+          style={{ width: `${Math.min(100, (progress / duration) * 100)}%` }}
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="mt-2 flex justify-between text-[11px] font-medium text-white/50 tabular-nums"
+      >
+        <span>{formatDuration(progress)}</span>
+        <span>−{formatDuration(duration - progress)}</span>
+      </div>
+    </div>
+  );
+}
+
+/** Title and artist, linking out to the song. */
+function TrackTitle({ track, size }: { track: Track; size: 'lg' | 'sm' }) {
+  return (
+    <div className="min-w-0">
+      <a
+        href={track.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`block truncate font-semibold tracking-tight text-white transition-opacity hover:opacity-75 ${
+          size === 'lg' ? 'text-xl sm:text-2xl lg:text-[1.75rem] lg:leading-tight' : 'text-[15px]'
+        }`}
+      >
+        {track.title}
+        <span className="sr-only"> (opens in a new tab)</span>
+      </a>
+      <p
+        className={`truncate text-white/65 ${size === 'lg' ? 'mt-1 text-base sm:text-lg' : 'text-[13px]'}`}
+      >
+        {track.artist}
+      </p>
+      {size === 'lg' ? (
+        <p className="mt-0.5 truncate text-sm text-white/40 sm:text-base">{track.album}</p>
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * "Recently played" as an iOS list: rounded art, inset separators, and a
+ * rounded highlight across the whole row, which is one link.
+ */
+function RecentList({ plays, now }: { plays: RecentPlay[]; now: number }) {
+  const headingId = useId();
+  return (
+    <section aria-labelledby={headingId} className="glass-panel">
+      <h3 id={headingId} className="px-3 pt-2 pb-1 text-[15px] font-semibold text-white">
+        Recently played
+      </h3>
+      <ol className="mt-1">
+        {plays.map((play) => (
+          <li key={play.playedAt} className="ios-row">
+            <a
+              href={play.track.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ios-row-link"
+            >
+              <Artwork
+                track={play.track}
+                sizes="44px"
+                shadow={false}
+                className="size-11 rounded-lg"
+              />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-medium text-white">
+                  {play.track.title}
+                </span>
+                <span className="block truncate text-[13px] text-white/55">
+                  {play.track.artist}
+                </span>
+              </span>
+              <span className="shrink-0 text-xs text-white/40 tabular-nums">
+                {timeAgo(play.playedAt, now)}
+              </span>
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function Skeleton({ variant }: { variant: 'full' | 'compact' }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`animate-pulse bg-raised ${
+        variant === 'full' ? 'h-[30rem] rounded-[28px] lg:h-[24rem]' : 'h-28 rounded-[22px]'
+      }`}
+    />
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   The player
+   --------------------------------------------------------------------------- */
+
+/**
+ * Apple-style "now playing" card on frosted glass over the album's own colours:
+ * the song on right now with a running progress capsule, or the last thing
+ * played, then a short history. Renders nothing until Spotify is connected, so
+ * an unconfigured deploy just shows the pinned record.
+ *
+ * `variant="compact"` is the widget-sized version (art, title, progress; no
+ * history) for tighter spots such as the home hero.
+ */
+export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' }) {
+  const state = usePlayer();
+  if (state === undefined) return <Skeleton variant={variant} />;
+  if (state === null) return null;
+
+  const { current, lead, history, now, progress, playing } = state;
+
+  if (variant === 'compact') {
+    return (
+      <div className="glass-card rounded-[22px]" data-playing={playing}>
+        <Ambient track={lead} />
+        <div className="relative flex items-center gap-3.5 p-3.5">
+          <Artwork track={lead} sizes="56px" className="size-14 rounded-xl" />
+          <div className="min-w-0 flex-1">
+            <TrackTitle track={lead} size="sm" />
+            {current ? (
+              <div className="mt-2">
+                <ProgressCapsule current={current} progress={progress} />
+              </div>
+            ) : null}
+          </div>
+          {current ? (
+            <span className="self-start pt-1">
+              <EqBars playing={playing} />
+            </span>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  const recent = history.slice(0, 5);
+  return (
+    <div className="glass-card rounded-[24px] sm:rounded-[32px]" data-playing={playing}>
+      <Ambient track={lead} />
+      <div
+        className={`relative grid gap-6 p-4 sm:p-7 lg:gap-8 lg:p-8 ${
+          recent.length > 0 ? 'lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]' : ''
+        }`}
+      >
+        <div className="flex min-w-0 flex-col p-1 sm:p-0">
+          <div className="flex items-center justify-between gap-3">
+            <StatusPill state={state} />
+            {state.leadPlayedAt ? (
+              <p className="text-xs font-medium text-white/50">
+                {timeAgo(state.leadPlayedAt, now)}
+              </p>
+            ) : (
+              <p className="text-xs font-medium text-white/50">Live from Spotify</p>
+            )}
+          </div>
+
+          <div className="mt-6 flex items-center gap-4 sm:mt-8 sm:gap-6 lg:flex-1">
+            <Artwork
+              track={lead}
+              sizes="(min-width: 1024px) 224px, (min-width: 640px) 168px, 96px"
+              className="glass-art size-24 rounded-2xl sm:size-42 lg:size-56"
+            />
+            <TrackTitle track={lead} size="lg" />
+          </div>
+
+          {current ? (
+            <div className="mt-6 sm:mt-8">
+              <ProgressCapsule current={current} progress={progress} />
+            </div>
+          ) : null}
+        </div>
+
+        {recent.length > 0 ? <RecentList plays={recent} now={now} /> : null}
+      </div>
     </div>
   );
 }
