@@ -5,11 +5,12 @@ import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from
 import type { ProjectImage } from '@/content';
 import { Corners } from './frame';
 
-/** Desktop viewport the thumbnail renders the live site at before scaling down. */
+/**
+ * Desktop viewport the thumbnail renders the live site at before scaling down.
+ * The iframe is exactly this size: sites size heroes in viewport units, so a
+ * taller frame blows them up instead of revealing more of the page.
+ */
 const VIEWPORT = { width: 1440, height: 900 };
-
-/** The iframe is this tall so hovering can glide down the page below the fold. */
-const PAGE_HEIGHT = VIEWPORT.height * 3;
 
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
 
@@ -114,9 +115,8 @@ export function LivePreview({
             style={
               {
                 width: VIEWPORT.width,
-                height: PAGE_HEIGHT,
+                height: VIEWPORT.height,
                 '--preview-scale': scale,
-                '--preview-travel': `${VIEWPORT.height - PAGE_HEIGHT}px`,
               } as CSSProperties
             }
           />
