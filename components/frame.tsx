@@ -56,8 +56,9 @@ export function Frame({
   );
 }
 
-function Corners() {
-  const shared = 'absolute h-2 w-2 border-tick';
+/** Four accent ticks on the corners of the nearest positioned box. */
+export function Corners({ className = '' }: { className?: string }) {
+  const shared = `absolute h-2 w-2 border-tick ${className}`.trim();
   return (
     <span aria-hidden="true">
       <span className={`${shared} -top-px -left-px border-t border-l`} />
