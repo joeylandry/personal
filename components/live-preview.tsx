@@ -9,21 +9,6 @@ const VIEWPORT = { width: 1440, height: 900 };
 
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
 
-function BrowserBar({ host }: { host: string }) {
-  return (
-    <div className="flex items-center gap-3 border-b border-rule bg-ink-raised px-3 py-2">
-      <span aria-hidden="true" className="flex gap-1.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-      </span>
-      <span className="meta min-w-0 flex-1 truncate rounded-sm bg-ink px-3 py-1 text-center text-[0.6875rem] normal-case tracking-normal text-fog">
-        {host}
-      </span>
-    </div>
-  );
-}
-
 /**
  * A live, scaled-down view of a project's production site. The static cover
  * shows until the iframe has loaded (or if the site refuses to be framed), and
@@ -92,7 +77,6 @@ export function LivePreview({
       className="group/preview block w-full border border-rule bg-raised text-left transition-colors hover:border-accent focus-visible:border-accent"
       aria-label={`Open ${name} (${host})`}
     >
-      <BrowserBar host={host} />
       <div
         ref={viewportRef}
         aria-hidden="true"
