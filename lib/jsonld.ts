@@ -1,5 +1,5 @@
 import { featuredProjects, profile, socials, timeline } from '@/content';
-import type { Project } from '@/content';
+import type { Note, Project } from '@/content';
 import { absoluteUrl, siteName, siteTitle, siteUrl } from './site';
 
 /**
@@ -71,6 +71,21 @@ export function projectSchema(project: Project) {
     author: { '@id': personId },
     keywords: project.stack.flatMap((group) => group.items).join(', '),
     image: absoluteUrl(project.image.src),
+    isPartOf: { '@id': websiteId },
+  };
+}
+
+export function articleSchema(note: Note) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': absoluteUrl(`/notes/${note.slug}#article`),
+    headline: note.title,
+    description: note.dek,
+    datePublished: note.date,
+    url: absoluteUrl(`/notes/${note.slug}`),
+    author: { '@id': personId },
+    keywords: note.tags.join(', '),
     isPartOf: { '@id': websiteId },
   };
 }

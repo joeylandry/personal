@@ -141,3 +141,29 @@ export interface StoryPhoto {
   height: number;
   caption: string;
 }
+
+/** One block of a note's body. Plain data, so a new post is a new object, not a new component. */
+export type NoteBlock =
+  | { type: 'p'; text: string }
+  | { type: 'h'; text: string }
+  | { type: 'quote'; text: string; cite?: string }
+  | { type: 'list'; items: string[] };
+
+/** A short post: a hot take, an opinion, a half-built idea. */
+export interface Note {
+  slug: string;
+  title: string;
+  /** One or two sentences under the title, and the meta description. */
+  dek: string;
+  /** YYYY-MM-DD. */
+  date: string;
+  tags: string[];
+  /**
+   * Drafts render in development and on Vercel previews, never in production,
+   * so a post can be read in place before it goes live.
+   */
+  draft?: boolean;
+  body: NoteBlock[];
+  /** Where the facts came from. */
+  sources?: { label: string; href: string }[];
+}

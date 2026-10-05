@@ -33,7 +33,12 @@ test.describe('homepage', () => {
     const pages = [
       { label: 'Work', path: '/work', ids: ['work'] },
       { label: 'Giving', path: '/giving', ids: ['giving'] },
-      { label: 'About', path: '/about', ids: ['about', 'donny', 'toolbox', 'exploring'] },
+      {
+        label: 'About',
+        path: '/about',
+        ids: ['about', 'donny', 'listening', 'toolbox', 'exploring'],
+      },
+      { label: 'Notes', path: '/notes', ids: ['notes'] },
       { label: 'Experience', path: '/experience', ids: ['experience'] },
       { label: 'Contact', path: '/contact', ids: ['contact'] },
     ];

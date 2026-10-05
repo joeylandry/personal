@@ -3,6 +3,7 @@ import { featuredProjects, profile, socials } from '@/content';
 import { buildStamp, navLinks } from '@/lib/site';
 import { Monogram } from './monogram';
 import { ExternalLink } from './external-link';
+import { NowPlayingTicker } from './now-playing-ticker';
 
 export function SiteFooter() {
   const year = buildStamp.slice(0, 4);
@@ -69,9 +70,12 @@ export function SiteFooter() {
       </div>
 
       <div className="wrap rule-t flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="meta text-faint">
-          © {year} {profile.name}
-        </p>
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+          <p className="meta shrink-0 text-faint">
+            © {year} {profile.name}
+          </p>
+          <NowPlayingTicker />
+        </div>
         <p className="meta text-faint">
           <span className="text-accent">build</span> {buildStamp} UTC ·{' '}
           <span className="normal-case tracking-normal italic">{profile.signature}</span>
