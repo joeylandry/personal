@@ -7,14 +7,17 @@ import type { Track } from '@/lib/spotify';
 import { refreshListening, useListening } from '@/lib/use-listening';
 import { ExternalLink } from './external-link';
 
-/** Three bars bouncing out of phase; frozen under reduced motion. */
+/** The Dynamic Island's six-bar waveform; frozen under reduced motion. */
 export function EqBars({ playing }: { playing: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className="eq inline-flex h-3 items-end gap-[2px]"
+      className="eq inline-flex h-3 items-center gap-[2px]"
       data-playing={playing}
     >
+      <span />
+      <span />
+      <span />
       <span />
       <span />
       <span />
