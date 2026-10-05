@@ -304,9 +304,14 @@
   .link:focus-visible {
     background-size: 100% 1px;
   }
-  /* Accent underline under muted text, e.g. the header nav. */
-  .link-accent {
-    background-image: linear-gradient(var(--accent), var(--accent));
+  /* Header nav: a detail-colored underline that draws in from the right (the
+     mirror of .link-on retracting) and stays drawn on the current page. */
+  .link-nav {
+    background-image: linear-gradient(var(--accent-detail), var(--accent-detail));
+    background-position: 100% 100%;
+  }
+  .link-nav[aria-current='page'] {
+    background-size: 100% 1px;
   }
 
   /* Persistent underline that retracts on hover — used where the link is the
