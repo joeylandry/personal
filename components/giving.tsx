@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { GivingChapter, StoryPhoto } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
+import { FormingTimeline } from './forming-timeline';
 import { Pennant } from './pennant';
 import { Section } from './section';
 
@@ -79,30 +80,33 @@ export function GivingIntro() {
   );
 }
 
-/** Photos for one chapter: one photo full width, three as a portrait plus a stack. */
+/**
+ * Photos for one chapter: one photo full width, three as a portrait plus a
+ * stack. `sizes` allows for the timeline showing them larger before they
+ * settle into their column.
+ */
 function ChapterPhotos({ chapter }: { chapter: GivingChapter }) {
   const [first, ...rest] = chapter.photos;
   if (!first) return null;
   if (rest.length === 0) {
-    const portrait = first.height > first.width;
-    return (
-      <Photo
-        photo={first}
-        sizes="(min-width: 768px) 60vw, 100vw"
-        className={portrait ? 'mx-auto max-w-md md:mx-0' : ''}
-      />
-    );
+    return <Photo photo={first} sizes="(min-width: 1280px) 1100px, 100vw" />;
   }
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      <Photo photo={first} sizes="(min-width: 768px) 30vw, 100vw" />
+      <Photo photo={first} sizes="(min-width: 768px) 50vw, 100vw" />
       <div className="space-y-6">
         {rest.map((photo) => (
-          <Photo key={photo.src} photo={photo} sizes="(min-width: 768px) 30vw, 100vw" />
+          <Photo key={photo.src} photo={photo} sizes="(min-width: 768px) 50vw, 100vw" />
         ))}
       </div>
     </div>
   );
+}
+
+/** A lone portrait photo sits narrower so it doesn't fill the screen. */
+function isLonePortrait(chapter: GivingChapter) {
+  const [first, ...rest] = chapter.photos;
+  return Boolean(first && rest.length === 0 && first.height > first.width);
 }
 
 export function GivingTimeline() {
@@ -116,13 +120,15 @@ export function GivingTimeline() {
           </h2>
         </div>
 
-        <ol className="mt-14 md:mt-20">
+        <FormingTimeline className="mt-14 md:mt-20">
           {giving.chapters.map((chapter) => (
             <li
               key={chapter.title}
-              className="grid gap-x-10 gap-y-8 border-t border-rule py-12 md:grid-cols-12 md:py-16"
+              data-chapter
+              className="relative grid gap-x-10 gap-y-8 py-12 md:grid-cols-12 md:py-16"
             >
-              <div className="md:col-span-4">
+              <span aria-hidden="true" className="tl-node" />
+              <div className="tl-text md:col-span-4">
                 <div className="md:sticky md:top-28">
                   <p className="meta text-detail">{chapter.year ?? 'Early years'}</p>
                   <h3 className="mt-3 text-heading font-medium tracking-tight">{chapter.title}</h3>
@@ -130,11 +136,15 @@ export function GivingTimeline() {
                 </div>
               </div>
               <div className="md:col-span-8">
-                <ChapterPhotos chapter={chapter} />
+                <div
+                  className={`tl-photos ${isLonePortrait(chapter) ? 'mx-auto max-w-md md:mx-0' : ''}`}
+                >
+                  <ChapterPhotos chapter={chapter} />
+                </div>
               </div>
             </li>
           ))}
-        </ol>
+        </FormingTimeline>
       </div>
     </Section>
   );

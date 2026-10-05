@@ -425,6 +425,98 @@
   transform: translate3d(0, var(--parallax, 0px), 0);
 }
 
+/* Forming timeline (Giving). The resting state below is the finished
+   timeline; `[data-forming]` is only set by script, never under reduced
+   motion, and hands every moving part to the progress properties it writes:
+   --rail (how far the rail has drawn), and per chapter --tl-scale/--tl-shift
+   (photo size and position), --tl-text and --tl-node (0 → 1). */
+.forming-timeline {
+  --tl-gutter: 2.25rem;
+  --tl-x: 0.3125rem;
+  position: relative;
+  padding-left: var(--tl-gutter);
+}
+@media (min-width: 48rem) {
+  .forming-timeline {
+    --tl-gutter: 4rem;
+    --tl-x: 0.75rem;
+  }
+}
+
+/* The rail: a faint track, and a drawn line over it. */
+.forming-timeline::before,
+.forming-timeline::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--tl-x);
+  width: 1px;
+  pointer-events: none;
+}
+.forming-timeline::before {
+  background: var(--rule);
+}
+.forming-timeline::after {
+  background: linear-gradient(
+    to bottom,
+    var(--accent-detail),
+    color-mix(in srgb, var(--accent-detail) 55%, transparent)
+  );
+  transform-origin: top;
+  transform: scaleY(var(--rail, 1));
+}
+
+/* One node per chapter, level with the year label, with a short tick out to
+   the text. */
+.tl-node {
+  position: absolute;
+  top: 3.25rem;
+  left: calc(var(--tl-x) + 0.5px - var(--tl-gutter) - 0.34375rem);
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border-radius: 9999px;
+  background: var(--bg);
+  border: 1px solid var(--accent-detail);
+  box-shadow: 0 0 0 4px var(--bg);
+  transform: scale(calc(0.4 + 0.6 * var(--tl-node, 1)));
+}
+.tl-node::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: var(--accent-detail);
+  opacity: var(--tl-node, 1);
+}
+.tl-node::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 0.375rem);
+  width: calc(var(--tl-gutter) - var(--tl-x) - 1.25rem);
+  height: 1px;
+  background: color-mix(in srgb, var(--accent-detail) 55%, transparent);
+  transform-origin: left;
+  transform: scaleX(var(--tl-node, 1));
+}
+@media (min-width: 48rem) {
+  .tl-node {
+    top: 4.25rem;
+  }
+}
+
+[data-forming] .tl-text {
+  opacity: var(--tl-text);
+  transform: translate3d(0, calc((1 - var(--tl-text)) * 1.5rem), 0);
+}
+[data-forming] .tl-photos {
+  position: relative;
+  transform-origin: top left;
+  transform: translate3d(var(--tl-shift), 0, 0) scale(var(--tl-scale));
+  will-change: transform;
+}
+
 /* Live previews: the scale fits the desktop page to the card. */
 .preview-page {
   transform: scale(var(--preview-scale, 1));
