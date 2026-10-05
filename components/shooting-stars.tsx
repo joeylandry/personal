@@ -49,6 +49,17 @@ const STREAKS: Streak[] = [
   { x: 760, y: 70, angle: 24, length: 110, cycle: 17, offset: 10 },
   { x: 1230, y: 400, angle: 28, length: 130, cycle: 15, offset: 7 },
   { x: 520, y: 650, angle: 24, length: 120, cycle: 19, offset: 14 },
+  { x: 1080, y: 180, angle: 22, length: 170, cycle: 13, offset: 9 },
+  { x: 380, y: 260, angle: 27, length: 100, cycle: 16, offset: 1 },
+  { x: 1400, y: 300, angle: 25, length: 140, cycle: 11, offset: 6 },
+  { x: 960, y: 520, angle: 29, length: 115, cycle: 18, offset: 4 },
+  { x: 640, y: 380, angle: 23, length: 135, cycle: 14, offset: 12 },
+  { x: 220, y: 480, angle: 26, length: 95, cycle: 21, offset: 17 },
+  { x: 1180, y: 620, angle: 24, length: 125, cycle: 16, offset: 11 },
+  // A little shower: three near-parallel streaks a beat apart.
+  { x: 1020, y: 40, angle: 25, length: 160, cycle: 23, offset: 20 },
+  { x: 1060, y: 110, angle: 25, length: 120, cycle: 23, offset: 19.6 },
+  { x: 980, y: 150, angle: 25, length: 100, cycle: 23, offset: 19.2 },
 ];
 
 /** Faint points of light: x, y, radius, and a twinkle offset in seconds. */
@@ -65,6 +76,12 @@ const POINTS: [number, number, number, number][] = [
   [300, 700, 0.9, 2.9],
   [1420, 160, 0.9, 0.6],
   [980, 300, 0.8, 3.3],
+  [560, 420, 1, 2.4],
+  [1320, 520, 1.2, 0.9],
+  [740, 260, 0.8, 4.1],
+  [200, 300, 1, 1.7],
+  [1100, 720, 0.9, 3.8],
+  [620, 30, 1.1, 2],
 ];
 
 /** A four-point sparkle, the head of a wishing star. */
