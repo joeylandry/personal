@@ -30,11 +30,11 @@ export const profile = {
 
   about: {
     kicker: 'About me',
-    title: 'Happiest on the water, or halfway through building something.',
+    title: 'A New Englander who is usually making something.',
     body: [
-      'I grew up spending every summer in Nyes Neck, a small neighborhood on Cape Cod. Weekends meant boat days out to Bassetts Island, sunsets over Buzzards Bay and a neighborhood that showed up for each other. A lot of who I am still comes from that place.',
-      'I like making things, and I like doing it with my own hands. That started with handmade signs and custom Nyes Neck merch for my fundraisers, and somewhere along the way it turned into software. Today I’m a software engineer at Fidelity, a Tufts CS grad, and the person who stays up too late building one more feature on a side project.',
-      'Outside of code, you will find me camping on Bassetts Island with my best friend (a tradition we keep every summer), cooking over a fire, or on whatever dance floor is playing Whitney Houston. I care about community, I love a good party, and I am happiest when I can bring people together.',
+      'I’m New England from start to finish. I spent my summers in Nyes Neck on Cape Cod, went to Tufts just outside Boston, and now call Manchester, New Hampshire home. I love places with a little history and character: an old neighborhood, a diner that hasn’t changed in decades, or anywhere near the water.',
+      'Outside of work, you will usually find me cooking, at the gym, out on a hike or in the water. I love good food, a good cocktail and any excuse to have people over (and yes, I put way too much thought into the details of a party). There is almost always music playing somewhere in the background, and Donny, my orange cat, is never far away.',
+      'I am happiest when I am making something or chasing down a new idea. I care a lot about my family, my friends and the places that made me. I’m curious by nature, a little obsessive about the projects I love, and rarely bored.',
     ],
     /** Pull-quote rendered as an editorial aside. */
     aside: {
@@ -45,11 +45,11 @@ export const profile = {
 
   /** Off-the-clock list beside the About intro. From Joey's own writing. */
   offClock: [
-    { label: 'Boat days', detail: 'Buzzards Bay, out to Bassetts Island' },
-    { label: 'Camping', detail: 'One night on Bassetts Island, every summer' },
-    { label: 'On repeat', detail: 'Remi Wolf, and Whitney Houston on any dance floor' },
-    { label: 'Cooking', detail: 'Steaks over a campfire, and the occasional bake' },
-    { label: 'Building', detail: 'Side projects, usually late at night, usually with Donny' },
+    { label: 'In the kitchen', detail: 'Cooking, baking and feeding whoever shows up' },
+    { label: 'Outside somewhere', detail: 'Hiking, swimming, or anywhere near the water' },
+    { label: 'Playing host', detail: 'Good food, cocktails, music and a full house' },
+    { label: 'Cape Cod bound', detail: 'Nyes Neck will always feel like home' },
+    { label: 'Donny duty', detail: 'Life with one very involved orange cat' },
   ],
 
   contact: {
