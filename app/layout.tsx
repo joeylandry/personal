@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: siteTitle,
-    template: '%s — Joey Landry',
+    template: '%s | Joey Landry',
   },
   description: profile.metaDescription,
   applicationName: 'Joey Landry',
@@ -65,7 +65,12 @@ const JS_FLAG = "document.documentElement.dataset.js='on'";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    // JS_FLAG adds data-js before hydration; the warning only covers <html>'s own attributes.
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: JS_FLAG }} />
         <script

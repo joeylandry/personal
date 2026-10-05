@@ -2,7 +2,7 @@
   "name": "joeylandry-personal",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal brand site for Joey Landry \u2014 software engineer and independent builder.",
+  "description": "Personal brand site for Joey Landry, software engineer and independent builder.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

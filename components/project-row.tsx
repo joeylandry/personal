@@ -68,7 +68,7 @@ export function ProjectRow({
         )}
       >
         <Heading className="text-heading font-medium tracking-tight">
-          <Link href={`/work/${project.slug}`} className="link-on">
+          <Link href={`/work/${project.slug}`} className="link">
             {project.name}
           </Link>
         </Heading>

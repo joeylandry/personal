@@ -4,8 +4,9 @@ import { ProjectRow } from './project-row';
 import { Section, SectionHeading } from './section';
 
 /**
- * The featured projects. On /work it opens the page; on the homepage it is a
- * teaser section under the hero, pointing on to the full work page.
+ * The featured projects. On the homepage it is a teaser under the hero; /work
+ * opens with the same section, so the two read identically. Only the heading
+ * level and the right-hand aside change.
  */
 export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
   return (
@@ -14,13 +15,12 @@ export function FeaturedWork({ teaser = false }: { teaser?: boolean }) {
       surface="paper"
       divider={teaser}
       labelledBy="work-heading"
-      className={teaser ? 'pt-12 pb-20 md:pt-16 md:pb-28' : 'py-16 md:py-24'}
+      className="pt-12 pb-20 md:pt-16 md:pb-28"
     >
       <div className="wrap">
         <SectionHeading
           id="work-heading"
           level={teaser ? 2 : 1}
-          label={teaser ? undefined : 'Work'}
           title="Recent Work"
           lead="Every project here is live, built end to end, and actively maintained."
           aside={

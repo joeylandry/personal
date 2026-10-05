@@ -19,23 +19,22 @@ export const profile = {
     eyebrow: 'Joey Landry · Merrimack, NH',
     headline: ['Building software', 'alone in the woods', 'with a cat.'],
     support:
-      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products — from community-powered commerce and local-business discovery to tools that make giving back easier.",
+      "I'm a software engineer at Fidelity and a Tufts CS graduate. After hours, I design and build full-stack products, from community-powered commerce and local-business discovery to tools that make giving back easier.",
     primaryCta: { label: "See what I've built", href: '/work' },
     secondaryCta: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/josephlandry/' },
   },
 
   /** Short bio used for meta descriptions and structured data. */
   metaDescription:
-    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours — e-commerce, content platforms and location tools.',
+    'Joey Landry is a software engineer at Fidelity and a Tufts CS graduate who designs and ships full-stack products after hours: e-commerce, content platforms and location tools.',
 
   about: {
-    kicker: 'Where it started',
-    title: 'I like the moment an idea stops being hypothetical.',
+    kicker: 'About me',
+    title: 'Happiest on the water, or halfway through building something.',
     body: [
-      'That started early. At nine, I set up a lemonade stand and sold bracelets in a Cape Cod neighborhood called Nyes Neck. The first year raised $50 for Make-A-Wish Massachusetts and Rhode Island.',
-      'The neighborhood kept showing up. Over nine years it grew into movie nights, raffles, apparel, live music and community events, and together we raised more than $20,000.',
-      'At Tufts I learned how to turn that same instinct into software. Today I am an associate software engineer at Fidelity, and outside of work I keep building: storefronts, content platforms, location tools, event systems and security games.',
-      'The thread is ownership. I like the whole path — from a rough idea to something real people can actually use.',
+      'I grew up spending every summer in Nyes Neck, a small neighborhood on Cape Cod. Weekends meant boat days out to Bassetts Island, sunsets over Buzzards Bay and a neighborhood that showed up for each other. A lot of who I am still comes from that place.',
+      'I like making things, and I like doing it with my own hands. That started with handmade signs and custom Nyes Neck merch for my fundraisers, and somewhere along the way it turned into software. Today I’m a software engineer at Fidelity, a Tufts CS grad, and the person who stays up too late building one more feature on a side project.',
+      'Outside of code, you will find me camping on Bassetts Island with my best friend (a tradition we keep every summer), cooking over a fire, or on whatever dance floor is playing Whitney Houston. I care about community, I love a good party, and I am happiest when I can bring people together.',
     ],
     /** Pull-quote rendered as an editorial aside. */
     aside: {
@@ -44,16 +43,13 @@ export const profile = {
     },
   },
 
-  /** Milestones for the origin/impact story. Verified facts only. */
-  impact: [
-    { year: '2013', label: 'A lemonade stand and bracelets in Nyes Neck', value: '$50 raised' },
-    { year: '2013—2021', label: 'Movie nights, raffles, apparel, live music', value: '9 years' },
-    {
-      year: 'Total',
-      label: 'Raised for Make-A-Wish Massachusetts and Rhode Island',
-      value: '$20,000+',
-    },
-    { year: 'Today', label: 'Nyes Neck Clothing & Apparel supports St. Jude', value: 'Ongoing' },
+  /** Off-the-clock list beside the About intro. From Joey's own writing. */
+  offClock: [
+    { label: 'Boat days', detail: 'Buzzards Bay, out to Bassetts Island' },
+    { label: 'Camping', detail: 'One night on Bassetts Island, every summer' },
+    { label: 'On repeat', detail: 'Remi Wolf, and Whitney Houston on any dance floor' },
+    { label: 'Cooking', detail: 'Steaks over a campfire, and the occasional bake' },
+    { label: 'Building', detail: 'Side projects, usually late at night, usually with Donny' },
   ],
 
   contact: {
@@ -78,7 +74,7 @@ export const explorations: Exploration[] = [
   {
     index: '01',
     title: 'AI-assisted development',
-    body: 'How much of the distance between an idea and a working product AI actually removes — and which parts of engineering judgement it does not.',
+    body: 'How much of the distance between an idea and a working product AI actually removes, and which parts of engineering judgement it does not.',
   },
   {
     index: '02',
@@ -88,6 +84,6 @@ export const explorations: Exploration[] = [
   {
     index: '03',
     title: 'Small products, real communities',
-    body: 'Focused digital products that make a specific group of people better off — a neighborhood, a taproom, a table of friends — rather than software built for everyone and no one.',
+    body: 'Focused digital products that make a specific group of people better off (a neighborhood, a taproom, a table of friends) rather than software built for everyone and no one.',
   },
 ];

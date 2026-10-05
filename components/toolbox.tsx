@@ -11,9 +11,8 @@ export function Toolbox() {
       <div className="wrap py-20 md:py-28">
         <SectionHeading
           id="toolbox-heading"
-          label="Toolbox"
           title="What I reach for, and why."
-          lead="Scoped to the things I've actually shipped with — the production work above is where each of these earned its place."
+          lead="Scoped to the things I've actually shipped with. The production work above is where each of these earned its place."
         />
 
         <div className="mt-14 grid gap-x-10 gap-y-0 md:mt-20 md:grid-cols-2">

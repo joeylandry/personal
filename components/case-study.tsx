@@ -69,7 +69,7 @@ export function CaseStudyHeader({ project }: { project: Project }) {
                   <OutboundArrow />
                 </RecursionTrigger>
               ) : (
-                <span className="text-muted">—</span>
+                <span className="text-muted">Not public yet</span>
               )}
             </dd>
           </div>

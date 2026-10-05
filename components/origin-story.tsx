@@ -3,7 +3,7 @@ import { Coastline } from './coastline';
 import { Section } from './section';
 
 export function OriginStory() {
-  const { about, impact } = profile;
+  const { about, offClock } = profile;
 
   return (
     <Section
@@ -47,18 +47,17 @@ export function OriginStory() {
           </div>
         </div>
 
-        {/* Impact ledger — verified milestones only. */}
+        {/* Off the clock: the things that aren't on a resume. */}
         <div className="md:col-span-4 md:col-start-9">
-          <h2 className="meta text-faint">Make-A-Wish · Nyes Neck</h2>
-          <ol className="mt-6 space-y-0">
-            {impact.map((entry) => (
-              <li key={entry.year} className="rule-t py-5 first:border-t-0 first:pt-0">
-                <p className="meta text-detail">{entry.year}</p>
-                <p className="mt-2 text-xl font-medium tracking-tight text-fg">{entry.value}</p>
-                <p className="mt-1.5 text-sm leading-snug text-muted">{entry.label}</p>
+          <h2 className="meta text-faint">Off the clock</h2>
+          <ul className="mt-6">
+            {offClock.map((entry) => (
+              <li key={entry.label} className="rule-t py-5 first:border-t-0 first:pt-0">
+                <p className="meta text-detail">{entry.label}</p>
+                <p className="mt-2 text-base leading-snug text-fg">{entry.detail}</p>
               </li>
             ))}
-          </ol>
+          </ul>
         </div>
       </div>
     </Section>

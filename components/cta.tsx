@@ -8,7 +8,11 @@ const base =
 const variants = {
   /** Filled accent — one per view, reserved for the primary action.
    *  Both the fill and its text flip per surface so the pair always clears AA. */
-  solid: 'bg-accent text-accent-fg hover:bg-action-hover hover:text-action-hover-fg',
+  solid:
+    'border border-transparent bg-accent text-accent-fg hover:bg-action-hover hover:text-action-hover-fg',
+  /** The solid action's mirror on ink: a sea fill that warms to amber on hover,
+   *  so a pair of them reads as opposites at rest and on hover. */
+  sea: 'border border-sea bg-sea text-ink hover:border-amber hover:bg-amber',
   /** Hairline outline for secondary actions. */
   outline: 'border border-rule-strong text-fg hover:border-detail hover:text-accent',
 } as const;

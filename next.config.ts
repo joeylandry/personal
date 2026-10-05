@@ -3,6 +3,15 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      // Notes became the Blog.
+      { source: '/notes', destination: '/blog', permanent: true },
+      { source: '/notes/:slug', destination: '/blog/:slug', permanent: true },
+      // The experience page folded into About.
+      { source: '/experience', destination: '/about#education', permanent: true },
+    ];
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     // Spotify album art for the live player.

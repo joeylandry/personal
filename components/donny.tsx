@@ -12,7 +12,7 @@ function Tile({ photo }: { photo: StoryPhoto }) {
             src={photo.src}
             alt={photo.alt}
             fill
-            sizes="(min-width: 1024px) 26vw, (min-width: 640px) 30vw, 50vw"
+            sizes="(min-width: 768px) 336px, 50vw"
             className="object-cover"
           />
         </div>
@@ -22,10 +22,10 @@ function Tile({ photo }: { photo: StoryPhoto }) {
   );
 }
 
-/** About page: Donny then and now. */
+/** About page: Donny as a kitten and now, two photos each. */
 export function DonnySection() {
   const rows = [
-    { label: 'Then', photos: donny.then },
+    { label: 'Kitty', photos: donny.then },
     { label: 'Now', photos: donny.now },
   ];
 
@@ -33,12 +33,12 @@ export function DonnySection() {
     <Section id="donny" surface="ink" labelledBy="donny-heading">
       <div className="wrap py-20 md:py-28">
         <div>
-          <p className="meta section-label">The coworker</p>
+          <p className="meta section-label">My business partner</p>
           <h2 id="donny-heading" className="mt-5 text-title font-medium">
             Meet {donny.name}.
           </h2>
           <p className="measure mt-5 text-lead text-muted">
-            Every late-night build ships with a second opinion.
+            He has never written a line of code, but he has sat on the keyboard for most of mine.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export function DonnySection() {
           {rows.map((row) => (
             <div key={row.label} className="grid gap-x-6 gap-y-6 md:grid-cols-12">
               <p className="meta text-detail md:col-span-1 md:pt-1">{row.label}</p>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:col-span-11">
+              <div className="grid max-w-2xl grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:col-span-11">
                 {row.photos.map((photo) => (
                   <Tile key={photo.src} photo={photo} />
                 ))}

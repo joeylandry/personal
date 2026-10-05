@@ -5,23 +5,22 @@ import { publishedNotes } from '@/content';
 import { formatDate } from '@/lib/format';
 
 export const metadata: Metadata = {
-  title: 'Notes',
+  title: 'Blog',
   description:
-    'Hot takes, opinions and half-built ideas from Joey Landry — on software, products and the apps that should be better.',
-  alternates: { canonical: '/notes' },
-  openGraph: { title: 'Notes — Joey Landry', url: '/notes' },
+    'Hot takes, opinions and half-built ideas from Joey Landry on software, products and the apps that should be better.',
+  alternates: { canonical: '/blog' },
+  openGraph: { title: 'Blog | Joey Landry', url: '/blog' },
 };
 
-export default function NotesPage() {
+export default function BlogPage() {
   return (
-    <Section id="notes" divider={false} labelledBy="notes-heading">
+    <Section id="blog" divider={false} labelledBy="blog-heading">
       <div className="wrap py-16 md:py-24">
         <SectionHeading
           level={1}
-          id="notes-heading"
-          label="Notes"
+          id="blog-heading"
           title="Hot takes & half-built ideas."
-          lead="Short opinions on software and the products I use every day — mostly the ones I think I could make better."
+          lead="Short opinions on software and the products I use every day, mostly the ones I think I could make better."
         />
 
         {publishedNotes.length === 0 ? (
@@ -31,7 +30,7 @@ export default function NotesPage() {
             {publishedNotes.map((note) => (
               <li key={note.slug} className="rule-t">
                 <Link
-                  href={`/notes/${note.slug}`}
+                  href={`/blog/${note.slug}`}
                   className="group grid gap-x-10 gap-y-3 py-8 md:grid-cols-12 md:py-10"
                 >
                   <div className="meta text-faint md:col-span-3 md:pt-1.5">

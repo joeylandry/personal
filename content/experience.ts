@@ -8,7 +8,7 @@ export const timeline: TimelineEntry[] = [
   {
     org: 'Fidelity Investments',
     title: 'Associate Software Engineer',
-    period: 'Aug 2026 — Present',
+    period: 'Aug 2026 to present',
     start: '2026-08',
     end: null,
     location: 'Merrimack, New Hampshire',
@@ -19,7 +19,7 @@ export const timeline: TimelineEntry[] = [
   {
     org: 'Tufts University',
     title: 'B.S. Computer Science',
-    period: 'Sep 2022 — May 2026',
+    period: 'Sep 2022 to May 2026',
     start: '2022-09',
     end: '2026-05',
     kind: 'education',
@@ -29,7 +29,7 @@ export const timeline: TimelineEntry[] = [
   {
     org: 'Fidelity Investments',
     title: 'Software Engineer Intern',
-    period: 'Jun — Aug 2025',
+    period: 'Jun to Aug 2025',
     start: '2025-06',
     end: '2025-08',
     location: 'Merrimack, New Hampshire',
@@ -40,7 +40,7 @@ export const timeline: TimelineEntry[] = [
   {
     org: 'Distributor Corporation of New England',
     title: 'Software Development Intern',
-    period: 'May — Aug 2024',
+    period: 'May to Aug 2024',
     start: '2024-05',
     end: '2024-08',
     location: 'Malden, Massachusetts',
@@ -50,7 +50,7 @@ export const timeline: TimelineEntry[] = [
   {
     org: 'Tufts University',
     title: 'Student Worker',
-    period: 'Jan — May 2024',
+    period: 'Jan to May 2024',
     start: '2024-01',
     end: '2024-05',
     kind: 'work',
