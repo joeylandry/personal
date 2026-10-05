@@ -288,6 +288,10 @@
   .link:focus-visible {
     background-size: 100% 1px;
   }
+  /* Accent underline under muted text, e.g. the header nav. */
+  .link-accent {
+    background-image: linear-gradient(var(--accent), var(--accent));
+  }
 
   /* Persistent underline that retracts on hover — used where the link is the
      primary action and should already look like one. */
