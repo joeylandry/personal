@@ -38,7 +38,6 @@ export function ProjectRow({
             host={displayHost(project.liveUrl)}
             name={project.name}
             fallback={project.image}
-            page={project.pageCapture}
           />
         ) : project.recursionTrigger ? (
           // This site's own card previews its home page, and clicking it recurses.

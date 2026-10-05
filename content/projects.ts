@@ -23,7 +23,6 @@ export const projects: Project[] = [
     summary:
       'A Cape Cod lifestyle and apparel brand that grew out of nine years of fundraising for Make-A-Wish, now a mission-driven store with a portion of proceeds supporting St. Jude Children’s Research Hospital. I own the brand, the design and the whole stack — Next.js storefront, Sanity content operations, and a Printful product boundary.',
     liveUrl: 'https://www.nyesneck.shop',
-    pageCapture: { src: '/images/projects/nyes-neck-page.webp', width: 1440, height: 2997 },
     highlights: ['Next.js 16', 'Sanity CMS', 'Printful', 'Tailwind 4'],
     stack: [
       { label: 'Framework', items: ['Next.js 16 (App Router)', 'React 19', 'TypeScript'] },
@@ -128,7 +127,6 @@ export const projects: Project[] = [
     summary:
       'A production website and content platform for a growing local brewery: beer pages, events, taproom information and a location-aware beer finder, plus a CMS the team actually uses to keep it current.',
     liveUrl: 'https://www.drinkarlingtonbeer.com',
-    pageCapture: { src: '/images/projects/arlington-brewing-page.webp', width: 1440, height: 3877 },
     highlights: ['Next.js 16', 'Sanity CMS', 'Leaflet', 'Geocoding'],
     stack: [
       { label: 'Framework', items: ['Next.js 16', 'React 19', 'TypeScript'] },
