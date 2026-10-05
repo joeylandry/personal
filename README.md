@@ -119,6 +119,12 @@ with none of them set.
 **Pinned song.** `content/listening.ts` holds the "My mind currently" track id; swap it for any
 `open.spotify.com/track/<id>`. It renders with Spotify's embed, so it needs no setup.
 
+**Spotify window.** The About page's listening section is a copy of my Spotify profile:
+library, profile header, top artists (`content/listening.ts`, images in
+`public/images/spotify/`, cropped from a screenshot). That part is a hand-kept snapshot, so
+update it by hand. The right-hand panel and the player bar along the bottom are live, and when
+Spotify isn't connected they show the snapshot's song (`onRepeat`).
+
 **Live player.** `GET /api/now-playing` reads your currently-playing track and recent plays
 from Spotify (CDN-cached for 10s), and the About page polls it every 20s while the tab is
 visible. One-time setup:

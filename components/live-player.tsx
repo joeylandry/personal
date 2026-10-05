@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { formatDuration, timeAgo } from '@/lib/format';
-import type { Track } from '@/lib/spotify';
 import { refreshListening, useListening } from '@/lib/use-listening';
+import { listening } from '@/content';
 import { ExternalLink } from './external-link';
 
 /*
@@ -55,17 +55,13 @@ export function EqBars({ playing }: { playing: boolean }) {
   );
 }
 
-function Art({ track, size }: { track: Track; size: number }) {
-  return (
-    <div
-      className="relative shrink-0 overflow-hidden border border-rule bg-ink-high"
-      style={{ width: size, height: size }}
-    >
-      {track.art ? (
-        <Image src={track.art} alt="" fill sizes={`${size}px`} className="object-cover" />
-      ) : null}
-    </div>
-  );
+/** Whatever the player should show: a live track, or the snapshot's fallback. */
+interface Shown {
+  title: string;
+  artist: string;
+  art: string | null;
+  url: string;
+  durationMs: number;
 }
 
 /**
@@ -82,12 +78,10 @@ function useNow(active: boolean): number {
 }
 
 /**
- * Sonos-style "now playing" card: the song on right now with a running
- * progress bar, or the last thing played, then a short history. Renders
- * nothing until Spotify is connected, so an unconfigured deploy just shows the
- * pinned track.
+ * The song on right now with its running progress, or the last thing played,
+ * or — before Spotify answers, or on a deploy without it — the snapshot's song.
  */
-export function LivePlayer() {
+function useLiveTrack() {
   const { data, receivedAt } = useListening();
   const playing = data?.nowPlaying?.isPlaying ?? false;
   const now = useNow(playing);
@@ -109,89 +103,215 @@ export function LivePlayer() {
     refreshListening();
   }, [current, progress]);
 
-  if (data === null) {
-    return (
-      <div aria-hidden="true" className="h-[22rem] animate-pulse border border-rule bg-raised" />
-    );
-  }
-  if (!data.configured || (!current && data.recent.length === 0)) return null;
+  const recent = data?.recent ?? [];
+  const lastPlayed = current ? null : (recent[0] ?? null);
+  const fallback = listening.onRepeat;
 
-  const lead = current?.track ?? data.recent[0]!.track;
-  const history = (current ? data.recent : data.recent.slice(1)).filter(
+  const track: Shown = current?.track ?? lastPlayed?.track ?? fallback;
+  const status = playing
+    ? 'Now playing'
+    : current
+      ? 'Paused'
+      : lastPlayed
+        ? `Last played · ${timeAgo(lastPlayed.playedAt, now)}`
+        : 'On repeat';
+  const history = (current ? recent : recent.slice(1)).filter(
     (play) => play.track.id !== current?.track.id,
   );
 
+  return {
+    track,
+    status,
+    playing,
+    live: Boolean(current),
+    progress: current ? progress : lastPlayed ? 0 : fallback.progressMs,
+    history,
+    now,
+  };
+}
+
+function Art({
+  src,
+  size,
+  className = '',
+}: {
+  src: string | null;
+  size: number;
+  className?: string;
+}) {
   return (
-    <div className="border border-rule bg-raised p-5 sm:p-6">
+    <div
+      className={`relative shrink-0 overflow-hidden rounded bg-[#282828] ${className}`}
+      style={{ width: size, height: size }}
+    >
+      {src ? <Image src={src} alt="" fill sizes={`${size}px`} className="object-cover" /> : null}
+    </div>
+  );
+}
+
+function Check() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true" className="size-4 shrink-0 text-[#1ed760]">
+      <circle cx="8" cy="8" r="8" fill="currentColor" />
+      <path d="M4.6 8.3l2.2 2.2 4.6-4.7" fill="none" stroke="#000" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
+/** Spotify's right-hand panel: big cover, title, and a short history when live. */
+export function NowPlayingPanel() {
+  const { track, status, playing, live, history, now } = useLiveTrack();
+
+  return (
+    <div>
       <div className="flex items-center gap-2.5">
-        {current ? <EqBars playing={playing} /> : null}
-        <p className="meta text-detail">
-          {playing ? 'Now playing' : current ? 'Paused' : 'Last played'}
-        </p>
-        {!current && data.recent[0] ? (
-          <p className="meta ml-auto text-faint">{timeAgo(data.recent[0].playedAt, now)}</p>
+        {live ? <EqBars playing={playing} /> : null}
+        <p className="text-sm font-bold text-white">{status}</p>
+      </div>
+      <div className="relative mt-4 aspect-square w-full overflow-hidden rounded-lg bg-[#282828]">
+        {track.art ? (
+          <Image
+            src={track.art}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 18rem, 80vw"
+            className="object-cover"
+          />
         ) : null}
       </div>
-
-      <div className="mt-5 flex items-center gap-5">
-        <Art track={lead} size={96} />
+      <div className="mt-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <ExternalLink
-            href={lead.url}
-            className="link block truncate text-lg font-medium tracking-tight text-fg"
+            href={track.url}
+            className="block truncate text-2xl font-bold tracking-tight text-white hover:underline"
           >
-            {lead.title}
+            {track.title}
           </ExternalLink>
-          <p className="mt-1 truncate text-sm text-muted">{lead.artist}</p>
-          <p className="mt-0.5 truncate text-sm text-faint">{lead.album}</p>
+          <p className="mt-0.5 truncate text-sm text-[#b3b3b3]">{track.artist}</p>
         </div>
+        <span className="mt-2">
+          <Check />
+        </span>
       </div>
 
-      {current ? (
-        <div className="mt-5">
-          <div
-            role="progressbar"
-            aria-label="Song progress"
-            aria-valuemin={0}
-            aria-valuemax={Math.round(current.track.durationMs / 1000)}
-            aria-valuenow={Math.round(progress / 1000)}
-            aria-valuetext={`${formatDuration(progress)} of ${formatDuration(current.track.durationMs)}`}
-            className="h-1 overflow-hidden bg-rule"
-          >
-            <div
-              className="h-full bg-accent transition-[width] duration-1000 ease-linear"
-              style={{ width: `${(progress / current.track.durationMs) * 100}%` }}
-            />
-          </div>
-          <div className="meta mt-2 flex justify-between text-faint">
-            <span>{formatDuration(progress)}</span>
-            <span>{formatDuration(current.track.durationMs)}</span>
-          </div>
-        </div>
-      ) : null}
-
       {history.length > 0 ? (
-        <div className="mt-7">
-          <p className="meta text-faint">Recently played</p>
-          <ol className="mt-3">
-            {history.slice(0, 5).map((play) => (
-              <li key={play.playedAt} className="rule-t flex items-center gap-3 py-2.5">
-                <Art track={play.track} size={36} />
+        <div className="mt-6 rounded-lg bg-[#242424] p-4">
+          <p className="text-sm font-bold text-white">Recently played</p>
+          <ol className="mt-3 space-y-3">
+            {history.slice(0, 4).map((play) => (
+              <li key={play.playedAt} className="flex items-center gap-3">
+                <Art src={play.track.art} size={40} />
                 <div className="min-w-0 flex-1">
                   <ExternalLink
                     href={play.track.url}
-                    className="link block truncate text-sm text-fg"
+                    className="block truncate text-sm text-white hover:underline"
                   >
                     {play.track.title}
                   </ExternalLink>
-                  <p className="truncate text-xs text-muted">{play.track.artist}</p>
+                  <p className="truncate text-xs text-[#b3b3b3]">{play.track.artist}</p>
                 </div>
-                <p className="meta shrink-0 text-faint">{timeAgo(play.playedAt, now)}</p>
+                <p className="shrink-0 text-xs text-[#b3b3b3]">{timeAgo(play.playedAt, now)}</p>
               </li>
             ))}
           </ol>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+/* Spotify's transport glyphs, drawn small. Decorative: this player can't steer mine. */
+const glyph = 'size-4 fill-current';
+const Shuffle = () => (
+  <svg viewBox="0 0 16 16" className={glyph} aria-hidden="true">
+    <path d="M13.2 2.5l2.3 2.2-2.3 2.3v-1.5h-1.4c-.9 0-1.7.4-2.2 1.1L5.7 12a4 4 0 01-3.2 1.6H.5V12h2a2.4 2.4 0 001.9-1L8.3 5.6a4 4 0 013.4-1.6h1.5zM.5 3.9h2a4 4 0 013.2 1.6l.6.8-1 1.3-.9-1.1a2.4 2.4 0 00-1.9-1H.5zm8.5 6.4l.6.8c.5.7 1.3 1.1 2.2 1.1h1.4v-1.5l2.3 2.3-2.3 2.2v-1.5h-1.5a4 4 0 01-3.2-1.6l-.5-.6z" />
+  </svg>
+);
+const Previous = () => (
+  <svg viewBox="0 0 16 16" className={glyph} aria-hidden="true">
+    <path d="M3.3 1a.7.7 0 01.7.7v5.1l9.3-5.4a.7.7 0 011 .6v12a.7.7 0 01-1 .6L4 9.2v5.1a.7.7 0 01-1.4 0V1.7a.7.7 0 01.7-.7z" />
+  </svg>
+);
+const Next = () => (
+  <svg viewBox="0 0 16 16" className={glyph} aria-hidden="true">
+    <path d="M12.7 1a.7.7 0 00-.7.7v5.1L2.7 1.4a.7.7 0 00-1 .6v12a.7.7 0 001 .6L12 9.2v5.1a.7.7 0 001.4 0V1.7a.7.7 0 00-.7-.7z" />
+  </svg>
+);
+const Repeat = () => (
+  <svg viewBox="0 0 16 16" className={glyph} aria-hidden="true">
+    <path d="M0 4.75A3.75 3.75 0 013.75 1h8.5A3.75 3.75 0 0116 4.75v5a3.75 3.75 0 01-3.75 3.75H9.81l1 1-1.06 1.06L6.94 12.7l2.81-2.8 1.06 1.06-.99 1h2.43a2.25 2.25 0 002.25-2.25v-5a2.25 2.25 0 00-2.25-2.25h-8.5A2.25 2.25 0 001.5 4.75v5A2.25 2.25 0 003.75 12H5v1.5H3.75A3.75 3.75 0 010 9.75z" />
+  </svg>
+);
+
+/** The bar along the bottom of the window: current song, transport, progress. */
+export function PlayerBar() {
+  const { track, playing, live, progress } = useLiveTrack();
+  const pct = track.durationMs ? (progress / track.durationMs) * 100 : 0;
+
+  return (
+    <div className="grid items-center gap-4 px-2 py-3 sm:grid-cols-[1fr_minmax(0,2fr)_1fr]">
+      <div className="flex min-w-0 items-center gap-3">
+        <Art src={track.art} size={56} />
+        <div className="min-w-0">
+          <p className="truncate text-sm text-white">{track.title}</p>
+          <p className="truncate text-xs text-[#b3b3b3]">{track.artist}</p>
+        </div>
+        <Check />
+      </div>
+
+      <div className="min-w-0">
+        <div
+          aria-hidden="true"
+          className="hidden items-center justify-center gap-6 text-[#b3b3b3] sm:flex"
+        >
+          <span className="text-[#1ed760]">
+            <Shuffle />
+          </span>
+          <Previous />
+          <span className="grid size-8 place-items-center rounded-full bg-white text-black">
+            {playing ? (
+              <svg viewBox="0 0 16 16" className="size-3.5 fill-current">
+                <rect x="3" y="2" width="3.5" height="12" rx=".7" />
+                <rect x="9.5" y="2" width="3.5" height="12" rx=".7" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 16 16" className="size-3.5 fill-current">
+                <path d="M3.5 2.1a.7.7 0 011-.6l10 5.9a.7.7 0 010 1.2l-10 5.9a.7.7 0 01-1-.6z" />
+              </svg>
+            )}
+          </span>
+          <Next />
+          <Repeat />
+        </div>
+        <div className="flex items-center gap-2 text-xs text-[#b3b3b3] sm:mt-2">
+          <span className="w-9 text-right tabular-nums">{formatDuration(progress)}</span>
+          <div
+            role="progressbar"
+            aria-label="Song progress"
+            aria-valuemin={0}
+            aria-valuemax={Math.round(track.durationMs / 1000)}
+            aria-valuenow={Math.round(progress / 1000)}
+            aria-valuetext={`${formatDuration(progress)} of ${formatDuration(track.durationMs)}`}
+            className="h-1 flex-1 overflow-hidden rounded-full bg-[#4d4d4d]"
+          >
+            <div
+              className={`h-full rounded-full bg-white ${live ? 'transition-[width] duration-1000 ease-linear' : ''}`}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span className="w-9 tabular-nums">{formatDuration(track.durationMs)}</span>
+        </div>
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="hidden items-center justify-end gap-3 text-[#b3b3b3] sm:flex"
+      >
+        <svg viewBox="0 0 16 16" className={glyph}>
+          <path d="M9.7 2.1A.7.7 0 0111 2.6v10.8a.7.7 0 01-1.2.5L6.2 10.6H2.7A1.7 1.7 0 011 8.9V7.1c0-.9.8-1.7 1.7-1.7h3.5z" />
+        </svg>
+        <span className="h-1 w-24 rounded-full bg-white" />
+      </div>
     </div>
   );
 }

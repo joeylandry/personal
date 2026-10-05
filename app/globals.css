@@ -805,3 +805,8 @@
     display: none !important;
   }
 }
+
+/* The Spotify window on /about (components/listening.tsx) keeps Spotify's green waveform. */
+.spotify .eq > span {
+  background-color: #1ed760;
+}
