@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Spotify album art for the live player.
+    remotePatterns: [{ protocol: 'https', hostname: 'i.scdn.co' }],
   },
   async headers() {
     return [

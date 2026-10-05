@@ -102,10 +102,7 @@ export function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 aria-current={current ? 'page' : undefined}
-                className={[
-                  'link text-sm transition-colors duration-200',
-                  current ? 'text-accent' : 'text-muted hover:text-fg',
-                ].join(' ')}
+                className={`link link-sea text-sm ${current ? 'text-accent' : 'text-muted'}`}
               >
                 {link.label}
               </Link>

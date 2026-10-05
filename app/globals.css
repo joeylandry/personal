@@ -289,6 +289,11 @@
     background-size: 100% 1px;
   }
 
+  /* Header nav: the underline is the whole hover effect, drawn in sea. */
+  .link-sea {
+    background-image: linear-gradient(var(--color-sea), var(--color-sea));
+  }
+
   /* Persistent underline that retracts on hover — used where the link is the
      primary action and should already look like one. */
   .link-on {
@@ -430,6 +435,42 @@
 
 .caret {
   animation: caret 1.25s steps(1, end) infinite;
+}
+
+/* Now-playing equaliser (components/live-player.tsx). Paused or under reduced
+   motion the bars sit still at staggered heights. */
+.eq > span {
+  width: 3px;
+  background-color: var(--accent);
+}
+.eq > span:nth-child(1) {
+  height: 45%;
+}
+.eq > span:nth-child(2) {
+  height: 100%;
+}
+.eq > span:nth-child(3) {
+  height: 65%;
+}
+.eq[data-playing='true'] > span {
+  animation: eq 0.9s ease-in-out infinite alternate;
+}
+.eq[data-playing='true'] > span:nth-child(2) {
+  animation-duration: 0.7s;
+  animation-delay: -0.3s;
+}
+.eq[data-playing='true'] > span:nth-child(3) {
+  animation-duration: 1.1s;
+  animation-delay: -0.6s;
+}
+
+@keyframes eq {
+  from {
+    height: 20%;
+  }
+  to {
+    height: 100%;
+  }
 }
 
 /* --------------------------------------------------------------------------
