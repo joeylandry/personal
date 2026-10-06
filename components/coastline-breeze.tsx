@@ -6,15 +6,16 @@ import { useEffect, useRef } from 'react';
  * Wind for the contour field (coastline.tsx).
  *
  * Renders nothing visible: it finds the field's lines and, every frame,
- * redraws the shared curve with a wave travelling downwind along it, so the
- * lines flap together like strings held at the left edge. The wave grows
- * toward the free end and swells and eases with the gusts. Never starts
- * under reduced motion, and idles while the field is off screen.
+ * redraws the shared curve with a long, slow wave rolling in from the right,
+ * so the lines drift together like loose strings in a beach breeze. Nothing
+ * holds either end down; the whole length moves alike, swelling and easing
+ * with the gusts. Never starts under reduced motion, and idles while the
+ * field is off screen.
  */
 const SAMPLES = 120;
-const WAVELENGTH = 300;
-const SPEED = 140; // viewBox units per second, left to right
-const AMPLITUDE = 16;
+const WAVELENGTH = 520;
+const SPEED = 38; // viewBox units per second, right to left
+const AMPLITUDE = 13;
 
 export function CoastlineBreeze({ curve }: { curve: string }) {
   const anchor = useRef<SVGGElement>(null);
@@ -40,8 +41,6 @@ export function CoastlineBreeze({ curve }: { curve: string }) {
       ys[i] = point.y;
     }
     guide.remove();
-    const x0 = xs[0] ?? 0;
-    const span = (xs[SAMPLES] ?? 0) - x0 || 1;
     const k = (Math.PI * 2) / WAVELENGTH;
 
     let frame = 0;
@@ -50,20 +49,18 @@ export function CoastlineBreeze({ curve }: { curve: string }) {
 
     const draw = (now: number) => {
       const t = (now - start) / 1000;
-      // Gusts: slow, uneven swells in strength.
-      const gust = 0.7 + 0.22 * Math.sin(t * 0.37) + 0.12 * Math.sin(t * 1.13 + 1.7);
+      // Gusts: slow, uneven swells in strength, like an onshore breeze.
+      const gust = 0.75 + 0.18 * Math.sin(t * 0.16) + 0.1 * Math.sin(t * 0.41 + 1.7);
       let d = '';
       for (let i = 0; i <= SAMPLES; i++) {
         const x = xs[i] ?? 0;
         const y = ys[i] ?? 0;
-        const u = (x - x0) / span; // 0 at the held end, 1 at the free end
-        const reach = 0.15 + 0.85 * u * u;
-        const phase = k * x - t * SPEED * k;
-        const wave =
-          Math.sin(phase) + 0.35 * Math.sin(phase * 2.3 + 0.8) + 0.15 * Math.sin(phase * 4.1 - t);
-        const dy = AMPLITUDE * gust * reach * wave;
-        // A little stretch downwind as the line is pulled taut.
-        const dx = 6 * gust * u * Math.cos(phase);
+        // Plus sign: the wave travels toward smaller x, downwind from the right.
+        const phase = k * x + t * SPEED * k;
+        const wave = Math.sin(phase) + 0.3 * Math.sin(phase * 1.7 + 0.8);
+        const dy = AMPLITUDE * gust * wave;
+        // The breeze also nudges the lines a touch downwind (leftward).
+        const dx = -4 * gust * (1 + Math.cos(phase)) * 0.5;
         d += `${i === 0 ? 'M' : 'L'}${(x + dx).toFixed(1)} ${(y + dy).toFixed(1)}`;
       }
       for (const line of lines) line.setAttribute('d', d);
