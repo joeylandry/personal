@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache';
-import { fetchProfile, fetchTrackPreview, spotifyMock } from './spotify';
-import type { SpotifyProfile, TrackPreview } from './spotify';
-import { mockProfile, mockTrackPreview } from './spotify-mock';
+import { fetchProfile, fetchTopArtists, fetchTrackPreview, spotifyMock } from './spotify';
+import type { Artist, SpotifyProfile, TrackPreview } from './spotify';
+import { mockProfile, mockTopArtists, mockTrackPreview } from './spotify-mock';
 
 /**
  * Cached server reads for the About page's music section.
@@ -20,6 +20,10 @@ const cachedTrackPreview = unstable_cache(fetchTrackPreview, ['spotify-track-pre
 
 const cachedProfile = unstable_cache(fetchProfile, ['spotify-profile'], { revalidate: 3_600 });
 
+const cachedTopArtists = unstable_cache(fetchTopArtists, ['spotify-top-artists'], {
+  revalidate: 21_600,
+});
+
 /** The pinned song's label, or null to show a neutral one. */
 export async function getTrackPreview(id: string): Promise<TrackPreview | null> {
   if (spotifyMock()) return mockTrackPreview;
@@ -37,5 +41,15 @@ export async function getSpotifyProfile(userId: string): Promise<SpotifyProfile 
     return await cachedProfile(userId);
   } catch {
     return null;
+  }
+}
+
+/** Top artists for the profile card, or an empty list to leave the row out. */
+export async function getTopArtists(): Promise<Artist[]> {
+  if (spotifyMock()) return mockTopArtists;
+  try {
+    return (await cachedTopArtists()) ?? [];
+  } catch {
+    return [];
   }
 }

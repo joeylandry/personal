@@ -1,5 +1,5 @@
 import { listening, spotifyEmbedUrl, spotifyTrackUrl } from '@/content';
-import { getSpotifyProfile, getTrackPreview } from '@/lib/spotify-cache';
+import { getSpotifyProfile, getTopArtists, getTrackPreview } from '@/lib/spotify-cache';
 import { ExternalLink } from './external-link';
 import { LivePlayer } from './live-player';
 import { RecordPlayer } from './record-player';
@@ -12,9 +12,10 @@ import { SpotifyProfileCard } from './spotify-profile';
  */
 export async function ListeningSection() {
   const { pinned, profile } = listening;
-  const [preview, spotifyProfile] = await Promise.all([
+  const [preview, spotifyProfile, topArtists] = await Promise.all([
     getTrackPreview(pinned.spotifyId),
     getSpotifyProfile(listening.profileId),
+    getTopArtists(),
   ]);
 
   return (
@@ -53,6 +54,9 @@ export async function ListeningSection() {
             url={listening.profileUrl}
             username={listening.profileId}
             fallbackName={profile.name}
+            fallbackAvatar={profile.avatar}
+            topArtists={topArtists}
+            topArtistsLabel={profile.topArtistsLabel}
             label={profile.label}
             blurb={profile.blurb}
             cta={profile.cta}

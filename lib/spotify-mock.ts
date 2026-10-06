@@ -6,7 +6,7 @@
  * with these fixed, made-up tracks instead of calling Spotify. The cover art is
  * inline SVG, so the preview works offline too. Never set it in production.
  */
-import type { Listening, SpotifyProfile, Track, TrackPreview } from './spotify';
+import type { Artist, Listening, SpotifyProfile, Track, TrackPreview } from './spotify';
 
 /** A made-up album cover: a soft two-tone gradient with a sun or a horizon. */
 function cover(from: string, to: string, motif: 'sun' | 'waves' | 'rings' | 'grid'): string {
@@ -127,3 +127,17 @@ export const mockProfile: SpotifyProfile = {
     tracks: tracks as number,
   })),
 };
+
+export const mockTopArtists: Artist[] = [
+  ['The Low Tides', '#1b1f4b', '#f08a7e', 'sun'],
+  ['Coastal Radio', '#0f4c5c', '#72d6c9', 'waves'],
+  ['June Avenue', '#5b2a48', '#f08a7e', 'rings'],
+  ['Marisol Vega', '#3a2a12', '#e7c36a', 'sun'],
+  ['Hollis & the Weather', '#233329', '#a6d785', 'grid'],
+  ['Night Ferry', '#10242f', '#9b8cff', 'rings'],
+].map(([name, from, to, motif], index) => ({
+  id: `mock-artist-${index}`,
+  name: name as string,
+  image: cover(from as string, to as string, motif as 'sun'),
+  url: 'https://open.spotify.com',
+}));

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { canOptimizeImage } from '@/lib/spotify-images';
-import type { SpotifyProfile } from '@/lib/spotify';
+import type { Artist, SpotifyProfile } from '@/lib/spotify';
 import { OutboundArrow } from './external-link';
 
 function plural(count: number, word: string): string {
@@ -36,16 +36,59 @@ function Avatar({ src, name }: { src: string | null; name: string }) {
   );
 }
 
+/** Top artists as a row of round portraits, the way Spotify shows them. */
+function TopArtists({ artists, label }: { artists: Artist[]; label: string }) {
+  return (
+    <div className="mt-8 lg:mt-10">
+      <p className="text-sm font-semibold tracking-tight text-white sm:text-base">{label}</p>
+      <ul className="mt-4 grid grid-cols-3 gap-x-3 gap-y-5 sm:gap-x-4 lg:grid-cols-6">
+        {artists.map((artist) => (
+          <li key={artist.id}>
+            <a
+              href={artist.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block rounded-2xl text-center outline-offset-4"
+            >
+              <span className="relative mx-auto block aspect-square w-full max-w-[9rem] overflow-hidden rounded-full bg-white/10 shadow-[0_14px_30px_-14px_rgb(0_0_0/0.7)] ring-1 ring-white/10 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-[1.03] group-focus-visible:-translate-y-1">
+                {artist.image ? (
+                  <Image
+                    src={artist.image}
+                    unoptimized={!canOptimizeImage(artist.image)}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 144px, 30vw"
+                    className="object-cover"
+                  />
+                ) : null}
+              </span>
+              <span className="mt-2.5 block truncate text-[13px] font-medium text-white sm:mt-3 sm:text-[15px]">
+                {artist.name}
+              </span>
+              <span className="block text-xs text-white/50 sm:text-[13px]">Artist</span>
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /**
- * A preview of the public Spotify profile: who, how many followers, and the
- * newest public playlists, each linking out. With `profile` null (Spotify not
- * configured or not answering) it is a plain card with the same link.
+ * A preview of the public Spotify profile: who, how many followers, the top
+ * artists of the month and the newest public playlists, each linking out.
+ * With `profile` null (Spotify not configured or not answering) it is a plain
+ * card with the same link, still wearing Joey's own photo.
  */
 export function SpotifyProfileCard({
   profile,
   url,
   username,
   fallbackName,
+  fallbackAvatar,
+  topArtists = [],
+  topArtistsLabel,
   label,
   blurb,
   cta,
@@ -55,6 +98,11 @@ export function SpotifyProfileCard({
   /** Shown, with `fallbackName`, when the profile itself couldn't be read. */
   username: string;
   fallbackName: string;
+  /** Used whenever Spotify doesn't send a profile photo. */
+  fallbackAvatar: string;
+  /** Empty leaves the row out, e.g. before the token has `user-top-read`. */
+  topArtists?: Artist[];
+  topArtistsLabel: string;
   label: string;
   blurb: string;
   cta: string;
@@ -72,7 +120,7 @@ export function SpotifyProfileCard({
       <div className="relative p-5 sm:p-8 lg:p-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4 sm:gap-5">
-            <Avatar src={profile?.avatar ?? null} name={name} />
+            <Avatar src={profile?.avatar ?? fallbackAvatar} name={name} />
             <div className="min-w-0">
               <p className="text-xs font-medium tracking-wide text-white/50 uppercase">{label}</p>
               <p className="mt-1 truncate text-xl font-semibold tracking-tight text-white sm:text-2xl">
@@ -95,44 +143,51 @@ export function SpotifyProfileCard({
           </a>
         </div>
 
+        {topArtists.length > 0 ? <TopArtists artists={topArtists} label={topArtistsLabel} /> : null}
+
         {profile && profile.playlists.length > 0 ? (
-          <ul className="mt-8 grid grid-cols-3 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:mt-10 lg:grid-cols-6">
-            {profile.playlists.map((playlist) => (
-              <li key={playlist.id}>
-                <a
-                  href={playlist.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block rounded-2xl outline-offset-4"
-                >
-                  <span className="relative block aspect-square overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 shadow-[0_14px_30px_-14px_rgb(0_0_0/0.7)] ring-1 ring-white/10 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-[1.02] group-focus-visible:-translate-y-1">
-                    {playlist.cover ? (
-                      <Image
-                        src={playlist.cover}
-                        unoptimized={!canOptimizeImage(playlist.cover)}
-                        alt=""
-                        fill
-                        sizes="(min-width: 1024px) 180px, 30vw"
-                        className="object-cover"
-                      />
-                    ) : null}
-                  </span>
-                  <span className="mt-2.5 block truncate text-[13px] font-medium text-white sm:mt-3 sm:text-[15px]">
-                    {playlist.name}
-                  </span>
-                  {playlist.tracks !== null ? (
-                    <span className="block text-xs text-white/50 sm:text-[13px]">
-                      {plural(playlist.tracks, 'song')}
+          <>
+            <p className="mt-8 text-sm font-semibold tracking-tight text-white sm:text-base lg:mt-10">
+              Playlists
+            </p>
+            <ul className="mt-4 grid grid-cols-3 gap-x-3 gap-y-5 sm:gap-x-4 sm:gap-y-6 lg:grid-cols-6">
+              {profile.playlists.map((playlist) => (
+                <li key={playlist.id}>
+                  <a
+                    href={playlist.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block rounded-2xl outline-offset-4"
+                  >
+                    <span className="relative block aspect-square overflow-hidden rounded-xl sm:rounded-2xl bg-white/10 shadow-[0_14px_30px_-14px_rgb(0_0_0/0.7)] ring-1 ring-white/10 transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-[1.02] group-focus-visible:-translate-y-1">
+                      {playlist.cover ? (
+                        <Image
+                          src={playlist.cover}
+                          unoptimized={!canOptimizeImage(playlist.cover)}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 180px, 30vw"
+                          className="object-cover"
+                        />
+                      ) : null}
                     </span>
-                  ) : null}
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
+                    <span className="mt-2.5 block truncate text-[13px] font-medium text-white sm:mt-3 sm:text-[15px]">
+                      {playlist.name}
+                    </span>
+                    {playlist.tracks !== null ? (
+                      <span className="block text-xs text-white/50 sm:text-[13px]">
+                        {plural(playlist.tracks, 'song')}
+                      </span>
+                    ) : null}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : topArtists.length === 0 ? (
           <p className="mt-6 max-w-[46ch] text-base text-white/60">{blurb}</p>
-        )}
+        ) : null}
       </div>
     </div>
   );
