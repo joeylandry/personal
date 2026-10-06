@@ -28,6 +28,7 @@ interface EmbedController {
   loadUri(uri: string): void;
   play(): void;
   togglePlay(): void;
+  seek(seconds: number): void;
   destroy(): void;
 }
 
@@ -89,6 +90,11 @@ export interface PinnedState {
   pinned: RecordTrack | null;
   /** True once anything has played; the header's island shows from then on. */
   started: boolean;
+  /** Where the song was at `at` (ms), and how long it runs (ms); 0 until known. */
+  position: number;
+  duration: number;
+  /** When `position` was read (`performance.now()`), to run the clock between updates. */
+  at: number;
 }
 
 let state: PinnedState = {
@@ -97,6 +103,9 @@ let state: PinnedState = {
   track: null,
   pinned: null,
   started: false,
+  position: 0,
+  duration: 0,
+  at: 0,
 };
 const listeners = new Set<() => void>();
 let controller: EmbedController | null = null;
@@ -175,7 +184,13 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
               clearTimeout(wantPlay);
               wantPlay = null;
             }
-            set({ playing, started: state.started || playing });
+            set({
+              playing,
+              started: state.started || playing,
+              position: event.data.position,
+              duration: event.data.duration,
+              at: performance.now(),
+            });
           });
         },
       );
@@ -191,6 +206,13 @@ export function togglePinned() {
   controller?.togglePlay();
 }
 
+/** Back to the top of whatever is on the record. */
+export function restartPinned() {
+  if (!controller) return;
+  controller.seek(0);
+  set({ position: 0, at: performance.now() });
+}
+
 /** Puts a song on the record and starts it, on every record at once. */
 export function playOnRecord(track: RecordTrack) {
   if (state.status === 'failed') {
@@ -203,14 +225,14 @@ export function playOnRecord(track: RecordTrack) {
     return;
   }
   loadAndPlay(track.id);
-  set({ track: track.id === pinnedId ? null : track });
+  set({ track: track.id === pinnedId ? null : track, position: 0, duration: 0 });
 }
 
 /** Puts the pinned song back on the record. */
 export function backToPinned() {
   if (!controller || !pinnedId) return;
   loadAndPlay(pinnedId);
-  set({ track: null });
+  set({ track: null, position: 0, duration: 0 });
 }
 
 function subscribe(listener: () => void) {
@@ -224,6 +246,9 @@ const serverState: PinnedState = {
   track: null,
   pinned: null,
   started: false,
+  position: 0,
+  duration: 0,
+  at: 0,
 };
 
 export function usePinned(): PinnedState {

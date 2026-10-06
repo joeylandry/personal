@@ -1515,3 +1515,19 @@
     scale: 1.08;
   }
 }
+
+/* --- Mini Now Playing (components/pinned-mini.tsx) ----------------------- */
+
+/* The home hero's site sound, on the frosted dark card of Apple's Now
+   Playing widget: blurred, a touch saturated, with a hairline edge. */
+.mini-now-playing {
+  background: rgb(28 28 30 / 0.72);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 12px 32px rgb(0 0 0 / 0.35);
+}
+.mini-now-playing .eq > span {
+  background-color: var(--color-sea);
+}
