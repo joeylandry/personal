@@ -78,6 +78,9 @@ export function GivingIntro() {
   );
 }
 
+/** Every timeline photo in order, so the gallery steps through them all. */
+const timelinePhotos = giving.chapters.flatMap((chapter) => chapter.photos);
+
 /**
  * One fundraiser: the photos at their own aspect ratio (opening full size in a
  * gallery), the caption, then the story. From md up the photos sit mini beside
@@ -99,6 +102,7 @@ function ChapterCard({ chapter, left }: { chapter: GivingChapter; left: boolean 
         <div className="giving-photo">
           <PhotoLightbox
             photos={chapter.photos}
+            gallery={timelinePhotos}
             layout="row"
             sizes={`(min-width: 768px) ${Math.round(50 / chapter.photos.length)}vw, ${Math.round(100 / chapter.photos.length)}vw`}
           />

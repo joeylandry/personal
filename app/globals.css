@@ -1383,22 +1383,37 @@
   box-shadow: 0 24px 60px -24px rgb(7 16 24 / 0.45);
 }
 
-/* Full-size photo viewer: a native modal dialog. */
+/* Full-screen photo gallery: a native modal dialog with a strip of photos
+   that snaps one to a screen, swiped or scrolled like a phone's viewer. */
 .giving-lightbox {
-  margin: auto;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
   padding: 0;
   border: 0;
-  max-width: min(72rem, calc(100vw - 2rem));
-  max-height: calc(100dvh - 2rem);
-  background: transparent;
-  overflow: visible;
+  background: rgb(7 16 24 / 0.94);
+  overflow: hidden;
 }
 .giving-lightbox::backdrop {
-  background-color: rgb(7 16 24 / 0.9);
+  background-color: rgb(7 16 24 / 0.6);
   backdrop-filter: blur(6px);
 }
 .giving-lightbox[open] {
   animation: giving-lightbox-in 320ms var(--ease-out-soft);
+}
+.giving-lightbox-strip {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.giving-lightbox-strip::-webkit-scrollbar {
+  display: none;
 }
 @keyframes giving-lightbox-in {
   from {

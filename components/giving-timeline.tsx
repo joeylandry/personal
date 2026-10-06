@@ -10,8 +10,8 @@ import { useEffect, useRef, type ReactNode } from 'react';
  * once its node crosses the reading line so the node lights up.
  *
  * From md up, each chapter's photos also zoom home. Laid out mini beside their
- * year, they are scaled up and centered on the spine while still below the
- * reading line, then shrink by their corners into place as they rise toward
+ * year, they are scaled up and centered on the spine while in the lower half
+ * of the viewport, then shrink by their corners into place as they rise toward
  * the top of the viewport. Once a photo is home it stays there for the rest of
  * the visit, even when the reader scrolls back up. Phones and reduced motion
  * skip the zoom.
@@ -28,11 +28,16 @@ import { useEffect, useRef, type ReactNode } from 'react';
 const READING_LINE = 0.62;
 /** Where a step's node sits below the top of the step, in pixels. */
 const NODE_OFFSET = 22;
-/** Where a photo is home, as a fraction of the viewport height from the top. */
-const ZOOM_END = 0.3;
+/**
+ * Where a photo starts shrinking and where it is home, as fractions of the
+ * viewport height from the top, measured at the top of its slot. Both sit high
+ * enough that the whole zoomed photo is on screen while it shrinks.
+ */
+const ZOOM_START = 0.45;
+const ZOOM_END = 0.15;
 /** The zoomed photo's largest height, in pixels, and share of the viewport height. */
 const ZOOM_MAX_HEIGHT = 320;
-const ZOOM_VIEWPORT_HEIGHT = 0.45;
+const ZOOM_VIEWPORT_HEIGHT = 0.42;
 /** The zoomed photo's largest width, as a share of the timeline's width. */
 const ZOOM_MAX_WIDTH = 0.7;
 
@@ -66,11 +71,12 @@ export function TimelineTrack({
         const reached = step.getBoundingClientRect().top + NODE_OFFSET <= line;
         step.setAttribute('data-reached', String(reached));
       }
-      zoom(line, box);
+      zoom(box);
     };
 
-    function zoom(line: number, box: DOMRect) {
+    function zoom(box: DOMRect) {
       const animate = wide.matches && !still.matches;
+      const start = window.innerHeight * ZOOM_START;
       const end = window.innerHeight * ZOOM_END;
       const spine = box.left + box.width / 2;
       const maxHeight = Math.min(ZOOM_MAX_HEIGHT, window.innerHeight * ZOOM_VIEWPORT_HEIGHT);
@@ -78,7 +84,7 @@ export function TimelineTrack({
         // The slot keeps the photo's home size and position; only the photo moves.
         const slot = photo.parentElement ?? photo;
         const rect = slot.getBoundingClientRect();
-        const reached = Math.min(Math.max((line - rect.top) / (line - end), 0), 1);
+        const reached = Math.min(Math.max((start - rect.top) / (start - end), 0), 1);
         const progress = Math.max(home.get(photo) ?? 0, reached);
         home.set(photo, progress);
 
