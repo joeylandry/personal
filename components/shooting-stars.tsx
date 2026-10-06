@@ -6,11 +6,16 @@
  * contour lines sweeping up from the lower left, a few small streaks that
  * shoot across now and then, and faint points of light.
  *
+ * While animating, the two wishing stars fly together in loose formation:
+ * each surges and bobs along its heading, its trail stretches behind it with
+ * sparks streaming down toward the tail, and the points of light drift past
+ * the other way.
+ *
  * Everything sits at fixed positions so the server and client render the same
- * markup. The small streaks only move while animating; at rest, and under
- * reduced motion (the global rule cancels the animation), they sit at their
- * drawn positions, so the still frame is the full picture. Purely decorative;
- * never announced.
+ * markup. Things only move while animating; at rest, and under reduced motion
+ * (the global rule cancels the animation), everything sits at its drawn
+ * position, so the still frame is the full picture. Purely decorative; never
+ * announced.
  */
 
 /** A wishing star: its head, the heading of its trail, and the trail's shape. */
@@ -26,6 +31,9 @@ interface Swoosh {
   /** How far the trail bows below a straight line. */
   bow: number;
 }
+
+/** Seconds into the shared flight cycle, so the pair flies together but not in lockstep. */
+const FLIGHT_OFFSETS = [0, 1.6];
 
 const SWOOSHES: Swoosh[] = [
   { x: 870, y: 104, angle: -18, length: 860, lines: 7, gap: 10, bow: 64 },
@@ -104,42 +112,73 @@ export function ShootingStars({ className = '' }: { className?: string }) {
         ))}
       </defs>
 
-      {POINTS.map(([cx, cy, r, delay]) => (
-        <circle
-          key={`${cx}-${cy}`}
-          cx={cx}
-          cy={cy}
-          r={r}
-          fill="currentColor"
-          className="giving-twinkle"
-          style={{ animationDelay: `-${delay}s` }}
-        />
-      ))}
-
-      {SWOOSHES.map((swoosh, index) => (
-        <g
-          key={`${swoosh.x}-${swoosh.y}`}
-          transform={`translate(${swoosh.x} ${swoosh.y}) rotate(${swoosh.angle})`}
-        >
-          {/* Every contour starts a little lower at the tail and meets at the head. */}
-          {Array.from({ length: swoosh.lines }, (_, line) => {
-            const t = line / Math.max(swoosh.lines - 1, 1);
-            const drop = line * swoosh.gap;
-            return (
-              <path
-                key={line}
-                d={`M${-swoosh.length} ${drop}C${-swoosh.length * 0.55} ${drop + swoosh.bow} ${-swoosh.length * 0.2} ${swoosh.bow * 0.35} 0 0`}
-                stroke={`url(#giving-trail-${index})`}
-                strokeWidth={line === 0 ? 1.2 : 0.8}
-                opacity={0.6 - t * 0.42}
-                vectorEffect="non-scaling-stroke"
+      {/* The field drifts left and wraps: a second copy follows one viewBox to the right. */}
+      <g className="giving-drift">
+        {[0, 1440].map((shift) => (
+          <g key={shift} transform={shift ? `translate(${shift} 0)` : undefined}>
+            {POINTS.map(([cx, cy, r, delay]) => (
+              <circle
+                key={`${cx}-${cy}`}
+                cx={cx}
+                cy={cy}
+                r={r}
+                fill="currentColor"
+                className="giving-twinkle"
+                style={{ animationDelay: `-${delay}s` }}
               />
-            );
-          })}
-          <circle r="18" fill="url(#giving-star-glow)" opacity="0.6" />
-          <path d={SPARKLE} transform={`rotate(${-swoosh.angle})`} fill="currentColor" />
-        </g>
-      ))}
+            ))}
+          </g>
+        ))}
+      </g>
+
+      {SWOOSHES.map((swoosh, index) => {
+        const flight = { animationDelay: `-${FLIGHT_OFFSETS[index] ?? 0}s` };
+        const contours = Array.from({ length: swoosh.lines }, (_, line) => {
+          const drop = line * swoosh.gap;
+          return `M${-swoosh.length} ${drop}C${-swoosh.length * 0.55} ${drop + swoosh.bow} ${-swoosh.length * 0.2} ${swoosh.bow * 0.35} 0 0`;
+        });
+        return (
+          <g
+            key={`${swoosh.x}-${swoosh.y}`}
+            transform={`translate(${swoosh.x} ${swoosh.y}) rotate(${swoosh.angle})`}
+          >
+            <g className="giving-fly" style={flight}>
+              <g className="giving-stretch" style={flight}>
+                {/* Every contour starts a little lower at the tail and meets at the head. */}
+                {contours.map((d, line) => {
+                  const t = line / Math.max(swoosh.lines - 1, 1);
+                  return (
+                    <path
+                      key={line}
+                      d={d}
+                      stroke={`url(#giving-trail-${index})`}
+                      strokeWidth={line === 0 ? 1.2 : 0.8}
+                      opacity={0.6 - t * 0.42}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  );
+                })}
+                {/* Sparks streaming off the head down the inner contours. */}
+                {contours.slice(0, 3).map((d, line) => (
+                  <path
+                    key={`stream-${line}`}
+                    d={d}
+                    pathLength={100}
+                    stroke={`url(#giving-trail-${index})`}
+                    strokeWidth={line === 0 ? 1.8 : 1.3}
+                    strokeLinecap="round"
+                    strokeDasharray={line === 1 ? '1.5 10.5' : '2.5 9.5'}
+                    className="giving-stream"
+                    style={{ animationDelay: `-${line * 0.37}s` }}
+                  />
+                ))}
+              </g>
+              <circle r="18" fill="url(#giving-star-glow)" className="giving-glow" style={flight} />
+              <path d={SPARKLE} transform={`rotate(${-swoosh.angle})`} fill="currentColor" />
+            </g>
+          </g>
+        );
+      })}
 
       {STREAKS.map((streak, index) => (
         <g
