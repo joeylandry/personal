@@ -28,7 +28,6 @@ interface EmbedController {
   loadUri(uri: string): void;
   play(): void;
   togglePlay(): void;
-  seek(seconds: number): void;
   destroy(): void;
 }
 
@@ -204,13 +203,6 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
 /** Play or pause the shared song. A no-op until the embed is ready. */
 export function togglePinned() {
   controller?.togglePlay();
-}
-
-/** Back to the top of whatever is on the record. */
-export function restartPinned() {
-  if (!controller) return;
-  controller.seek(0);
-  set({ position: 0, at: performance.now() });
 }
 
 /** Puts a song on the record and starts it, on every record at once. */
