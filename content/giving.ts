@@ -3,7 +3,7 @@ import type { StoryPhoto } from './types';
 /**
  * The Giving page: nine years of Nyes Neck fundraisers for Make-A-Wish
  * Massachusetts and Rhode Island, then what carries on through Nyes Neck
- * Clothing & Apparel. Copy follows Joey's own account of the fundraisers.
+ * Clothing & Apparel. Copy is based on Joey’s account of the fundraisers.
  */
 
 export interface GivingChapter {
@@ -16,15 +16,15 @@ export interface GivingChapter {
 
 export const giving = {
   intro: {
-    title: 'At nine years old, my charitable career started.',
+    title: 'It started with a lemonade stand.',
     body: [
-      'When I was nine, I got my first glimpse of the joy Make-A-Wish brings to kids with critical illnesses, and I wanted to help. Then I read that granting one wish costs about $20,000, so that became my goal. I started where I was: a lemonade stand on the lawn in Nyes Neck, a small neighborhood on Cape Cod.',
-      'It did not happen overnight. Every summer I tried something new (games nights, movie nights, raffles, apparel), and plenty of it flopped. I kept adapting, the neighborhood kept showing up, and by 2021 we had raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
+      'When I was nine, I learned about Make-A-Wish and the experiences it creates for children with critical illnesses. Granting a single wish costs about $20,000, so I set that as my goal and started with a lemonade stand in Nyes Neck, the Cape Cod neighborhood where I spent my summers.',
+      'Over the next nine summers I organized games nights, movie nights, raffles and apparel sales. Not every event worked, but each year I learned from it and the neighborhood continued to support the cause. By 2021, we had raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
     ],
     /** Headline figures beside the title. The last one is the chapter still being written. */
     stats: [
       { value: '$20,000+', label: 'Raised for Make-A-Wish Massachusetts and Rhode Island' },
-      { value: '9 years', label: '2013 to 2021, every summer in Nyes Neck' },
+      { value: '9 years', label: 'Summer fundraisers in Nyes Neck, 2013 to 2021' },
       {
         value: 'Now',
         label: 'Continuing the work for St. Jude through Nyes Neck Clothing & Apparel',
@@ -39,22 +39,22 @@ export const giving = {
   chapters: [
     {
       year: '2013',
-      title: 'My first fundraiser',
-      body: 'Lemonade, iced tea and bracelets on the lawn, under a hand-painted sign (spelling was not my strongest subject yet). It was a small start, but it was a start.',
+      title: 'The first fundraiser',
+      body: 'Lemonade, iced tea and handmade bracelets on the lawn, under a hand-painted sign. It raised $50 and gave me a place to start.',
       photos: [
         {
           src: '/images/giving/2013-lemonade-stand.jpg',
           alt: 'Joey at nine beside a hand-painted “Lemanade” sign and a striped table of bracelets strung with colored lights, on a lawn in front of a gray-shingled porch.',
           width: 1600,
           height: 1200,
-          caption: 'Lemonade and bracelets. I raised only $50.',
+          caption: 'The first stand, 2013.',
         },
       ],
     },
     {
       year: '2014',
       title: 'Games night at the Beach Field',
-      body: 'Two dollars at the door, 7:30 to 8:30 at the Beach Field, rain date next Monday. Not every night worked: I was crushed at 10 when only two kids showed up to Movie Night, and again a week later when I had to cancel Games Night for lack of interest. I kept going anyway.',
+      body: 'Two dollars at the door for an hour of games at the Beach Field. Not every event that summer drew a crowd: one movie night had two kids, and a games night was canceled for lack of interest. Those setbacks taught me to plan around what people actually wanted to attend.',
       photos: [
         {
           src: '/images/giving/2014-games-night.jpg',
@@ -66,8 +66,8 @@ export const giving = {
       ],
     },
     {
-      title: 'The table by the harbor',
-      body: 'A pop-up tent, two striped tables and a Make-A-Wish banner. My fundraisers ran in the daytime, so I set up by the water to catch beach-goers (and a few early arrivals to the annual meeting) on their way by.',
+      title: 'Setting up by the harbor',
+      body: 'A pop-up tent, two tables and a Make-A-Wish banner. Most of the fundraisers ran during the day, so I set up near the water where beach-goers and neighbors would pass by.',
       photos: [
         {
           src: '/images/giving/harbor-table.jpg',
@@ -81,7 +81,7 @@ export const giving = {
     {
       year: '2016',
       title: 'Backyard movie nights',
-      body: 'A sheet on the fence, a projector and a lawn full of blankets. This time the kids came, and movie-night gift bags and s’mores kits became a summer staple.',
+      body: 'A projector, a sheet on the fence and a lawn full of blankets. Movie nights drew a steady crowd, and gift bags and s’mores kits became a regular part of each summer.',
       photos: [
         {
           src: '/images/giving/2016-movie-night.jpg',
@@ -95,7 +95,7 @@ export const giving = {
     {
       year: '2019',
       title: 'Apparel and gift bags',
-      body: 'By 2019 the table had become a tent: shirts, sweatshirts and rows of gift bags, all for Make-A-Wish. Each summer went better than the last, but I was still thousands of dollars short of $20,000.',
+      body: 'By 2019 the table had grown into a tent with shirts, sweatshirts and gift bags, all supporting Make-A-Wish. Each summer raised more than the last, though the total was still several thousand dollars short of the goal.',
       photos: [
         {
           src: '/images/giving/2019-apparel-tent.jpg',
@@ -108,29 +108,29 @@ export const giving = {
     },
     {
       year: '2021',
-      title: 'The last one: the first Nyes Neck Gala',
-      body: 'My final summer before college. The whole neighborhood gathers once a year for the annual meeting (to debate the “dock,” among other fiery topics), so this time I took over when it ended: a tent, a live band, and the first ever Nyes Neck apparel. By dark the colored lights were on and everyone was dancing. It pushed the total past $20,000.',
+      title: 'The final fundraiser: the first Nyes Neck Gala',
+      body: 'My last summer before college. The neighborhood gathers each year for its annual meeting, so I organized an event to follow it: a tent, a live band and the first Nyes Neck apparel. The evening brought the total past $20,000.',
       photos: [
         {
           src: '/images/giving/2021-annual-meeting.jpg',
           alt: 'A hand-drawn sign on a split-rail fence reading “Nyes Neck, Sat 10th, Annual Meeting 5pm”, with a crowd gathered under a white tent by the water behind it.',
           width: 768,
           height: 1024,
-          caption: 'The annual meeting, always at 5 pm.',
+          caption: 'The Nyes Neck annual meeting, 2021.',
         },
         {
           src: '/images/giving/2021-live-music.jpg',
           alt: 'A four-piece band (bass, drums, guitar and keyboard) playing under a white tent strung with lights and a Make-A-Wish banner.',
           width: 969,
           height: 810,
-          caption: 'The band: my best friend and his siblings.',
+          caption: 'Live music under the tent.',
         },
         {
           src: '/images/giving/2021-tent-party.jpg',
           alt: 'A crowd dancing under a tent lit purple and blue at night, with Make-A-Wish banners along the back wall.',
           width: 1600,
           height: 1200,
-          caption: 'By dark, the colored lights came on.',
+          caption: 'The gala after dark.',
         },
       ],
     },
@@ -148,10 +148,10 @@ export const giving = {
   },
 
   next: {
-    title: 'Continuing where I left off, with St. Jude.',
+    title: 'Continuing the work with St. Jude.',
     body: [
-      'The Nyes Neck apparel started as a fundraiser under the tent in 2021. Now it is Nyes Neck Clothing & Apparel, a brand inspired by Nyes Neck and Cape Cod, and a portion of proceeds supports St. Jude Children’s Research Hospital.',
-      'Someday I would like to build a nonprofit around this work, helping children in need and people affected by domestic violence. Until then, the shop keeps giving back, one sweatshirt at a time.',
+      'The apparel first sold under the tent in 2021 is now Nyes Neck Clothing & Apparel, a brand inspired by Nyes Neck and Cape Cod. A portion of proceeds supports St. Jude Children’s Research Hospital.',
+      'In the future, I hope to build a nonprofit focused on supporting children in need and people affected by domestic violence. For now, the shop continues to give back.',
     ],
     photo: {
       src: '/images/giving/dock-sunset.jpg',

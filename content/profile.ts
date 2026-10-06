@@ -30,11 +30,11 @@ export const profile = {
 
   about: {
     kicker: 'About me',
-    title: 'A New Englander who is usually making something.',
+    title: 'Born and raised in New England.',
     body: [
-      'I’m New England from start to finish. I spent my summers in Nyes Neck on Cape Cod, went to Tufts just outside Boston, and now call southern New Hampshire home. I love places with a little history and character: an old neighborhood, a diner that hasn’t changed in decades, or anywhere near the water.',
-      'Outside of work, you will usually find me cooking, at the gym, out on a hike or in the water. I love good food, a good cocktail and any excuse to have people over (and yes, I put way too much thought into the details of a party). There is almost always music playing somewhere in the background, and Donny, my orange cat, is never far away.',
-      'I am happiest when I am making something or chasing down a new idea. I care a lot about my family, my friends and the places that made me. I’m curious by nature, a little obsessive about the projects I love, and rarely bored.',
+      'I spent my summers in Nyes Neck on Cape Cod, studied computer science at Tufts just outside Boston, and now live in southern New Hampshire. I’m drawn to places with history and character, especially anywhere near the water.',
+      'Outside of work, I enjoy cooking, staying active at the gym and on the trails, and hosting friends and family. There is usually music playing, and my cat, Donny, is rarely far away.',
+      'I’m happiest when I’m building something or working through a new idea. My family, my friends and the places I come from matter a great deal to me, and they shape much of what I make.',
     ],
     /** Pull-quote rendered as an editorial aside. */
     aside: {
@@ -45,11 +45,11 @@ export const profile = {
 
   /** Off-the-clock list beside the About intro. From Joey's own writing. */
   offClock: [
-    { label: 'In the kitchen', detail: 'Cooking, baking and feeding whoever shows up' },
-    { label: 'Outside somewhere', detail: 'Hiking, swimming, or anywhere near the water' },
-    { label: 'Playing host', detail: 'Good food, cocktails, music and a full house' },
-    { label: 'Cape Cod bound', detail: 'Nyes Neck will always feel like home' },
-    { label: 'Donny duty', detail: 'Life with one very involved orange cat' },
+    { label: 'Cooking', detail: 'Cooking and baking for friends and family' },
+    { label: 'Outdoors', detail: 'Hiking, swimming and time near the water' },
+    { label: 'Hosting', detail: 'Bringing people together over good food and music' },
+    { label: 'Cape Cod', detail: 'Nyes Neck will always feel like home' },
+    { label: 'Donny', detail: 'My orange cat and constant companion' },
   ],
 
   contact: {
