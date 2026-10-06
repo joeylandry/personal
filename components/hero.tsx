@@ -39,7 +39,7 @@ export async function Hero() {
             {/* An eyebrow over the headline, not a rival to it. The name is
                 already in the header, so small screens drop it and keep the
                 location. */}
-            <p className="meta section-label text-[0.8125rem] tracking-[0.12em] sm:text-sm md:whitespace-nowrap">
+            <p className="meta section-label text-[0.8125rem] [--accent-detail:var(--accent)] tracking-[0.12em] sm:text-sm md:whitespace-nowrap">
               <span className="text-muted">
                 <span className="hidden whitespace-nowrap text-fg sm:inline">{profile.name}</span>
                 <span className="hidden sm:inline"> · </span>
@@ -64,7 +64,7 @@ export async function Hero() {
                 {index === hero.headline.length - 1 ? (
                   <>
                     {line.replace(/\.$/, '')}
-                    <span className="text-accent">.</span>
+                    <span className="text-detail">.</span>
                   </>
                 ) : (
                   line
@@ -84,9 +84,10 @@ export async function Hero() {
                 {hero.secondaryCta.label}
               </Cta>
               {/* The site's song, on the same player as the About turntable,
-                  in the open space beside the buttons; it wraps under them
-                  when the row runs out of room. */}
-              <div className="w-full sm:w-auto sm:max-w-sm sm:min-w-[17rem] sm:flex-1 lg:ml-4">
+                  centred in the open space between the buttons and the Donny
+                  card (the negative margin reaches across the column gap); it
+                  wraps under the buttons when the row runs out of room. */}
+              <div className="flex w-full sm:w-auto sm:min-w-[17rem] sm:flex-1 lg:-mr-6 lg:justify-center">
                 <PinnedMini
                   trackId={pinned.spotifyId}
                   eyebrow={pinned.label}
