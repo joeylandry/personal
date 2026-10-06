@@ -103,6 +103,24 @@ let controller: EmbedController | null = null;
 let pinnedId: string | null = null;
 /** A song asked for before the embed was ready; it goes on as soon as it is. */
 let queued: RecordTrack | null = null;
+/** Set when a new song is loaded and should start; cleared once it plays. */
+let wantPlay: ReturnType<typeof setTimeout> | null = null;
+
+/**
+ * Loads a song into the embed and starts it. A `play()` sent straight after
+ * `loadUri()` can land before the new song is ready (notably on phones), so
+ * it is sent again shortly after if the song still hasn't started.
+ */
+function loadAndPlay(id: string) {
+  if (!controller) return;
+  controller.loadUri(`spotify:track:${id}`);
+  controller.play();
+  if (wantPlay) clearTimeout(wantPlay);
+  wantPlay = setTimeout(() => {
+    wantPlay = null;
+    if (!state.playing) controller?.play();
+  }, 900);
+}
 
 function set(patch: Partial<PinnedState>) {
   state = { ...state, ...patch };
@@ -153,6 +171,10 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
           });
           created.addListener('playback_update', (event) => {
             const playing = !event.data.isPaused;
+            if (playing && wantPlay) {
+              clearTimeout(wantPlay);
+              wantPlay = null;
+            }
             set({ playing, started: state.started || playing });
           });
         },
@@ -180,16 +202,14 @@ export function playOnRecord(track: RecordTrack) {
     if (pinnedId) loadPinned(pinnedId);
     return;
   }
-  controller.loadUri(`spotify:track:${track.id}`);
-  controller.play();
+  loadAndPlay(track.id);
   set({ track: track.id === pinnedId ? null : track });
 }
 
 /** Puts the pinned song back on the record. */
 export function backToPinned() {
   if (!controller || !pinnedId) return;
-  controller.loadUri(`spotify:track:${pinnedId}`);
-  controller.play();
+  loadAndPlay(pinnedId);
   set({ track: null });
 }
 

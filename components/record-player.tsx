@@ -61,10 +61,12 @@ export function RecordPlayer({
   return (
     <div className="grid items-center gap-10 md:grid-cols-12 md:gap-12">
       {/* The turntable. Decorative apart from the play button on the label. */}
-      <div className="md:col-span-7">
+      <div id="record" className="md:col-span-7">
         <div className="turntable" data-playing={playing}>
           <div className="turntable-platter" aria-hidden="true" />
+          {/* Keyed by song, so a new record drops onto the platter when it changes. */}
           <Vinyl
+            key={track?.id ?? 'pinned'}
             art={art}
             playing={playing}
             sizes="(min-width: 768px) 200px, 30vw"
