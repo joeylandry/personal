@@ -7,8 +7,8 @@ import { useEffect, useRef } from 'react';
  *
  * Short waves surface anywhere across the hero. Each one draws itself on as a
  * wavy line, rises, and curls over at its leading edge into nested spirals,
- * throwing a little spray. While it curls, its oldest end dissolves the way it
- * was drawn, until only the curl is left and that unwinds too.
+ * with spray blowing off the lip. While it curls, its oldest end dissolves
+ * the way it was drawn, until only the curl is left and that unwinds too.
  *
  * Purely decorative and never announced. It pauses off-screen and in
  * background tabs, and under `prefers-reduced-motion` it draws one still frame.
@@ -27,7 +27,6 @@ type Wave = {
   phase: number;
   /** 0..1, how close the wave feels: brighter and bolder when near. */
   near: number;
-  burst: boolean;
 };
 type Spray = { x: number; y: number; vx: number; vy: number; life: number; max: number };
 
@@ -91,7 +90,7 @@ export function Sea({ className = '' }: { className?: string }) {
     const spawn = (age = 0) => {
       for (let attempt = 0; attempt < 8; attempt++) {
         const near = Math.random();
-        const length = unit * random(0.16, 0.3) * (0.7 + near * 0.5);
+        const length = unit * random(0.22, 0.4) * (0.7 + near * 0.5);
         const x = random(-0.1 * width, width - length * 0.9);
         const y = random(0.14, 0.94) * height;
         const crowded = waves.some(
@@ -111,7 +110,6 @@ export function Sea({ className = '' }: { className?: string }) {
           life,
           phase: random(0, Math.PI * 2),
           near,
-          burst: age / life > 0.8,
         });
         return;
       }
@@ -183,22 +181,6 @@ export function Sea({ className = '' }: { className?: string }) {
             life,
             max: life,
           });
-        }
-
-        // And a burst as the curl closes.
-        if (!w.burst && g.p >= 0.8) {
-          w.burst = true;
-          for (let n = 0; n < 26 * size && spray.length < MAX_SPRAY; n++) {
-            const life = random(0.5, 1.2);
-            spray.push({
-              x: tip.x + random(-0.4, 0.4) * g.radius,
-              y: g.center.y + g.radius * 0.6,
-              vx: random(-40, 160) * scale,
-              vy: -random(60, 300) * scale * size,
-              life,
-              max: life,
-            });
-          }
         }
       }
 
