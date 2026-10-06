@@ -3,77 +3,36 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Breaking sea, drawn in line.
+ * Line-drawn breakers.
  *
- * Three bands of water in perspective, each a stack of contour lines, drawn
- * back to front so each band hides the lines behind it. Breakers rise out of
- * the swell and steepen, and their lines curl over into nested spirals before
- * collapsing in a burst of spray.
+ * Short waves surface anywhere across the hero. Each one draws itself on as a
+ * wavy line, rises, and curls over at its leading edge into nested spirals,
+ * throwing a little spray. While it curls, its oldest end dissolves the way it
+ * was drawn, until only the curl is left and that unwinds too.
  *
  * Purely decorative and never announced. It pauses off-screen and in
  * background tabs, and under `prefers-reduced-motion` it draws one still frame.
  */
 
 type Rgb = [number, number, number];
-type Layer = {
-  depth: number;
-  /** Rest height of the water, as a fraction of the sea box. */
-  base: number;
-  swell: number;
-  breakerHeight: number;
-  breakerWidth: number;
-  maxBreakers: number;
-  speed: number;
-};
-type Breaker = {
-  x: number;
-  age: number;
-  life: number;
-  height: number;
-  width: number;
-  speed: number;
-  crashed: boolean;
-};
-type Particle = {
+type Wave = {
   x: number;
   y: number;
-  vx: number;
-  vy: number;
+  /** Length of the run-up before the curl. */
+  length: number;
+  height: number;
+  lines: number;
+  age: number;
   life: number;
-  max: number;
-  layer: number;
+  phase: number;
+  /** 0..1, how close the wave feels: brighter and bolder when near. */
+  near: number;
+  burst: boolean;
 };
+type Spray = { x: number; y: number; vx: number; vy: number; life: number; max: number };
 
-const LAYERS: Layer[] = [
-  {
-    depth: 0,
-    base: 0.2,
-    swell: 0.012,
-    breakerHeight: 0.1,
-    breakerWidth: 0.09,
-    maxBreakers: 3,
-    speed: 18,
-  },
-  {
-    depth: 0.5,
-    base: 0.38,
-    swell: 0.018,
-    breakerHeight: 0.19,
-    breakerWidth: 0.13,
-    maxBreakers: 3,
-    speed: 30,
-  },
-  {
-    depth: 1,
-    base: 0.58,
-    swell: 0.024,
-    breakerHeight: 0.34,
-    breakerWidth: 0.18,
-    maxBreakers: 3,
-    speed: 44,
-  },
-];
-const MAX_PARTICLES = 300;
+const CURL = Math.PI * 1.75;
+const MAX_SPRAY = 240;
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 const smooth = (from: number, to: number, value: number) => {
@@ -95,8 +54,8 @@ function parseColor(value: string, fallback: Rgb): Rgb {
   return fallback;
 }
 
-const mix = (a: Rgb, b: Rgb, t: number, alpha = 1) =>
-  `rgba(${a.map((v, i) => Math.round(v + ((b[i] ?? v) - v) * t)).join(',')},${alpha})`;
+const mix = (a: Rgb, b: Rgb, t: number) =>
+  `rgb(${a.map((v, i) => Math.round(v + ((b[i] ?? v) - v) * t)).join(',')})`;
 
 export function Sea({ className = '' }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -109,237 +68,212 @@ export function Sea({ className = '' }: { className?: string }) {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const styles = getComputedStyle(canvas);
-    const sea = parseColor(styles.getPropertyValue('--accent-graphic'), [114, 214, 201]);
     const white: Rgb = [240, 252, 250];
+    const seaRgb = parseColor(styles.getPropertyValue('--accent-graphic'), [114, 214, 201]);
+    const crest = mix(seaRgb, white, 0.2);
+    const sea = mix(seaRgb, white, 0);
     const fog = mix(parseColor(styles.color, [159, 177, 189]), white, 0);
 
     let width = 0;
     let height = 0;
-    let seaTop = 0;
-    let seaHeight = 0;
-    /** One length unit so the waves keep their proportions on any screen. */
+    /** One length unit so waves keep their proportions on any screen. */
     let unit = 1;
     let frame = 0;
     let visible = true;
     let last = performance.now();
-    let time = Math.random() * 100;
+    let timer = 0;
     let seeded = false;
+    const waves: Wave[] = [];
+    const spray: Spray[] = [];
 
-    const breakers: Breaker[][] = LAYERS.map(() => []);
-    const timers = LAYERS.map(() => 0);
-    const particles: Particle[] = [];
-    const phases = LAYERS.map(() => [random(0, 6.3), random(0, 6.3)] as const);
+    const capacity = () => Math.round(Math.min(9, Math.max(4, (width * height) / 160000)));
 
-    const shape = (b: Breaker) => {
-      const p = b.age / b.life;
-      const collapse = smooth(0.74, 1, p);
-      const steep = smooth(0.15, 0.6, p);
-      const spread = 1 + collapse * 1.6;
-      return {
-        p,
-        h: b.height * smooth(0, 0.55, p) * (1 - collapse * 0.9),
-        back: b.width * spread,
-        front: b.width * (1 - 0.72 * steep) * spread,
-      };
-    };
-
-    const surface = (layer: number, x: number) => {
-      const spec = LAYERS[layer];
-      const [a = 0, b = 0] = phases[layer] ?? [];
-      if (!spec) return height;
-      const k = (Math.PI * 2) / (unit * 0.45);
-      let y =
-        seaTop +
-        spec.base * seaHeight -
-        spec.swell *
-          unit *
-          (Math.sin(x * k - time * 0.9 + a) * 0.65 + Math.sin(x * k * 2.3 + time * 0.6 + b) * 0.35);
-      for (const breaker of breakers[layer] ?? []) {
-        const { h, back, front } = shape(breaker);
-        const dx = x - breaker.x;
-        const w = dx < 0 ? back : front;
-        y -= h * Math.exp(-((dx / w) ** 2));
-      }
-      return y;
-    };
-
-    const spawn = (layer: number, age?: number) => {
-      const spec = LAYERS[layer];
-      const list = breakers[layer];
-      if (!spec || !list) return;
-      const w = spec.breakerWidth * unit;
-      for (let attempt = 0; attempt < 6; attempt++) {
-        const x = random(-0.05 * width, 0.7 * width);
-        if (list.some((b) => Math.abs(b.x - x) < w * 3)) continue;
-        const life = random(5.5, 8);
-        list.push({
+    const spawn = (age = 0) => {
+      for (let attempt = 0; attempt < 8; attempt++) {
+        const near = Math.random();
+        const length = unit * random(0.16, 0.3) * (0.7 + near * 0.5);
+        const x = random(-0.1 * width, width - length * 0.9);
+        const y = random(0.14, 0.94) * height;
+        const crowded = waves.some(
+          (w) =>
+            Math.abs(w.y - y) < (w.height + length * 0.3) * 0.9 &&
+            Math.abs(w.x - x) < (w.length + length) * 0.85,
+        );
+        if (crowded) continue;
+        const life = random(6, 9);
+        waves.push({
           x,
-          age: age ?? 0,
+          y,
+          length,
+          height: length * random(0.24, 0.34),
+          lines: Math.random() < 0.55 ? 3 : 2,
+          age,
           life,
-          height: spec.breakerHeight * unit * random(0.75, 1.1) * 0.6,
-          width: w * random(0.85, 1.15),
-          speed: spec.speed * (unit / 1000) * random(0.8, 1.2),
-          crashed: (age ?? 0) / life > 0.8,
+          phase: random(0, Math.PI * 2),
+          near,
+          burst: age / life > 0.8,
         });
         return;
       }
     };
 
-    const emit = (particle: Omit<Particle, 'max'>) => {
-      if (particles.length >= MAX_PARTICLES) return;
-      particles.push({ ...particle, max: particle.life });
-    };
+    /** Everything needed to draw one wave at its current age. */
+    const geometry = (w: Wave) => {
+      const p = w.age / w.life;
+      const drift = w.length * 0.12 * w.age;
+      const rise = smooth(0.08, 0.5, p);
+      const sweep = CURL * smooth(0.42, 0.8, p);
+      const radius = w.height * 0.55;
+      const gap = Math.max(3.5, w.height * 0.13);
+      // The run-up draws on quickly, easing as it reaches the crest.
+      const head = w.length * (1 - (1 - clamp(p / 0.45)) ** 2);
+      const curlLength = radius * CURL * 0.7;
+      const tail = smooth(0.55, 1, p) * (w.length + curlLength);
 
-    /**
-     * The curl of a pitching lip: a spiral that leaves the crest, runs forward
-     * and down, and winds back in on itself. Lines further down the wave start
-     * on a smaller radius, so their curls nest inside the first one.
-     */
-    const curlOf = (layer: number, b: Breaker) => {
-      const { p, h, front } = shape(b);
-      const out = smooth(0.4, 0.72, p) * (1 - smooth(0.8, 0.96, p));
-      const crestY = surface(layer, b.x);
-      const radius = h * 0.55;
-      const sweep = out * Math.PI * 1.75;
-      const center = { x: b.x, y: crestY + radius };
-      const at = (start: number, angle: number) => {
-        const r = start * (1 - (0.55 * angle) / (Math.PI * 1.75));
+      const point = (s: number, offset: number) => {
+        const toCrest = smooth(0.3, 1, s / w.length);
+        const wobble =
+          w.height *
+          0.14 *
+          (1 - toCrest) *
+          Math.sin((s / (w.length * 0.42)) * Math.PI * 2 - w.age * 2.4 + w.phase);
+        return {
+          x: w.x + drift + s,
+          y: w.y + offset - w.height * rise * toCrest ** 1.5 - wobble,
+        };
+      };
+      const top = point(w.length, 0);
+      const center = { x: top.x, y: top.y + radius };
+      const curlAt = (start: number, angle: number) => {
+        const r = start * (1 - (0.55 * angle) / CURL);
         const theta = -Math.PI / 2 + angle;
         return { x: center.x + r * Math.cos(theta), y: center.y + r * Math.sin(theta) };
       };
-      return { p, h, front, crestY, radius, sweep, at, tip: at(radius, sweep), live: out > 0.02 };
+      return { p, sweep, radius, gap, head, tail, curlLength, point, center, curlAt };
     };
 
     const step = (dt: number) => {
       const scale = unit / 1000;
-      for (const [layer, list] of breakers.entries()) {
-        const spec = LAYERS[layer];
-        if (!spec) continue;
-        timers[layer] = (timers[layer] ?? 0) - dt;
-        if (list.length < spec.maxBreakers && (timers[layer] ?? 0) <= 0) {
-          spawn(layer);
-          timers[layer] = random(0.8, 2.2);
-        }
-        for (let i = list.length - 1; i >= 0; i--) {
-          const b = list[i];
-          if (!b) continue;
-          b.age += dt;
-          b.x += b.speed * dt;
-          const lip = curlOf(layer, b);
-          const size = 0.4 + spec.depth * 0.6;
+      timer -= dt;
+      if (waves.length < capacity() && timer <= 0) {
+        spawn();
+        timer = random(0.5, 1.4);
+      }
 
-          // Wind tears spray off the lip as it pitches.
-          if (lip.p > 0.5 && lip.p < 0.82 && Math.random() < dt * 40 * size) {
-            emit({
-              x: lip.tip.x + random(-0.5, 0.5) * lip.radius,
-              y: lip.crestY + random(-4, 4) * scale,
-              vx: random(40, 140) * scale,
-              vy: -random(30, 110) * scale,
-              life: random(0.5, 1.1),
-              layer,
+      for (let i = waves.length - 1; i >= 0; i--) {
+        const w = waves[i];
+        if (!w) continue;
+        w.age += dt;
+        if (w.age >= w.life) {
+          waves.splice(i, 1);
+          continue;
+        }
+        const g = geometry(w);
+        const tip = g.curlAt(g.radius, g.sweep);
+        const size = 0.5 + w.near * 0.5;
+
+        // Wind tears spray off the lip as it curls over.
+        if (g.p > 0.5 && g.p < 0.85 && Math.random() < dt * 22 * size && spray.length < MAX_SPRAY) {
+          const life = random(0.4, 0.9);
+          spray.push({
+            x: tip.x,
+            y: tip.y,
+            vx: random(30, 120) * scale,
+            vy: -random(20, 90) * scale,
+            life,
+            max: life,
+          });
+        }
+
+        // And a burst as the curl closes.
+        if (!w.burst && g.p >= 0.8) {
+          w.burst = true;
+          for (let n = 0; n < 26 * size && spray.length < MAX_SPRAY; n++) {
+            const life = random(0.5, 1.2);
+            spray.push({
+              x: tip.x + random(-0.4, 0.4) * g.radius,
+              y: g.center.y + g.radius * 0.6,
+              vx: random(-40, 160) * scale,
+              vy: -random(60, 300) * scale * size,
+              life,
+              max: life,
             });
           }
-
-          // The plunge: a burst of spray as the lip hits the water.
-          if (!b.crashed && lip.p >= 0.78) {
-            b.crashed = true;
-            for (let n = 0; n < 40 * size; n++) {
-              emit({
-                x: lip.tip.x + random(-0.3, 0.3) * lip.front,
-                y: lip.crestY + lip.radius * 2,
-                vx: b.speed + random(-80, 180) * scale,
-                vy: -random(80, 420) * scale * size,
-                life: random(0.7, 1.6),
-                layer,
-              });
-            }
-          }
-          if (b.age >= b.life) list.splice(i, 1);
         }
       }
 
-      for (const s of particles) {
+      for (const s of spray) {
         s.life -= dt;
         s.vy += 420 * scale * dt;
         s.x += s.vx * dt;
         s.y += s.vy * dt;
-        // Spray that falls back into the water is gone.
-        if (s.vy > 0 && s.y > surface(s.layer, s.x)) s.life = 0;
       }
-      for (let i = particles.length - 1; i >= 0; i--) {
-        if ((particles[i]?.life ?? 0) <= 0) particles.splice(i, 1);
+      for (let i = spray.length - 1; i >= 0; i--) {
+        if ((spray[i]?.life ?? 0) <= 0) spray.splice(i, 1);
       }
     };
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
       if (width === 0 || height === 0) return;
-      const stride = width < 640 ? 5 : 4;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
+      const stride = 4;
 
-      for (const [layer, spec] of LAYERS.entries()) {
-        const curls = (breakers[layer] ?? []).map((b) => curlOf(layer, b)).filter((c) => c.live);
-        const lines = 2 + Math.round(spec.depth);
-        const gap = Math.max(4, (7 + spec.depth * 9) * (unit / 1000));
-        const strength = 0.22 + spec.depth * 0.45;
+      for (const w of waves) {
+        const g = geometry(w);
+        const strength = (0.28 + w.near * 0.42) * smooth(0, 0.04, g.p);
 
-        // Blank out whatever lies behind this band, so lines never tangle
-        // through the water in front of them. Nothing is painted, only erased.
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.globalAlpha = 1;
-        ctx.beginPath();
-        ctx.moveTo(-20, height);
-        for (let x = -20; x <= width + 20; x += stride) ctx.lineTo(x, surface(layer, x));
-        ctx.lineTo(width + 20, height);
-        ctx.closePath();
-        ctx.fill();
-        ctx.globalCompositeOperation = 'source-over';
-
-        for (let line = 0; line < lines; line++) {
-          const offset = line * gap;
-          const fade = 1 - (line / lines) * 0.7;
-          ctx.strokeStyle =
-            line === 0 ? mix(sea, white, 0.2) : line % 3 === 0 ? mix(sea, white, 0) : fog;
-          ctx.globalAlpha = strength * fade;
-          ctx.lineWidth = (line === 0 ? 1.4 : 1) * (0.8 + spec.depth * 0.6);
-
+        for (let line = 0; line < w.lines; line++) {
+          const offset = line * g.gap;
+          ctx.strokeStyle = line === 0 ? crest : line === 2 ? sea : fog;
+          ctx.globalAlpha = strength * (1 - line * 0.28);
+          ctx.lineWidth = (line === 0 ? 1.4 : 1) * (0.8 + w.near * 0.5);
           ctx.beginPath();
-          for (let x = -20; x <= width + 20; x += stride) {
-            const y = surface(layer, x) + offset;
-            if (x === -20) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          }
-          ctx.stroke();
+          let started = false;
+          const to = (x: number, y: number) => {
+            if (started) ctx.lineTo(x, y);
+            else ctx.moveTo(x, y);
+            started = true;
+          };
 
-          // Each line curls over at the crest, nested inside the line above.
-          for (const curl of curls) {
-            const start = curl.radius - offset;
-            if (start < 3) continue;
-            ctx.beginPath();
-            const first = curl.at(start, 0);
-            ctx.moveTo(first.x, first.y);
-            for (let angle = 0.12; angle <= curl.sweep; angle += 0.12) {
-              const point = curl.at(start, angle);
-              ctx.lineTo(point.x, point.y);
+          // The run-up, from wherever the tail has dissolved to, up to the head.
+          // Lower lines start a little later, so the bundle tapers at the back.
+          const from = Math.max(g.tail, line * g.gap * 2);
+          for (let s = from; s < g.head; s += stride) {
+            const pt = g.point(s, offset);
+            to(pt.x, pt.y);
+          }
+          if (g.head > from) {
+            const end = g.point(g.head, offset);
+            to(end.x, end.y);
+          }
+
+          // The curl, nested inside the line above. Once the tail reaches it,
+          // it unwinds from the outside in.
+          const start = g.radius - offset;
+          const unwound = Math.max(0, (g.tail - w.length) / g.curlLength) * CURL;
+          if (start >= 3 && g.sweep > unwound) {
+            for (let angle = unwound; angle < g.sweep; angle += 0.1) {
+              const pt = g.curlAt(start, angle);
+              to(pt.x, pt.y);
             }
-            const end = curl.at(start, curl.sweep);
-            ctx.lineTo(end.x, end.y);
-            ctx.stroke();
+            const end = g.curlAt(start, g.sweep);
+            to(end.x, end.y);
           }
-        }
-
-        // Spray: short streaks thrown off the lip.
-        ctx.strokeStyle = mix(sea, white, 0.35);
-        ctx.lineWidth = 1;
-        for (const s of particles) {
-          if (s.layer !== layer) continue;
-          ctx.globalAlpha = strength * (s.life / s.max);
-          ctx.beginPath();
-          ctx.moveTo(s.x, s.y);
-          ctx.lineTo(s.x - s.vx * 0.04, s.y - s.vy * 0.04);
           ctx.stroke();
         }
+      }
+
+      // Spray: short streaks thrown off the lip.
+      ctx.strokeStyle = crest;
+      ctx.lineWidth = 1;
+      for (const s of spray) {
+        ctx.globalAlpha = 0.6 * (s.life / s.max);
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - s.vx * 0.04, s.y - s.vy * 0.04);
+        ctx.stroke();
       }
       ctx.globalAlpha = 1;
     };
@@ -347,13 +281,9 @@ export function Sea({ className = '' }: { className?: string }) {
     const seed = () => {
       if (seeded) return;
       seeded = true;
-      // Start mid-set so the first frame already has waves breaking.
-      for (const [layer, spec] of LAYERS.entries()) {
-        for (let n = 0; n < spec.maxBreakers; n++) spawn(layer, random(1, 6));
-      }
-      const hero = breakers[LAYERS.length - 1]?.[0];
-      if (hero) hero.age = hero.life * 0.66;
-      if (!reduced.matches) for (let n = 0; n < 40; n++) step(1 / 30);
+      // Start mid-set so the first frame already has waves at every stage.
+      const count = capacity();
+      for (let n = 0; n < count; n++) spawn(random(0.5, 6));
     };
 
     const resize = () => {
@@ -361,9 +291,7 @@ export function Sea({ className = '' }: { className?: string }) {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = rect.width;
       height = rect.height;
-      seaHeight = Math.min(height, Math.max(460, width * 0.62));
-      seaTop = height - seaHeight;
-      unit = Math.min(width, seaHeight * 1.6);
+      unit = Math.min(width, 1400);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -372,7 +300,6 @@ export function Sea({ className = '' }: { className?: string }) {
     const tick = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-      time += dt;
       step(dt);
       draw();
       frame = requestAnimationFrame(tick);
