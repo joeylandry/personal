@@ -25,13 +25,16 @@ import { PlayGlyph, Vinyl } from './vinyl';
 export function RecordPlayer({
   trackId,
   eyebrow,
+  name,
   preview,
   embedUrl,
   trackUrl,
 }: {
   trackId: string;
-  /** Small label above the title, e.g. "Site sound currently". */
+  /** Small label above the title, e.g. "Currently: Site sound". */
   eyebrow: string;
+  /** The pinned song in running text, for "Back to …". */
+  name: string;
   /** Title, artist and art for the label; null shows a neutral label. */
   preview: TrackPreview | null;
   embedUrl: string;
@@ -103,7 +106,7 @@ export function RecordPlayer({
                 onClick={backToPinned}
                 className="link meta text-muted hover:text-fg"
               >
-                Back to {eyebrow.toLowerCase()}
+                Back to {name}
               </button>
             ) : null}
             <ExternalLink
@@ -171,7 +174,6 @@ export function RecordPlayer({
             </svg>
           </div>
         </div>
-
       </div>
     </div>
   );

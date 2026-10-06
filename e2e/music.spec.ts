@@ -135,7 +135,7 @@ test.describe('record player', () => {
     await expectSound(page, 'mock-2');
     await expect(turntableCta(page)).toHaveText('Pause');
 
-    await page.getByRole('button', { name: /^Back to my mind currently$/i }).click();
+    await page.getByRole('button', { name: /^Back to site sound$/i }).click();
     await expectSound(page, PINNED);
     await expect(page.getByRole('button', { name: /^Back to/i })).toHaveCount(0);
     expect((await audio(page)).count).toBe(1);
