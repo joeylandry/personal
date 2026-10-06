@@ -7,8 +7,9 @@ import { Section, SectionHeading } from './section';
 import { SpotifyProfileCard } from './spotify-profile';
 
 /**
- * About page music: the pinned song as a spinning record, the live player on
- * glass below it, then a preview of the public Spotify profile.
+ * About page music: the pinned song as a spinning record beside the live player
+ * on glass (stacked on smaller screens), then a preview of the public Spotify
+ * profile.
  */
 export async function ListeningSection() {
   const { pinned, profile } = listening;
@@ -37,7 +38,8 @@ export async function ListeningSection() {
           }
         />
 
-        <div className="mt-12 md:mt-16">
+        {/* Side by side on desktop; the record takes the full row when Spotify isn't connected. */}
+        <div className="mt-12 grid gap-16 md:mt-16 md:gap-24 lg:items-start lg:gap-8 lg:[&:has(>:nth-child(2))]:grid-cols-2">
           <RecordPlayer
             trackId={pinned.spotifyId}
             eyebrow={pinned.label}
@@ -45,10 +47,10 @@ export async function ListeningSection() {
             embedUrl={spotifyEmbedUrl(pinned.spotifyId)}
             trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
           />
+          <LivePlayer />
         </div>
 
-        <div className="mt-16 space-y-6 md:mt-24 md:space-y-8">
-          <LivePlayer />
+        <div className="mt-6 md:mt-8">
           <SpotifyProfileCard
             profile={spotifyProfile}
             url={listening.profileUrl}
