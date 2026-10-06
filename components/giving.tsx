@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { GivingChapter, StoryPhoto } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
+import { Corners } from './frame';
 import { TimelineTrack } from './giving-timeline';
 import { Pennant } from './pennant';
 import { PhotoLightbox } from './photo-lightbox';
@@ -156,11 +157,17 @@ export function GivingThanks() {
           {thanks.title}
         </h2>
         <div className="mt-12 max-w-4xl">
-          <PhotoLightbox
-            photos={[thanks.image]}
-            layout="natural"
-            sizes="(min-width: 1024px) 56rem, 100vw"
-          />
+          <div className="relative border border-rule bg-raised p-1.5">
+            <Corners />
+            <Image
+              src={thanks.image.src}
+              alt={thanks.image.alt}
+              width={thanks.image.width}
+              height={thanks.image.height}
+              sizes="(min-width: 1024px) 56rem, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
           <p className="meta mt-3 text-faint">{thanks.image.caption}</p>
         </div>
       </div>
