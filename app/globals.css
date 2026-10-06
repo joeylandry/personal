@@ -1471,8 +1471,13 @@
 /* --- Music island (components/music-island.tsx) -------------------------- */
 
 /* The header's Dynamic Island: a black pill that grows in place into the
-   controls, on Apple's spring-like curve. Phones only. */
+   controls, on Apple's spring-like curve. Phones only. No text selection or
+   iOS callout anywhere on it: the finger that held it open is still down
+   when the song and artist appear under it. */
 .music-island {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
   position: absolute;
   top: 0.9375rem;
   left: 50%;
@@ -1508,8 +1513,7 @@
   }
 }
 
-/* The collapsed island: art left, waveform right, both centred on the pill.
-   No iOS callout on a long press, which opens the island instead. */
+/* The collapsed island: art left, waveform right, both centred on the pill. */
 .music-island-pill {
   display: flex;
   width: 100%;
@@ -1517,8 +1521,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 0.875rem 0 0.625rem;
-  -webkit-touch-callout: none;
-  user-select: none;
   touch-action: manipulation;
 }
 
