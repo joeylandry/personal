@@ -29,7 +29,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-20 md:grid-cols-12 md:pt-16 md:pb-32 lg:pt-20">
+      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-14 md:grid-cols-12 md:pt-16 md:pb-16 lg:pt-20 lg:pb-20">
         <div className="md:col-span-8">
           <Reveal immediate>
             {/* An eyebrow over the headline, not a rival to it. The name is
