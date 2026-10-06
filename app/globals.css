@@ -1277,15 +1277,19 @@
   }
 }
 
-/* The spine runs down the left edge on phones and the center from md up. */
+/* The spine runs down the left edge on phones and the center from md up.
+   --run-on matches the band padding (py-20, md:py-28) the spine crosses when
+   the timeline is split across bands. */
 .giving-track {
   position: relative;
   --spine-x: 0.4375rem;
   --node-y: 22px;
+  --run-on: 5rem;
 }
 @media (min-width: 48rem) {
   .giving-track {
     --spine-x: 50%;
+    --run-on: 7rem;
   }
 }
 .giving-spine {
@@ -1297,6 +1301,21 @@
   transform: translateX(-50%);
   background-color: var(--rule-strong);
   mask-image: linear-gradient(to bottom, #000 88%, transparent);
+}
+/* Off the bottom of the band, to pass behind the next one. */
+.giving-track[data-runs-on] .giving-spine {
+  bottom: calc(-1 * var(--run-on));
+  mask-image: none;
+}
+/* In from the top of a later band, ending at its node. */
+.giving-track[data-continues] {
+  padding-top: var(--run-on);
+}
+.giving-track[data-continues] .giving-spine {
+  top: 0;
+  bottom: auto;
+  height: calc(var(--run-on) + var(--node-y));
+  mask-image: none;
 }
 .giving-spine::before {
   content: '';

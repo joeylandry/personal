@@ -13,6 +13,11 @@ import { useEffect, useRef, type ReactNode } from 'react';
  *
  * Without JavaScript the stylesheet shows the spine fully drawn and every node
  * lit, so the static page reads as a finished timeline.
+ *
+ * The timeline can be split across bands: `runsOn` carries the spine past the
+ * last step to the bottom of its band, and `continues` brings it in from the
+ * top of a later band and stops it at that band's last node, so the spine
+ * reads as one line passing behind whatever sits between.
  */
 
 /** The reading line, as a fraction of the viewport height from the top. */
@@ -23,22 +28,30 @@ const NODE_OFFSET = 22;
 export function TimelineTrack({
   children,
   className = '',
+  runsOn = false,
+  continues = false,
 }: {
   children: ReactNode;
   className?: string;
+  /** Run the spine on past the last step, off the bottom of the band. */
+  runsOn?: boolean;
+  /** Bring the spine in from the top of the band and end it at the last node. */
+  continues?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const list = ref.current;
     if (!list) return;
+    const spine = list.querySelector<HTMLElement>('.giving-spine');
     const steps = Array.from(list.querySelectorAll<HTMLElement>('[data-step]'));
     let frame = 0;
 
     const update = () => {
       frame = 0;
       const line = window.innerHeight * READING_LINE;
-      const box = list.getBoundingClientRect();
+      // Measured on the spine itself, which can reach past the list.
+      const box = (spine ?? list).getBoundingClientRect();
       const progress = Math.min(Math.max((line - box.top) / box.height, 0), 1);
       list.style.setProperty('--spine-progress', progress.toFixed(4));
       for (const step of steps) {
@@ -62,7 +75,12 @@ export function TimelineTrack({
   }, []);
 
   return (
-    <div ref={ref} className={`giving-track ${className}`.trim()}>
+    <div
+      ref={ref}
+      data-runs-on={runsOn || undefined}
+      data-continues={continues || undefined}
+      className={`giving-track ${className}`.trim()}
+    >
       <span aria-hidden="true" className="giving-spine" />
       <ol className="relative space-y-14 md:space-y-16">{children}</ol>
     </div>

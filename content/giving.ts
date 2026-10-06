@@ -147,7 +147,9 @@ export const giving = {
     },
   },
 
+  /** The timeline's last stop, past the thank-you: where the work goes on now. */
   next: {
+    year: 'Now',
     title: 'Continuing where I left off, with St. Jude.',
     body: [
       'The Nyes Neck apparel started as a fundraiser under the tent in 2021. Now it is Nyes Neck Clothing & Apparel, a brand inspired by Nyes Neck and Cape Cod, and a portion of proceeds supports St. Jude Children’s Research Hospital.',
