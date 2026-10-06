@@ -100,7 +100,7 @@ export function LivePreview({
         {visible && scale > 0 ? (
           <iframe
             src={url}
-            title={`${name} — live site`}
+            title={`${name}, live site`}
             tabIndex={-1}
             aria-hidden="true"
             loading="lazy"

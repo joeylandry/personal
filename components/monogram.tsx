@@ -2,11 +2,13 @@
  * The JL monogram.
  *
  * Solid grotesk letters on a 40×30 grid: shared cap height and baseline, one
- * stroke weight, the J's bowl landing exactly on the L's foot. A hairline
- * horizon sits below the baseline — the coastal half of "Midnight Coastal Lab".
+ * stroke weight. The J's bowl dips 0.6 below the L's foot: a round letter that
+ * only touches the baseline at one point reads as floating, so it overshoots,
+ * as round letters do in any typeface. A sea-colored hairline horizon sits
+ * below the baseline, the coastal half of "Midnight Coastal Lab".
  * Drawn rather than imported so it inherits color from its surface.
  */
-export const MONOGRAM_J = 'M13.5 1h4v15a7 7 0 0 1-14 0h4a3 3 0 0 0 6 0z';
+export const MONOGRAM_J = 'M13.5 1h4v15a7 7.6 0 0 1-14 0h4a3 3.6 0 0 0 6 0z';
 export const MONOGRAM_L = 'M22.5 1h4v18h10v4h-14z';
 
 export function Monogram({
@@ -15,7 +17,7 @@ export function Monogram({
   title,
 }: {
   className?: string;
-  /** The accent horizon beneath the letters. */
+  /** The sea horizon beneath the letters. */
   horizon?: boolean;
   /** Accessible name. Omit inside a labelled link to avoid double-reading. */
   title?: string;
@@ -34,7 +36,7 @@ export function Monogram({
       {horizon ? (
         <path
           d="M3.5 27.5h33"
-          stroke="var(--accent)"
+          stroke="var(--accent-sea)"
           strokeWidth="1"
           vectorEffect="non-scaling-stroke"
         />

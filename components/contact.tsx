@@ -24,8 +24,7 @@ export function Contact() {
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-5">
           <div>
-            <p className="meta section-label">{profile.contact.kicker}</p>
-            <h1 id="contact-heading" className="mt-5 text-title font-medium">
+            <h1 id="contact-heading" className="text-title font-medium">
               {profile.contact.headline}
             </h1>
             <p className="measure-tight mt-6 text-lead text-muted">{profile.contact.body}</p>
@@ -70,6 +69,7 @@ export function Contact() {
         </div>
 
         <div className="md:col-span-6 md:col-start-7">
+          <p className="meta section-label mb-8">{profile.contact.kicker}</p>
           <ContactForm
             fallbackHref={contactEmail ? `mailto:${contactEmail}` : linkedin.href}
             fallbackLabel={contactEmail ? 'email' : 'LinkedIn'}

@@ -3,7 +3,7 @@ import type { StoryPhoto } from './types';
 /**
  * The Giving page: nine years of Nyes Neck fundraisers for Make-A-Wish
  * Massachusetts and Rhode Island, then what carries on through Nyes Neck
- * Clothing & Apparel. Captions are placeholders until Joey writes his own.
+ * Clothing & Apparel. Copy follows Joey's own account of the fundraisers.
  */
 
 export interface GivingChapter {
@@ -16,40 +16,53 @@ export interface GivingChapter {
 
 export const giving = {
   intro: {
-    kicker: 'Giving',
-    title: 'Nine years, one neighborhood, $20,000+ for Make-A-Wish.',
+    title: 'At nine years old, my charitable career started.',
     body: [
-      'When I was nine, I got my first glimpse of the joy Make-A-Wish brings to children with critical illnesses, and I wanted to help. So I started where I was: Nyes Neck, a small neighborhood on Cape Cod.',
-      'It began with a lemonade stand and grew, summer after summer, into games nights, movie nights, apparel, gift bags and live music — with the whole neighborhood showing up. Together we raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
+      'When I was nine, I got my first glimpse of the joy Make-A-Wish brings to kids with critical illnesses, and I wanted to help. Then I read that granting one wish costs about $20,000, so that became my goal. I started where I was: a lemonade stand on the lawn in Nyes Neck, a small neighborhood on Cape Cod.',
+      'It did not happen overnight. Every summer I tried something new (games nights, movie nights, raffles, apparel), and plenty of it flopped. I kept adapting, the neighborhood kept showing up, and by 2021 we had raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
+    ],
+    /** Headline figures beside the title: the goal, the total raised, and where it goes now. */
+    stats: [
+      { value: '1 wish', label: 'The goal from the start. Granting one costs about $20,000' },
+      {
+        value: '$20,000+',
+        label: 'Raised for Make-A-Wish Massachusetts and Rhode Island, 2013 to 2021',
+      },
+      {
+        value: 'St. Jude',
+        label:
+          'Children’s Research Hospital, supported today by a portion of Nyes Neck Clothing & Apparel proceeds',
+      },
     ],
     quote:
       'I have been given an amazing opportunity to help provide life-changing experiences for wish children.',
+    quoteYear: '2021',
   },
 
   /** Oldest first, ordered by the date each photo was taken. */
   chapters: [
     {
       year: '2013',
-      title: 'Where it started',
-      body: 'A lemonade stand and bracelets on the lawn in Nyes Neck. The very first fundraiser.',
+      title: 'My first fundraiser',
+      body: 'Lemonade, iced tea and bracelets on the lawn, under a hand-painted sign (spelling was not my strongest subject yet). It was a small start, but it was a start.',
       photos: [
         {
           src: '/images/giving/2013-lemonade-stand.jpg',
           alt: 'Joey at nine beside a hand-painted “Lemanade” sign and a striped table of bracelets strung with colored lights, on a lawn in front of a gray-shingled porch.',
           width: 1600,
           height: 1200,
-          caption: 'Lemonade and bracelets, 2013.',
+          caption: 'Lemonade and bracelets. I raised only $50.',
         },
       ],
     },
     {
       year: '2014',
       title: 'Games night at the Beach Field',
-      body: 'Two dollars at the door, 7:30 to 8:30, rain date next Monday. Profits went to Make-A-Wish.',
+      body: 'Two dollars at the door, 7:30 to 8:30 at the Beach Field, rain date next Monday. Not every night worked: I was crushed at 10 when only two kids showed up to Movie Night, and again a week later when I had to cancel Games Night for lack of interest. I kept going anyway.',
       photos: [
         {
           src: '/images/giving/2014-games-night.jpg',
-          alt: 'Joey behind a small table by the water, with a hand-lettered whiteboard: Games Night tonight, $2, 7:30–8:30 pm at the Beach Field, profits to the Make-A-Wish Foundation.',
+          alt: 'Joey behind a small table by the water, with a hand-lettered whiteboard: Games Night tonight, $2, 7:30 to 8:30 pm at the Beach Field, profits to the Make-A-Wish Foundation.',
           width: 768,
           height: 1024,
           caption: 'Games night, 2014.',
@@ -58,7 +71,7 @@ export const giving = {
     },
     {
       title: 'The table by the harbor',
-      body: 'A pop-up tent, two striped tables and a Make-A-Wish banner, set up where the neighborhood walks by the water.',
+      body: 'A pop-up tent, two striped tables and a Make-A-Wish banner. My fundraisers ran in the daytime, so I set up by the water to catch beach-goers (and a few early arrivals to the annual meeting) on their way by.',
       photos: [
         {
           src: '/images/giving/harbor-table.jpg',
@@ -72,7 +85,7 @@ export const giving = {
     {
       year: '2016',
       title: 'Backyard movie nights',
-      body: 'A sheet on the fence, a projector and a lawn full of blankets. Movie-night gift bags and s’mores kits became a summer staple.',
+      body: 'A sheet on the fence, a projector and a lawn full of blankets. This time the kids came, and movie-night gift bags and s’mores kits became a summer staple.',
       photos: [
         {
           src: '/images/giving/2016-movie-night.jpg',
@@ -86,7 +99,7 @@ export const giving = {
     {
       year: '2019',
       title: 'Apparel and gift bags',
-      body: 'By 2019 the table had become a tent: shirts, sweatshirts and rows of gift bags, all for Make-A-Wish.',
+      body: 'By 2019 the table had become a tent: shirts, sweatshirts and rows of gift bags, all for Make-A-Wish. Each summer went better than the last, but I was still thousands of dollars short of $20,000.',
       photos: [
         {
           src: '/images/giving/2019-apparel-tent.jpg',
@@ -99,36 +112,35 @@ export const giving = {
     },
     {
       year: '2021',
-      title: 'The last one: live music after the annual meeting',
-      body: 'My final fundraiser before college — a live band under the tent after the Nyes Neck annual meeting. It pushed the total past $20,000.',
+      title: 'The last one: the first Nyes Neck Gala',
+      body: 'My final summer before college. The whole neighborhood gathers once a year for the annual meeting (to debate the “dock,” among other fiery topics), so this time I took over when it ended: a tent, a live band, and the first ever Nyes Neck apparel. By dark the colored lights were on and everyone was dancing. It pushed the total past $20,000.',
       photos: [
         {
           src: '/images/giving/2021-annual-meeting.jpg',
           alt: 'A hand-drawn sign on a split-rail fence reading “Nyes Neck, Sat 10th, Annual Meeting 5pm”, with a crowd gathered under a white tent by the water behind it.',
           width: 768,
           height: 1024,
-          caption: 'The annual meeting, 5 pm.',
+          caption: 'The annual meeting, always at 5 pm.',
         },
         {
           src: '/images/giving/2021-live-music.jpg',
-          alt: 'A four-piece band — bass, drums, guitar and keyboard — playing under a white tent strung with lights and a Make-A-Wish banner.',
+          alt: 'A four-piece band (bass, drums, guitar and keyboard) playing under a white tent strung with lights and a Make-A-Wish banner.',
           width: 969,
           height: 810,
-          caption: 'The band.',
+          caption: 'The band: my best friend and his siblings.',
         },
         {
           src: '/images/giving/2021-tent-party.jpg',
           alt: 'A crowd dancing under a tent lit purple and blue at night, with Make-A-Wish banners along the back wall.',
           width: 1600,
           height: 1200,
-          caption: 'Under the tent, after dark.',
+          caption: 'By dark, the colored lights came on.',
         },
       ],
     },
   ] satisfies GivingChapter[],
 
   thanks: {
-    kicker: 'From Make-A-Wish',
     title: 'A thank-you from Make-A-Wish Massachusetts and Rhode Island.',
     image: {
       src: '/images/giving/make-a-wish-thank-you.jpg',
@@ -137,14 +149,16 @@ export const giving = {
       height: 1428,
       caption: 'Make-A-Wish Massachusetts and Rhode Island.',
     },
+    /** My reply, set under the graphic. */
+    reply:
+      'Thank you to my family, my neighbors, and everyone who showed up for Make-A-Wish along the way.',
   },
 
   next: {
-    kicker: 'What’s next',
-    title: 'Continuing where I left off — with St. Jude.',
+    title: 'Continuing where I left off, with St. Jude.',
     body: [
-      'Nyes Neck Clothing & Apparel carries the same purpose forward. It’s a brand inspired by Nyes Neck and Cape Cod, and a portion of proceeds supports St. Jude Children’s Research Hospital.',
-      'The long-term goal is to build a nonprofit around this work, helping children in need and people affected by domestic violence. Until then, the shop keeps giving back.',
+      'The Nyes Neck apparel started as a fundraiser under the tent in 2021. Now it is Nyes Neck Clothing & Apparel, a brand inspired by Nyes Neck and Cape Cod, and a portion of proceeds supports St. Jude Children’s Research Hospital.',
+      'Someday I would like to build a nonprofit around this work, helping children in need and people affected by domestic violence. Until then, the shop keeps giving back, one sweatshirt at a time.',
     ],
     photo: {
       src: '/images/giving/dock-sunset.jpg',
@@ -156,7 +170,4 @@ export const giving = {
     shopUrl: 'https://www.nyesneck.shop',
     stJudeUrl: 'https://www.stjude.org',
   },
-
-  closing:
-    'Thank you to everyone who has supported Nyes Neck, Make-A-Wish, and every fundraiser along the way.',
 };

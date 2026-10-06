@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: note.title,
     description: note.dek,
-    alternates: { canonical: `/notes/${note.slug}` },
+    alternates: { canonical: `/blog/${note.slug}` },
     robots: note.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: 'article',
       title: note.title,
       description: note.dek,
-      url: `/notes/${note.slug}`,
+      url: `/blog/${note.slug}`,
       publishedTime: note.date,
     },
     twitter: { card: 'summary_large_image', title: note.title, description: note.dek },
@@ -80,8 +80,8 @@ export default async function NotePage({ params }: Params) {
             articleSchema(note),
             breadcrumbSchema([
               { name: 'Home', path: '/' },
-              { name: 'Notes', path: '/notes' },
-              { name: note.title, path: `/notes/${note.slug}` },
+              { name: 'Blog', path: '/blog' },
+              { name: note.title, path: `/blog/${note.slug}` },
             ]),
           ]),
         }}
@@ -90,12 +90,12 @@ export default async function NotePage({ params }: Params) {
         <div className="wrap py-16 md:py-24">
           <div className="mx-auto max-w-[42rem]">
             <p className="meta text-faint">
-              <Link href="/notes" className="link hover:text-fg">
-                Notes
+              <Link href="/blog" className="link hover:text-fg">
+                Blog
               </Link>
               <span aria-hidden="true"> / </span>
               <time dateTime={note.date}>{formatDate(note.date)}</time>
-              {note.draft ? <span className="ml-2 text-accent">Draft — not live</span> : null}
+              {note.draft ? <span className="ml-2 text-accent">Draft, not live</span> : null}
             </p>
             <h1 id="note-heading" className="mt-6 text-title font-medium text-fg">
               {note.title}
@@ -129,8 +129,8 @@ export default async function NotePage({ params }: Params) {
             ) : null}
 
             <p className="mt-14">
-              <Link href="/notes" className="link meta text-muted hover:text-fg">
-                ← All notes
+              <Link href="/blog" className="link meta text-muted hover:text-fg">
+                ← All posts
               </Link>
             </p>
           </div>

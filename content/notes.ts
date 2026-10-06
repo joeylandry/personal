@@ -1,7 +1,7 @@
 import type { Note } from './types';
 
 /**
- * Notes — hot takes, opinions and half-built ideas. Newest first.
+ * Blog posts: hot takes, opinions and half-built ideas. Newest first.
  *
  * To post: add an object to the top of this list. Set `draft: true` to read it
  * on a preview deploy before it goes live.
@@ -9,44 +9,78 @@ import type { Note } from './types';
 export const notes: Note[] = [
   {
     slug: 'sonos-let-me-fix-your-app',
-    title: 'Sonos, let me fix your app.',
-    dek: 'Two years, one CEO and a tab bar later, the best-sounding speakers in my house still have the most frustrating remote. A hot take, and an application.',
+    title: 'Sonos can’t market its way out of a broken app.',
+    dek: 'I built a whole marketing presentation on Sonos this semester. My verdict: the comeback plan is smart, but the ads can only promise what the app actually delivers.',
     date: '2026-10-05',
-    tags: ['Hot take', 'Product', 'Sonos'],
-    draft: true,
+    tags: ['Hot take', 'Marketing', 'Sonos'],
     body: [
       {
         type: 'p',
-        text: 'I love my Sonos speakers. I do not love opening the Sonos app. Those two sentences shouldn’t both be true about the same product — and for a company whose whole pitch is “it just works in every room,” the app isn’t a side feature. The app is the product. The speakers are the part you can see.',
-      },
-      { type: 'h', text: 'What happened' },
-      {
-        type: 'p',
-        text: 'On May 7, 2024, Sonos shipped a ground-up redesign of its app. It looked cleaner. It also launched without things people used every day: sleep timers, alarms, editing queues, managing a local music library. Speakers went missing from the app. Volume lagged. Screen-reader support regressed. The company apologised, spent the rest of the year rebuilding features it had removed, and in January 2025 its CEO stepped down.',
+        text: 'It’s a Saturday night, friends are over, and you want the same song playing in the kitchen, the living room and out on the deck. With Sonos, that used to take about five seconds. You opened the app, grouped the rooms, hit play, and it just worked. That “just worked” feeling was the entire brand.',
       },
       {
         type: 'p',
-        text: 'The repair has been slow and public. In July 2026 the app got its tab bar back — Home, System, Search — as an opt-in setting. In September, “Sonos 27” added presets and, more interestingly, a public MCP server so AI agents can drive your speakers directly.',
+        text: 'For a marketing class this semester, my group put together a presentation on Sonos: how it grew, how it fell, and how it is trying to climb back. I came out of it with a strong opinion, and since I’m a software engineer who also owns more Sonos speakers than I probably should, I figured I would share it.',
       },
-      { type: 'h', text: 'My take: this was an engineering failure, not a design one' },
+      { type: 'h', text: 'How Sonos used to grow' },
       {
         type: 'p',
-        text: 'People argue about the layout, but the layout was never the real problem. The problem is that a rewrite went out the door before it could do everything the old app did, on hardware that lives on flaky home Wi-Fi, for customers who own systems that cost thousands of dollars. That’s a release-engineering decision. You don’t replace a remote control people use twenty times a day with one that’s missing buttons.',
+        text: 'The original Sonos strategy was simple. Sell one great speaker, make it reliable, and let the system do the rest. A household starts with one speaker for around $400, falls in love with it, and slowly adds a second, a third and a soundbar. Before long that one $400 purchase is a $2,000+ system spread across the house.',
+      },
+      {
+        type: 'p',
+        text: 'Sonos barely had to advertise. The product was the marketing. Customers trusted it, told their friends about it, and kept coming back for more speakers. Reliability built trust, trust built word of mouth, and word of mouth built the ecosystem.',
+      },
+      { type: 'h', text: 'The app that broke the loop' },
+      {
+        type: 'p',
+        text: 'Then came May 2024. Sonos shipped a ground-up rebuild of its app, and it launched missing features people used every day: sleep timers, alarms, queue editing and accessibility options. Speakers disappeared from the app. Multi-room grouping, the one thing Sonos is known for, stopped working for a lot of people.',
+      },
+      {
+        type: 'p',
+        text: 'The fallout was brutal. Fixing the app was projected to cost $20 million to $30 million, the company laid people off, and the redesign wiped out hundreds of millions of dollars in market value. In January 2025, CEO Patrick Spence stepped down, and board member Tom Conrad (who helped build Pandora) took over with a clear mandate: fix reliability first.',
+      },
+      {
+        type: 'p',
+        text: 'Here is the part that stuck with me. The app didn’t just annoy existing customers. It broke the growth engine. Nobody buys a fifth speaker for a system that can’t find the first four.',
+      },
+      { type: 'h', text: 'The comeback plan' },
+      {
+        type: 'p',
+        text: 'The new strategy flips the old one. Instead of quietly letting the product sell itself, Sonos is going marketing-led:',
       },
       {
         type: 'list',
         items: [
-          'Parity is a launch gate, not a roadmap. Every feature in the old app gets a row in a checklist, and the new app doesn’t ship to everyone until every row is green.',
-          'Roll out behind flags, by cohort. Let the people who want the new thing opt in, measure them, then widen. Sonos eventually did exactly this with the 2026 navigation toggle — two years late.',
-          'Measure “time to music.” Cold open to sound coming out of the right room is the only metric that matters. Put a budget on it, and fail the build when it regresses.',
-          'Treat discovery as the core product. Finding speakers on a messy home network is the hard part. It deserves the best engineers on the team, the most tests, and a lab full of bad routers.',
-          'Keep the old app alive until the new one wins on merit. Users should leave because the new one is better, not because the old one stopped working.',
+          'Existing customers first. Upselling more speakers into homes that already own Sonos is a lot cheaper than finding brand new customers.',
+          'Portable speakers as the new front door. The old starter speaker (the Play:1) only lived inside your house. Roam and Move go outside, to the beach and on the boat, which lowers the commitment for someone trying Sonos for the first time.',
+          'Selling the feeling, not the specs. Sonos’s marketing leans on emotion (big, colorful “Brilliant Sound” visuals, real people in real homes) instead of drivers and wattage.',
         ],
       },
-      { type: 'h', text: 'The actually-good news' },
       {
         type: 'p',
-        text: 'Here’s the spicy part: the MCP server might be the smartest thing Sonos has done in years. An AI agent doesn’t care about your navigation hierarchy. If “play something mellow in the kitchen and turn the living room down” works reliably from any assistant, half the arguments about where the buttons live go away. But it only works if the control layer underneath is rock solid — which is the same work the app needed in the first place.',
+        text: 'On paper, I like it. Going back to the ecosystem model and focusing on lifetime value is the right instinct. Sonos already knows its best customer is the one who already owns a speaker.',
+      },
+      { type: 'h', text: 'My take: the ads are writing checks the app has to cash' },
+      {
+        type: 'p',
+        text: 'So the question is, can emotional storytelling rebuild a broken brand promise? I don’t think it can, at least not by itself.',
+      },
+      {
+        type: 'p',
+        text: 'Sonos never won on emotion. It won on reliability. People didn’t fall for a speaker because a commercial made them feel something. They fell for it because it worked every single time they pressed play. When an ad tells you to “feel more,” and then the app takes 20 seconds to find the kitchen, the ad actually makes things worse. It reminds you of exactly what you lost.',
+      },
+      {
+        type: 'p',
+        text: 'Marketing can bring people back to the door. Only the product can keep them inside. That is why the most important “marketing” Sonos has done lately is not a campaign at all:',
+      },
+      {
+        type: 'list',
+        items: [
+          'In July 2026, the app finally got a real tab bar back (Home, System and Search), offered as an opt-in setting so nobody gets forced into another surprise redesign.',
+          'In September, Sonos 27 refreshed the app again and opened a public MCP server, which lets AI assistants control your speakers directly. If “play something mellow in the kitchen” works from any assistant, half the arguments about where the buttons live go away.',
+          'Both updates rolled out gradually and let people choose. That is the exact opposite of what went wrong in 2024.',
+        ],
       },
       {
         type: 'quote',
@@ -55,28 +89,37 @@ export const notes: Note[] = [
       },
       {
         type: 'p',
-        text: 'That’s the right instinct: fix it in place, ship it incrementally, let people opt in. I’d like to help make the rest of it feel that way. I build full-stack products end to end, I care a lot about the boring reliability work that makes software feel effortless, and I have very strong opinions about where the sleep timer should go.',
+        text: 'That line is the whole lesson. Fix it in place, ship it in steps, and let customers opt in. Once the app is boring again (and I mean that as the highest compliment), the marketing will finally have something true to say.',
+      },
+      { type: 'h', text: 'What I would do' },
+      {
+        type: 'p',
+        text: 'If I were in the room, my advice would be short. Treat feature parity as a launch requirement, not a roadmap. Measure “time to music,” from opening the app to sound coming out of the right room, and never let it get slower. Put your best engineers on speaker discovery, because finding devices on messy home Wi-Fi is the hard part. And hold the big campaigns until the reviews say the app is good again, because trust is earned in the app long before it is earned in an ad.',
       },
       {
         type: 'p',
-        text: 'Sonos — my contact page is open.',
+        text: 'I still love my speakers, and I’m genuinely rooting for Sonos. I build products end to end, I care a lot about the unglamorous reliability work that makes software feel effortless, and I have very strong opinions about where the sleep timer should go. Sonos, my contact page is open.',
       },
     ],
     sources: [
       {
-        label: 'What Hi-Fi — Sonos boss resigns following disastrous app redesign',
-        href: 'https://www.whathifi.com/news/sonos-boss-resigns-following-disastrous-app-redesign',
+        label: 'Fast Company: Sonos CEO steps down following a disastrous app redesign',
+        href: 'https://www.fastcompany.com/91259432/sonos-ceo-steps-down-following-a-disastrous-app-redesign',
       },
       {
-        label: 'TechRadar — 2024: the year Sonos slipped',
-        href: 'https://www.techradar.com/televisions/2024-the-year-sonos-slipped',
+        label: 'Billboard: Sonos CEO Patrick Spence resigns after app redesign fallout',
+        href: 'https://www.billboard.com/pro/sonos-ceo-patrick-spence-resigns-after-app-redesign-layoffs/',
       },
       {
-        label: 'Sonos Community — July 14, 2026 app and player updates',
+        label: 'TechRadar: “Not a new app, but a new way of navigating”',
+        href: 'https://www.techradar.com/audio/multi-room/not-a-new-app-but-a-new-way-of-navigating-the-sonos-app',
+      },
+      {
+        label: 'Sonos Community: July 14, 2026 app and player updates',
         href: 'https://en.community.sonos.com/product-updates/14th-july-2026-new-sonos-app-player-updates-now-available-6934332',
       },
       {
-        label: 'Engadget — “Sonos 27” refreshes the app and lets AI agents control your system',
+        label: 'Engadget: “Sonos 27” refreshes the app and lets AI agents control your system',
         href: 'https://www.engadget.com/2248252/sonos-27-brings-a-refreshed-ui-to-the-app-and-lets-ai-agents-control-your-system/',
       },
     ],

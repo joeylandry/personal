@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const project = getProject(slug);
   if (!project) return { title: 'Not found' };
 
-  const title = `${project.name} — ${project.kind}`;
+  const title = `${project.name}: ${project.kind}`;
   return {
     title: project.name,
     description: project.summary,
@@ -144,7 +144,7 @@ export default async function ProjectPage({ params }: Params) {
 
           <CaseSection id="next" label="Next" title="What I'd explore next">
             <p className="measure mb-6 text-sm text-faint italic">
-              Directions I&apos;m considering — none of this is built yet.
+              Directions I&apos;m considering. None of this is built yet.
             </p>
             <RuledList items={caseStudy.next} />
           </CaseSection>

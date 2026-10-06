@@ -5,11 +5,7 @@ export function Exploring() {
   return (
     <Section id="exploring" surface="paper" labelledBy="exploring-heading">
       <div className="wrap py-20 md:py-28">
-        <SectionHeading
-          id="exploring-heading"
-          label="What I'm exploring"
-          title="Open questions I keep circling back to."
-        />
+        <SectionHeading id="exploring-heading" title="What I’m exploring." />
 
         <div className="mt-14 grid gap-x-10 gap-y-0 md:mt-20 md:grid-cols-3">
           {explorations.map((item) => (

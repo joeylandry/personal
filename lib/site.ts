@@ -23,7 +23,7 @@ export function absoluteUrl(path = '/'): string {
 }
 
 export const siteName = 'Joey Landry';
-export const siteTitle = 'Joey Landry — Software Engineer & Builder';
+export const siteTitle = 'Joey Landry | Software Engineer & Builder';
 
 /**
  * Optional public contact address. When unset the UI falls back to LinkedIn
@@ -34,9 +34,8 @@ export const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || nul
 export const navLinks = [
   { label: 'Work', href: '/work' },
   { label: 'Giving', href: '/giving' },
+  { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
-  { label: 'Notes', href: '/notes' },
-  { label: 'Experience', href: '/experience' },
   { label: 'Contact', href: '/contact' },
 ] as const;
 

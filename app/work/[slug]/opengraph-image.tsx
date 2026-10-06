@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import { getProject, projects } from '@/content';
 import { OG_ACCENTS, OG_CONTENT_TYPE, OG_SIZE, OgCard, ogFonts } from '@/lib/og';
 
-export const alt = 'Case study — Joey Landry';
+export const alt = 'Case study | Joey Landry';
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 

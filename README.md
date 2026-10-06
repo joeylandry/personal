@@ -116,7 +116,7 @@ with none of them set.
 
 ## Listening and notes
 
-**Pinned song.** `content/listening.ts` holds the "My mind currently" track id; swap it for any
+**Pinned song.** `content/listening.ts` holds the "Currently: Site sound" track id; swap it for any
 `open.spotify.com/track/<id>`. It renders with Spotify's embed, so it needs no setup.
 
 **Live player.** `GET /api/now-playing` reads your currently-playing track and recent plays
@@ -130,7 +130,12 @@ visible. One-time setup:
 
 Without them the live card simply doesn't render.
 
-**Notes.** `content/notes.ts` — add a `Note` to the list. `draft: true` shows it in dev and on
+The profile card's **Top artists this month** row needs the `user-top-read` scope. A refresh
+token minted before that scope was added keeps working for everything else, but the row stays
+hidden until you re-run step 2 and replace `SPOTIFY_REFRESH_TOKEN`. The card's photo falls back
+to `public/images/spotify/avatar.jpg` whenever Spotify doesn't send one.
+
+**Blog.** `content/notes.ts`: add a `Note` to the list. `draft: true` shows it in dev and on
 Vercel previews only.
 
 ---

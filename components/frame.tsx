@@ -47,7 +47,7 @@ export function Frame({
           {caption ? <span className="text-detail">{caption}</span> : <span />}
           {image.illustrated ? (
             <span className="text-faint normal-case tracking-normal">
-              Illustrated cover — not a screenshot
+              Illustrated cover, not a screenshot
             </span>
           ) : null}
         </figcaption>

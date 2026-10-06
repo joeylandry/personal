@@ -3,24 +3,19 @@ import Link from 'next/link';
 import type { GivingChapter, StoryPhoto } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
-import { FormingTimeline } from './forming-timeline';
+import { Corners } from './frame';
+import { TimelineTrack } from './giving-timeline';
 import { Pennant } from './pennant';
+import { PhotoLightbox } from './photo-lightbox';
+import { Reveal } from './reveal';
 import { Section } from './section';
+import { ShootingStars } from './shooting-stars';
+import { WishingFlight } from './wishing-flight';
 
 /** A captioned photo at its natural aspect ratio, never cropped. */
-function Photo({
-  photo,
-  sizes,
-  priority = false,
-  className = '',
-}: {
-  photo: StoryPhoto;
-  sizes: string;
-  priority?: boolean;
-  className?: string;
-}) {
+function Photo({ photo, sizes }: { photo: StoryPhoto; sizes: string }) {
   return (
-    <figure className={className}>
+    <figure>
       <div className="overflow-hidden border border-rule bg-raised">
         <Image
           src={photo.src}
@@ -28,7 +23,6 @@ function Photo({
           width={photo.width}
           height={photo.height}
           sizes={sizes}
-          priority={priority}
           className="h-auto w-full"
         />
       </div>
@@ -40,28 +34,33 @@ function Photo({
 export function GivingIntro() {
   const { intro } = giving;
   return (
-    <Section id="giving" surface="ink" divider={false} labelledBy="giving-heading">
-      <div className="wrap grid gap-x-10 gap-y-12 py-20 md:grid-cols-12 md:py-28">
+    <Section
+      id="giving"
+      surface="ink"
+      divider={false}
+      labelledBy="giving-heading"
+      className="overflow-hidden"
+    >
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <ShootingStars className="giving-static absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <WishingFlight className="text-sea opacity-75" />
+      </div>
+
+      <div className="wrap relative grid gap-x-10 gap-y-12 pt-10 pb-20 md:grid-cols-12 md:pt-14 md:pb-28">
         <div className="md:col-span-7">
-          <div>
-            <p className="meta section-label">{intro.kicker}</p>
-            <h1 id="giving-heading" className="mt-5 text-title font-medium">
-              {intro.title}
-            </h1>
-          </div>
-          <div className="measure mt-8 space-y-5 text-lead text-muted">
+          <h1 id="giving-heading" className="text-title font-medium">
+            {intro.title}
+          </h1>
+          <div data-flight-from className="measure mt-8 space-y-5 text-lead text-muted">
             {intro.body.map((paragraph) => (
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
         </div>
 
-        <div className="md:col-span-4 md:col-start-9 md:self-end">
+        <div data-flight-to className="md:col-span-4 md:col-start-9 md:pt-2">
           <dl className="space-y-6">
-            {[
-              { value: '$20,000+', label: 'Raised for Make-A-Wish Massachusetts and Rhode Island' },
-              { value: '9 years', label: '2013 to 2021, every summer in Nyes Neck' },
-            ].map((stat) => (
+            {intro.stats.map((stat) => (
               <div key={stat.value} className="rule-t pt-5 first:border-t-0 first:pt-0">
                 <dt className="sr-only">{stat.label}</dt>
                 <dd>
@@ -73,6 +72,7 @@ export function GivingIntro() {
           </dl>
           <blockquote className="mt-10 border-l border-detail pl-6">
             <p className="text-lg leading-snug text-fg">“{intro.quote}”</p>
+            <footer className="meta mt-3 text-faint">{intro.quoteYear}</footer>
           </blockquote>
         </div>
       </div>
@@ -80,33 +80,24 @@ export function GivingIntro() {
   );
 }
 
-/**
- * Photos for one chapter: one photo full width, three as a portrait plus a
- * stack. `sizes` allows for the timeline showing them larger before they
- * settle into their column.
- */
-function ChapterPhotos({ chapter }: { chapter: GivingChapter }) {
-  const [first, ...rest] = chapter.photos;
-  if (!first) return null;
-  if (rest.length === 0) {
-    return <Photo photo={first} sizes="(min-width: 1280px) 1100px, 100vw" />;
-  }
+/** One fundraiser: thumbnails that open full size, the caption, then the story. */
+function ChapterCard({ chapter }: { chapter: GivingChapter }) {
+  const [first] = chapter.photos;
+  const multiple = chapter.photos.length > 1;
   return (
-    <div className="grid gap-6 sm:grid-cols-2">
-      <Photo photo={first} sizes="(min-width: 768px) 50vw, 100vw" />
-      <div className="space-y-6">
-        {rest.map((photo) => (
-          <Photo key={photo.src} photo={photo} sizes="(min-width: 768px) 50vw, 100vw" />
-        ))}
-      </div>
-    </div>
+    <article>
+      <PhotoLightbox
+        photos={chapter.photos}
+        layout={multiple ? 'mosaic' : 'single'}
+        sizes="(min-width: 768px) 36vw, 100vw"
+      />
+      <p className="meta mt-3 text-faint">
+        {multiple ? `${chapter.photos.length} photos` : first?.caption}
+      </p>
+      <h3 className="mt-5 text-xl font-medium tracking-tight md:text-2xl">{chapter.title}</h3>
+      <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
+    </article>
   );
-}
-
-/** A lone portrait photo sits narrower so it doesn't fill the screen. */
-function isLonePortrait(chapter: GivingChapter) {
-  const [first, ...rest] = chapter.photos;
-  return Boolean(first && rest.length === 0 && first.height > first.width);
 }
 
 export function GivingTimeline() {
@@ -116,35 +107,44 @@ export function GivingTimeline() {
         <div>
           <p className="meta section-label">Make-A-Wish · Nyes Neck</p>
           <h2 id="giving-timeline-heading" className="mt-5 text-title font-medium">
-            The fundraisers, in order.
+            Where it all began.
           </h2>
         </div>
 
-        <FormingTimeline className="mt-14 md:mt-20">
-          {giving.chapters.map((chapter) => (
-            <li
-              key={chapter.title}
-              data-chapter
-              className="relative grid gap-x-10 gap-y-8 py-12 md:grid-cols-12 md:py-16"
-            >
-              <span aria-hidden="true" className="tl-node" />
-              <div className="tl-text md:col-span-4">
-                <div className="md:sticky md:top-28">
-                  <p className="meta text-detail">{chapter.year ?? 'Early years'}</p>
-                  <h3 className="mt-3 text-heading font-medium tracking-tight">{chapter.title}</h3>
-                  <p className="mt-4 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
+        {/* Cards alternate either side of the spine from md up, each tucked
+            up beside the one before so the two columns interleave. */}
+        <TimelineTrack className="mt-14 md:mt-20">
+          {giving.chapters.map((chapter, index) => {
+            const left = index % 2 === 0;
+            return (
+              <li
+                key={chapter.title}
+                data-step
+                className={`giving-step relative pl-10 md:grid md:grid-cols-2 md:gap-x-20 md:pl-0 ${
+                  index > 0 ? 'md:-mt-48' : ''
+                }`}
+              >
+                <span aria-hidden="true" className="giving-node" />
+                <span
+                  aria-hidden="true"
+                  className={`giving-link hidden md:block ${left ? 'right-1/2' : 'left-1/2'}`}
+                />
+                <div className={left ? 'md:col-start-1' : 'md:col-start-2'}>
+                  <p
+                    className={`giving-year font-mono text-2xl leading-[44px] font-medium tracking-tight ${
+                      left ? 'md:text-right' : ''
+                    }`}
+                  >
+                    {chapter.year ?? 'Early years'}
+                  </p>
+                  <Reveal className="mt-3">
+                    <ChapterCard chapter={chapter} />
+                  </Reveal>
                 </div>
-              </div>
-              <div className="md:col-span-8">
-                <div
-                  className={`tl-photos ${isLonePortrait(chapter) ? 'mx-auto max-w-md md:mx-0' : ''}`}
-                >
-                  <ChapterPhotos chapter={chapter} />
-                </div>
-              </div>
-            </li>
-          ))}
-        </FormingTimeline>
+              </li>
+            );
+          })}
+        </TimelineTrack>
       </div>
     </Section>
   );
@@ -155,15 +155,24 @@ export function GivingThanks() {
   return (
     <Section surface="ink" labelledBy="giving-thanks-heading">
       <div className="wrap py-20 md:py-28">
-        <div>
-          <p className="meta section-label">{thanks.kicker}</p>
-          <h2 id="giving-thanks-heading" className="measure mt-5 text-title font-medium">
-            {thanks.title}
-          </h2>
+        <h2 id="giving-thanks-heading" className="measure text-title font-medium">
+          {thanks.title}
+        </h2>
+        <div className="mt-12 max-w-4xl">
+          <div className="relative border border-rule bg-raised p-1.5">
+            <Corners />
+            <Image
+              src={thanks.image.src}
+              alt={thanks.image.alt}
+              width={thanks.image.width}
+              height={thanks.image.height}
+              sizes="(min-width: 1024px) 56rem, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
+          <p className="meta mt-3 text-faint">{thanks.image.caption}</p>
         </div>
-        <div className="mt-12">
-          <Photo photo={thanks.image} sizes="(min-width: 1280px) 1200px, 100vw" />
-        </div>
+        <p className="measure mt-12 text-lead font-medium">{thanks.reply}</p>
       </div>
     </Section>
   );
@@ -176,11 +185,8 @@ export function GivingNext() {
       <div className="wrap grid items-center gap-x-10 gap-y-12 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-5">
           <div>
-            <p className="meta section-label flex items-center gap-3">
-              {next.kicker}
-              <Pennant className="h-3.5 w-auto" />
-            </p>
-            <h2 id="giving-next-heading" className="mt-5 text-title font-medium">
+            <Pennant className="h-9 w-auto" />
+            <h2 id="giving-next-heading" className="mt-6 text-title font-medium">
               {next.title}
             </h2>
           </div>
@@ -205,20 +211,6 @@ export function GivingNext() {
         </div>
         <div className="md:col-span-7">
           <Photo photo={next.photo} sizes="(min-width: 768px) 55vw, 100vw" />
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-export function GivingClosing() {
-  return (
-    <Section surface="ink">
-      <div className="wrap py-20 text-center md:py-28">
-        <div>
-          <p className="mx-auto max-w-3xl text-title font-medium tracking-tight">
-            {giving.closing}
-          </p>
         </div>
       </div>
     </Section>

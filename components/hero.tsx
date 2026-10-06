@@ -1,14 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { donny, profile } from '@/content';
+import { donny, listening, profile, spotifyTrackUrl } from '@/content';
+import { getTrackPreview } from '@/lib/spotify-cache';
 import { Cta, CtaArrow } from './cta';
+import { PinnedMini } from './pinned-mini';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
 const HEADLINE_DELAYS = [150, 800, 1600];
 
-export function Hero() {
+export async function Hero() {
   const { hero } = profile;
+  const { pinned } = listening;
+  const preview = await getTrackPreview(pinned.spotifyId);
 
   return (
     <section
@@ -29,7 +33,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-20 md:grid-cols-12 md:pt-16 md:pb-32 lg:pt-20">
+      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-14 md:grid-cols-12 md:pt-16 md:pb-16 lg:pt-20 lg:pb-20">
         <div className="md:col-span-8">
           <Reveal immediate>
             {/* An eyebrow over the headline, not a rival to it. The name is
@@ -76,7 +80,7 @@ export function Hero() {
           <Reveal immediate delay={500}>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Cta href={hero.primaryCta.href}>{hero.primaryCta.label}</Cta>
-              <Cta href={hero.secondaryCta.href} variant="outline" arrow={false} external>
+              <Cta href={hero.secondaryCta.href} variant="sea" arrow={false} external>
                 {hero.secondaryCta.label}
               </Cta>
             </div>
@@ -87,7 +91,7 @@ export function Hero() {
         <Reveal immediate delay={600} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
-            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-detail md:flex-col md:items-start md:p-5"
+            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
           >
             <span className="relative block aspect-square w-24 shrink-0 overflow-hidden border border-rule md:w-full">
               <Image
@@ -105,10 +109,19 @@ export function Hero() {
                 <CtaArrow size={18} />
               </span>
               <span className="mt-1.5 block text-sm leading-snug text-muted">
-                Coworker, code reviewer, professional napper.
+                Business partner, code reviewer, professional napper.
               </span>
             </span>
           </Link>
+          {/* The site's song, on the same player as the About turntable. */}
+          <div className="mt-4">
+            <PinnedMini
+              trackId={pinned.spotifyId}
+              eyebrow={pinned.label}
+              preview={preview}
+              trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
+            />
+          </div>
         </Reveal>
       </div>
     </section>

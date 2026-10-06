@@ -79,11 +79,11 @@ export function articleSchema(note: Note) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    '@id': absoluteUrl(`/notes/${note.slug}#article`),
+    '@id': absoluteUrl(`/blog/${note.slug}#article`),
     headline: note.title,
     description: note.dek,
     datePublished: note.date,
-    url: absoluteUrl(`/notes/${note.slug}`),
+    url: absoluteUrl(`/blog/${note.slug}`),
     author: { '@id': personId },
     keywords: note.tags.join(', '),
     isPartOf: { '@id': websiteId },
@@ -96,7 +96,7 @@ export function collectionSchema() {
     '@type': 'CollectionPage',
     '@id': absoluteUrl('/work#collection'),
     url: absoluteUrl('/work'),
-    name: 'Recent work — Joey Landry',
+    name: 'Recent work | Joey Landry',
     isPartOf: { '@id': websiteId },
     about: { '@id': personId },
     hasPart: featuredProjects.map((project) => ({

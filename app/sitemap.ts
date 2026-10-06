@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'monthly', priority: 1 },
-    ...['/work', '/giving', '/about', '/notes', '/experience', '/contact'].map((path) => ({
+    ...['/work', '/giving', '/blog', '/about', '/contact'].map((path) => ({
       url: absoluteUrl(path),
       lastModified: now,
       changeFrequency: 'monthly' as const,
@@ -22,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...publishedNotes
       .filter((note) => !note.draft)
       .map((note) => ({
-        url: absoluteUrl(`/notes/${note.slug}`),
+        url: absoluteUrl(`/blog/${note.slug}`),
         lastModified: new Date(`${note.date}T12:00:00Z`),
         changeFrequency: 'yearly' as const,
         priority: 0.6,
