@@ -202,6 +202,7 @@ function SmallPlayGlyph() {
 /** A frosted play button over a song's artwork: "put this on the record". */
 function SampleButton({ track, className = '' }: { track: Track; className?: string }) {
   const onRecord = useOnRecord(track);
+  const { audible } = usePinned();
   return (
     <button
       type="button"
@@ -209,7 +210,7 @@ function SampleButton({ track, className = '' }: { track: Track; className?: str
       aria-label={`Play ${track.title} on the record player`}
       className={`glass-sample ${className}`}
     >
-      {onRecord ? <EqBars playing /> : <SmallPlayGlyph />}
+      {onRecord ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
     </button>
   );
 }
@@ -435,6 +436,7 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
 
 function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
   const onRecord = useOnRecord(play.track);
+  const { audible } = usePinned();
   return (
     <li className="ios-row flex items-center">
       <button
@@ -447,7 +449,7 @@ function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
         <span className="relative shrink-0">
           <Artwork track={play.track} sizes="44px" shadow={false} className="size-11 rounded-lg" />
           <span className="ios-row-play" aria-hidden="true">
-            {onRecord ? <EqBars playing /> : <SmallPlayGlyph />}
+            {onRecord ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
           </span>
         </span>
         <span className="min-w-0 flex-1">

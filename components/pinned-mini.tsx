@@ -24,7 +24,7 @@ export function PinnedMini({
   preview: TrackPreview | null;
   trackUrl: string;
 }) {
-  const { status, playing, track } = usePinned();
+  const { status, playing, audible, track } = usePinned();
 
   useEffect(
     () =>
@@ -66,7 +66,7 @@ export function PinnedMini({
       <div className="min-w-0 flex-1">
         <p className="meta flex items-center gap-2 text-detail">
           {track ? 'Sampling' : eyebrow}
-          {playing ? <EqBars playing /> : null}
+          {playing ? <EqBars playing={audible} /> : null}
         </p>
         <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg">{title}</p>
         {status === 'failed' ? (

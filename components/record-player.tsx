@@ -37,7 +37,7 @@ export function RecordPlayer({
   embedUrl: string;
   trackUrl: string;
 }) {
-  const { status, playing, track } = usePinned();
+  const { status, playing, audible, track } = usePinned();
 
   useEffect(
     () =>
@@ -122,7 +122,7 @@ export function RecordPlayer({
         {artist ? <p className="mt-2 text-lead text-muted">{artist}</p> : null}
 
         <p className="mt-6 flex items-center gap-2.5 text-sm text-muted" aria-live="polite">
-          <EqBars playing={playing} />
+          <EqBars playing={audible} />
           <span>
             {playing ? 'Spinning now, all over the site' : 'Press play to drop the needle'}
           </span>
