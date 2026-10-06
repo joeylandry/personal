@@ -7,6 +7,7 @@ import {
   useId,
   useRef,
   useState,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
 } from 'react';
@@ -25,6 +26,9 @@ import { Corners } from './frame';
  * - `single`: one cropped thumbnail at a fixed height.
  * - `mosaic`: the first photo as a tall tile, the rest stacked beside it.
  * - `natural`: one photo at its own aspect ratio, never cropped.
+ * - `row`: every photo side by side at its own aspect ratio, never cropped.
+ *   Each tile's share of the row follows its aspect ratio, so the tiles come
+ *   out the same height.
  */
 export function PhotoLightbox({
   photos,
@@ -33,7 +37,7 @@ export function PhotoLightbox({
   className = '',
 }: {
   photos: StoryPhoto[];
-  layout?: 'single' | 'mosaic' | 'natural';
+  layout?: 'single' | 'mosaic' | 'natural' | 'row';
   sizes: string;
   className?: string;
 }) {
@@ -74,9 +78,16 @@ export function PhotoLightbox({
 
   if (!current) return null;
 
-  const thumb = (photo: StoryPhoto, position: number, tileClass: string, fit = true) => (
+  const thumb = (
+    photo: StoryPhoto,
+    position: number,
+    tileClass: string,
+    fit = true,
+    style?: CSSProperties,
+  ) => (
     <a
       key={photo.src}
+      style={style}
       href={photo.src}
       onClick={(event) => open(event, position)}
       aria-haspopup="dialog"
@@ -113,6 +124,17 @@ export function PhotoLightbox({
           <div className="grid h-56 grid-cols-3 grid-rows-2 gap-1.5 md:h-60">
             {photos.map((photo, position) =>
               thumb(photo, position, position === 0 ? 'row-span-2' : 'col-span-2'),
+            )}
+          </div>
+        ) : layout === 'row' ? (
+          <div className="flex gap-1.5">
+            {photos.map((photo, position) =>
+              thumb(photo, position, 'min-w-0', true, {
+                // Grow factors are scaled up so they never sum below 1, where flex
+                // would leave part of the row empty.
+                flex: `${(100 * photo.width) / photo.height} 1 0%`,
+                aspectRatio: `${photo.width} / ${photo.height}`,
+              }),
             )}
           </div>
         ) : layout === 'natural' ? (

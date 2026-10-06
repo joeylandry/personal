@@ -1363,6 +1363,29 @@
   color: var(--faint);
 }
 
+/* A chapter's photos, at their own aspect ratio. They start at full size,
+   capped so the row never runs taller than --photo-max-h, then shrink toward
+   the spine as the reader scrolls past. The giving-timeline script writes
+   --shrink; without it, or under reduced motion, they stay full size. */
+.giving-photo {
+  --photo-max-h: min(32rem, 70svh);
+  --photo-min: 0.72;
+  width: calc(
+    min(100%, var(--photo-max-h) * var(--ratio, 1)) *
+      (1 - (1 - var(--photo-min)) * var(--shrink, 0))
+  );
+}
+@media (min-width: 48rem) {
+  .giving-photo {
+    --photo-min: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .giving-photo {
+    --shrink: 0 !important;
+  }
+}
+
 /* Full-size photo viewer: a native modal dialog. */
 .giving-lightbox {
   margin: auto;

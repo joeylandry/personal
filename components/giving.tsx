@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import type { GivingChapter, StoryPhoto } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
@@ -77,17 +78,29 @@ export function GivingIntro() {
   );
 }
 
-/** One fundraiser: thumbnails that open full size, the caption, then the story. */
-function ChapterCard({ chapter }: { chapter: GivingChapter }) {
+/**
+ * One fundraiser: the photos at their own aspect ratio (opening full size),
+ * the caption, then the story. The photos start large and shrink toward the
+ * spine as the reader scrolls past (see TimelineTrack).
+ */
+function ChapterCard({ chapter, left }: { chapter: GivingChapter; left: boolean }) {
   const [first] = chapter.photos;
   const multiple = chapter.photos.length > 1;
+  // Width over height of the whole row of photos, which caps how wide it may
+  // grow so a tall photo never runs taller than the viewport.
+  const ratio = chapter.photos.reduce((sum, photo) => sum + photo.width / photo.height, 0);
   return (
     <article>
-      <PhotoLightbox
-        photos={chapter.photos}
-        layout={multiple ? 'mosaic' : 'single'}
-        sizes="(min-width: 768px) 36vw, 100vw"
-      />
+      <div
+        className={`giving-photo ${left ? 'md:ml-auto' : ''}`}
+        style={{ '--ratio': ratio.toFixed(4) } as CSSProperties}
+      >
+        <PhotoLightbox
+          photos={chapter.photos}
+          layout="row"
+          sizes={`(min-width: 768px) ${Math.round(40 / chapter.photos.length)}vw, ${Math.round(100 / chapter.photos.length)}vw`}
+        />
+      </div>
       <p className="meta mt-3 text-faint">
         {multiple ? `${chapter.photos.length} photos` : first?.caption}
       </p>
@@ -135,7 +148,7 @@ export function GivingTimeline() {
                     {chapter.year ?? 'Early years'}
                   </p>
                   <Reveal className="mt-3">
-                    <ChapterCard chapter={chapter} />
+                    <ChapterCard chapter={chapter} left={left} />
                   </Reveal>
                 </div>
               </li>
