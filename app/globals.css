@@ -1258,8 +1258,10 @@
    Giving page (components/giving.tsx, giving-timeline.tsx, shooting-stars.tsx,
    photo-lightbox.tsx)
    --------------------------------------------------------------------------
-   Shooting stars streak now and then; at rest, and under reduced motion, each
-   streak sits at its drawn position. The timeline spine and nodes start drawn
+   Shooting stars streak now and then and the points of light drift past; at
+   rest, and under reduced motion, each sits at its drawn position. With
+   JavaScript and motion allowed, WishingFlight (wishing-flight.tsx) swaps the
+   whole still frame for a live ride through space with the two wishing stars. The timeline spine and nodes start drawn
    and lit; only a page with JavaScript ties them to scroll.
    -------------------------------------------------------------------------- */
 
@@ -1296,6 +1298,28 @@
     opacity: 0;
     transform: translateX(170px);
   }
+}
+
+/* One full viewBox width, so the trailing copy lands where the first began. */
+.giving-drift {
+  animation: giving-drift 150s linear infinite;
+}
+@keyframes giving-drift {
+  to {
+    transform: translateX(-1440px);
+  }
+}
+
+/* The live ride replaces the still frame; the canvas fades in once it runs. */
+[data-flight='on'] .giving-static {
+  display: none;
+}
+.giving-flight {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+[data-flight='on'] .giving-flight {
+  opacity: 1;
 }
 
 /* The spine runs down the left edge on phones and the center from md up. */
