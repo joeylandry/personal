@@ -31,7 +31,7 @@ export const giving = {
       {
         value: 'St. Jude',
         label:
-          'Children’s Research Hospital, supported today by Nyes Neck Clothing & Apparel proceeds',
+          'Children’s Research Hospital, supported today by a portion of Nyes Neck Clothing & Apparel proceeds',
       },
     ],
     quote:
