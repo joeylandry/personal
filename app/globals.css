@@ -433,7 +433,6 @@
 /* Live previews: the scale fits the desktop page to the card. */
 .preview-page {
   transform: scale(var(--preview-scale, 1));
-  transition: opacity 0.5s ease;
 }
 
 @keyframes grid-drift {
