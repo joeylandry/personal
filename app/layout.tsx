@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Ambient } from '@/components/ambient';
+import { PinnedHost } from '@/components/pinned-host';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { profile } from '@/content';
@@ -88,6 +89,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
+        {/* The site's one music player, kept here so it plays on across pages. */}
+        <PinnedHost />
         <Ambient />
       </body>
     </html>

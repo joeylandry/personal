@@ -1,14 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { donny, profile } from '@/content';
+import { donny, listening, profile, spotifyTrackUrl } from '@/content';
+import { getTrackPreview } from '@/lib/spotify-cache';
 import { Cta, CtaArrow } from './cta';
+import { PinnedMini } from './pinned-mini';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
 const HEADLINE_DELAYS = [150, 800, 1600];
 
-export function Hero() {
+export async function Hero() {
   const { hero } = profile;
+  const { pinned } = listening;
+  const preview = await getTrackPreview(pinned.spotifyId);
 
   return (
     <section
@@ -109,6 +113,15 @@ export function Hero() {
               </span>
             </span>
           </Link>
+          {/* The site's song, on the same player as the About turntable. */}
+          <div className="mt-4">
+            <PinnedMini
+              trackId={pinned.spotifyId}
+              eyebrow={pinned.label}
+              preview={preview}
+              trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
+            />
+          </div>
         </Reveal>
       </div>
     </section>

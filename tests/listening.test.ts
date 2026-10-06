@@ -5,12 +5,13 @@ import {
   parseOEmbed,
   toNowPlaying,
   toPlaylists,
+  toTopArtists,
   toProfile,
   toRecent,
   toTrackPreview,
 } from '@/lib/spotify';
 import { canOptimizeImage } from '@/lib/spotify-images';
-import { mockListening, mockProfile } from '@/lib/spotify-mock';
+import { mockListening, mockProfile, mockTopArtists } from '@/lib/spotify-mock';
 
 const track = (id: string, name = `Song ${id}`) => ({
   id,
@@ -227,5 +228,48 @@ describe('notes', () => {
         expect(new URL(source.href).protocol).toBe('https:');
       }
     }
+  });
+});
+
+describe('top artists', () => {
+  it('keeps Spotify order, picks art and skips broken entries', () => {
+    const artists = toTopArtists(
+      {
+        items: [
+          {
+            id: 'a1',
+            name: 'Remi Wolf',
+            images: [
+              { url: 'https://i.scdn.co/big', width: 640 },
+              { url: 'https://i.scdn.co/mid', width: 320 },
+            ],
+            external_urls: { spotify: 'https://open.spotify.com/artist/a1' },
+          },
+          null,
+          { id: 'a2' },
+          { id: 'a3', name: 'SAULT', images: [] },
+        ],
+      },
+      6,
+    );
+    expect(artists).toEqual([
+      {
+        id: 'a1',
+        name: 'Remi Wolf',
+        image: 'https://i.scdn.co/mid',
+        url: 'https://open.spotify.com/artist/a1',
+      },
+      { id: 'a3', name: 'SAULT', image: null, url: 'https://open.spotify.com/artist/a3' },
+    ]);
+  });
+
+  it('respects the limit and tolerates an empty answer', () => {
+    const items = Array.from({ length: 10 }, (_, i) => ({ id: `a${i}`, name: `Artist ${i}` }));
+    expect(toTopArtists({ items }, 6)).toHaveLength(6);
+    expect(toTopArtists(null)).toEqual([]);
+  });
+
+  it('ships mock artists for local previews', () => {
+    expect(mockTopArtists.length).toBeGreaterThan(0);
   });
 });

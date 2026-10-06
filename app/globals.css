@@ -876,6 +876,18 @@
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
   will-change: transform;
 }
+/* The same disc on its own, sized by its container (the hero's mini player). */
+.record.record-solo {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  translate: none;
+}
+/* A small disc wears a bigger label, so the art still reads. */
+.record-solo .record-label {
+  inset: 26%;
+}
 .record-label {
   position: absolute;
   inset: 32%;
@@ -1355,5 +1367,151 @@
   from {
     opacity: 0;
     transform: scale(0.97);
+  }
+}
+
+/* --- Sampling songs onto the record (components/live-player.tsx) -------- */
+
+/* Frosted play button over the lead artwork. */
+.glass-sample {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  color: #fff;
+  background: rgb(20 24 28 / 0.45);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    0 8px 20px -6px rgb(0 0 0 / 0.6);
+  cursor: pointer;
+  transition:
+    scale 200ms var(--ease-out-soft),
+    background-color 200ms ease;
+}
+.glass-sample:hover {
+  scale: 1.08;
+  background: rgb(20 24 28 / 0.6);
+}
+.glass-sample:active {
+  scale: 0.95;
+}
+@media (min-width: 40rem) {
+  .glass-sample {
+    width: 3.25rem;
+  }
+}
+
+/* A small play mark over each row's art: always on touch screens, on hover or
+   focus elsewhere, and swapped for the waveform while that song spins. */
+.ios-row-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 0.5rem;
+  color: #fff;
+  background: rgb(0 0 0 / 0.42);
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+@media (hover: none) {
+  .ios-row-play {
+    opacity: 1;
+    background: rgb(0 0 0 / 0.28);
+  }
+}
+.ios-row-link:hover .ios-row-play,
+.ios-row-link:focus-visible .ios-row-play,
+.ios-row-link[data-on-record='true'] .ios-row-play {
+  opacity: 1;
+}
+.ios-row-link[data-on-record='true'] {
+  background: rgb(255 255 255 / 0.08);
+}
+/* The way out to Spotify, beside each row. */
+.ios-row-out {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-right: 0.25rem;
+  border-radius: 999px;
+  color: rgb(255 255 255 / 0.45);
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+.ios-row-out:hover,
+.ios-row-out:focus-visible {
+  color: #fff;
+  background: rgb(255 255 255 / 0.1);
+}
+
+/* --- Music island (components/music-island.tsx) -------------------------- */
+
+/* The header's Dynamic Island: a black pill that grows in place into the
+   controls, on Apple's spring-like curve. Phones only. */
+.music-island {
+  position: absolute;
+  top: 0.9375rem;
+  left: 50%;
+  z-index: 10;
+  translate: -50% 0;
+  width: 6.25rem;
+  height: 2.125rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #000;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 10px 30px -10px rgb(0 0 0 / 0.8);
+  transition:
+    width 480ms cubic-bezier(0.32, 0.72, 0, 1),
+    height 480ms cubic-bezier(0.32, 0.72, 0, 1),
+    top 480ms cubic-bezier(0.32, 0.72, 0, 1),
+    border-radius 480ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.music-island[data-open='true'] {
+  top: 0.5rem;
+  width: min(22rem, calc(100vw - 1.5rem));
+  height: 4.25rem;
+  border-radius: 1.75rem;
+}
+.music-island .eq > span {
+  background-color: var(--color-sea);
+}
+/* On phones the name steps aside for the island; the monogram stays. */
+@media (max-width: 47.99rem) {
+  header:has(.music-island) .header-name {
+    display: none;
+  }
+}
+
+/* The collapsed island: art left, waveform right, both centred on the pill.
+   No iOS callout on a long press, which opens the island instead. */
+.music-island-pill {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.75rem 0 0.375rem;
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* A new song drops onto the turntable: the record settles onto the platter. */
+.turntable .record {
+  animation: record-drop 520ms var(--ease-out-soft) both;
+}
+@keyframes record-drop {
+  from {
+    opacity: 0;
+    scale: 1.08;
   }
 }

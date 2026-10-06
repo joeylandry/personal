@@ -68,6 +68,14 @@ export interface Playlist {
   tracks: number | null;
 }
 
+/** One of the account's top artists, for the profile card. */
+export interface Artist {
+  id: string;
+  name: string;
+  image: string | null;
+  url: string;
+}
+
 export interface SpotifyProfile {
   name: string;
   avatar: string | null;
@@ -255,6 +263,33 @@ export function toProfile(
   };
 }
 
+/** Parses `/v1/me/top/artists`, keeping Spotify's order. */
+export function toTopArtists(raw: unknown, limit = 6): Artist[] {
+  const items =
+    (
+      raw as {
+        items?: ({
+          id?: string;
+          name?: string;
+          images?: SpotifyImage[] | null;
+          external_urls?: { spotify?: string };
+        } | null)[];
+      } | null
+    )?.items ?? [];
+  const artists: Artist[] = [];
+  for (const item of items) {
+    if (!item?.id || !item.name) continue;
+    artists.push({
+      id: item.id,
+      name: item.name,
+      image: pickArt(item.images ?? []),
+      url: item.external_urls?.spotify ?? `https://open.spotify.com/artist/${item.id}`,
+    });
+    if (artists.length === limit) break;
+  }
+  return artists;
+}
+
 async function get(path: string, token: string): Promise<unknown | null> {
   const response = await fetch(`${API}${path}`, {
     cache: 'no-store',
@@ -305,6 +340,23 @@ export async function fetchProfile(userId: string): Promise<SpotifyProfile | nul
   const profile = toProfile(user, playlists, userId);
   if (!profile) throw new Error('Spotify profile unavailable');
   return profile;
+}
+
+/**
+ * The account's top artists over roughly the last four weeks. Needs the
+ * `user-top-read` scope (re-mint the token with `npm run spotify:token` if it
+ * predates it). Null when Spotify isn't configured; throws when it is but
+ * doesn't answer, so a miss isn't cached.
+ */
+export async function fetchTopArtists(limit = 6): Promise<Artist[] | null> {
+  const token = await accessToken().catch(() => null);
+  if (!token) {
+    if (credentials()) throw new Error('Spotify token refresh failed');
+    return null;
+  }
+  const raw = await get(`/me/top/artists?time_range=short_term&limit=${limit}`, token);
+  if (!raw) throw new Error('Spotify top artists unavailable');
+  return toTopArtists(raw, limit);
 }
 
 export async function getListening(recentLimit = 6): Promise<Listening> {
