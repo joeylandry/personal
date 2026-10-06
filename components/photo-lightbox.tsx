@@ -7,55 +7,87 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import type { StoryPhoto } from '@/content';
 import { Corners } from './frame';
 
 /**
- * Photo thumbnails that open full size.
+ * Photo thumbnails that open a full-screen gallery.
  *
- * Thumbnails stay small and cropped so a chapter reads at a glance; the
- * uncropped photo opens in a native modal <dialog>, which brings the focus
- * trap, Esc to close and focus return for free. Each thumbnail is a real link
- * to the image file, so without JavaScript it still opens the full photo.
+ * The gallery is a native modal <dialog> (focus trap, Esc to close and focus
+ * return for free), portalled to <body> so no transformed ancestor can shift
+ * it. It shows `gallery` (the thumbnails' own photos by default) as a
+ * swipeable strip, like a phone's photo viewer: swipe, scroll or use the
+ * arrows and arrow keys, or pick a photo from the thumbnails along the bottom.
+ *
+ * The gallery is for wider screens only. On phones the photos already fill
+ * the column, so a tap does nothing. Each thumbnail is a real link to the
+ * image file, so without JavaScript it still opens the full photo.
  *
  * Layouts:
  * - `single`: one cropped thumbnail at a fixed height.
  * - `mosaic`: the first photo as a tall tile, the rest stacked beside it.
  * - `natural`: one photo at its own aspect ratio, never cropped.
+ * - `row`: every photo side by side at its own aspect ratio, never cropped.
+ *   Each tile's share of the row follows its aspect ratio, so the tiles come
+ *   out the same height.
  */
 export function PhotoLightbox({
   photos,
+  gallery = photos,
   layout = 'single',
   sizes,
   className = '',
 }: {
   photos: StoryPhoto[];
-  layout?: 'single' | 'mosaic' | 'natural';
+  /** Every photo the gallery steps through; defaults to `photos`. */
+  gallery?: StoryPhoto[];
+  layout?: 'single' | 'mosaic' | 'natural' | 'row';
   sizes: string;
   className?: string;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  // False while server rendering and hydrating, true after: the portal needs <body>.
+  const mounted = useSyncExternalStore(subscribeNothing, onClient, onServer);
   const captionId = useId();
-  const count = photos.length;
-  const current = photos[index] ?? photos[0];
+  const count = gallery.length;
+  const current = gallery[index] ?? gallery[0];
 
-  const open = (event: MouseEvent<HTMLAnchorElement>, next: number) => {
+  /** Brings photo `next` to the middle of the strip. */
+  const go = useCallback(
+    (next: number, behavior: ScrollBehavior = 'smooth') => {
+      const strip = stripRef.current;
+      const target = (next + count) % count;
+      setIndex(target);
+      strip?.scrollTo({ left: target * strip.clientWidth, behavior });
+    },
+    [count],
+  );
+
+  const open = (event: MouseEvent<HTMLAnchorElement>, photo: StoryPhoto) => {
     // Let modified clicks (new tab, save link) behave like any link.
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    setIndex(next);
+    // Phones get no gallery.
+    if (!window.matchMedia('(min-width: 48rem)').matches) return;
     dialogRef.current?.showModal();
+    go(
+      Math.max(
+        gallery.findIndex((item) => item.src === photo.src),
+        0,
+      ),
+      'instant',
+    );
   };
 
   const close = useCallback(() => dialogRef.current?.close(), []);
-  const step = useCallback(
-    (delta: number) => setIndex((value) => (value + delta + count) % count),
-    [count],
-  );
 
   // Hold the page still while the dialog is open.
   useEffect(() => {
@@ -70,18 +102,19 @@ export function PhotoLightbox({
       observer.disconnect();
       document.documentElement.style.overflow = '';
     };
-  }, []);
+  }, [mounted]);
 
   if (!current) return null;
 
-  const thumb = (photo: StoryPhoto, position: number, tileClass: string, fit = true) => (
+  const thumb = (photo: StoryPhoto, tileClass: string, fit = true, style?: CSSProperties) => (
     <a
       key={photo.src}
+      style={style}
       href={photo.src}
-      onClick={(event) => open(event, position)}
+      onClick={(event) => open(event, photo)}
       aria-haspopup="dialog"
       aria-label={`View full size: ${photo.alt}`}
-      className={`group/thumb relative block overflow-hidden bg-raised ${tileClass}`}
+      className={`group/thumb relative block overflow-hidden bg-raised max-md:pointer-events-none ${tileClass}`}
     >
       <Image
         src={photo.src}
@@ -97,7 +130,7 @@ export function PhotoLightbox({
       />
       <span
         aria-hidden="true"
-        className="meta absolute right-2 bottom-2 flex items-center gap-1.5 bg-[rgb(7_16_24/0.72)] px-2 py-1 text-[0.65rem] text-[#f7f9fb] opacity-0 transition-opacity duration-300 group-hover/thumb:opacity-100 group-focus-visible/thumb:opacity-100"
+        className="meta absolute right-2 bottom-2 flex items-center gap-1.5 bg-[rgb(7_16_24/0.72)] px-2 py-1 text-[0.65rem] text-[#f7f9fb] opacity-0 transition-opacity duration-300 group-hover/thumb:opacity-100 group-focus-visible/thumb:opacity-100 max-md:hidden"
       >
         <ExpandIcon />
         View
@@ -105,78 +138,159 @@ export function PhotoLightbox({
     </a>
   );
 
+  const [lead] = photos;
+  const viewer = (
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={captionId}
+      className="giving-lightbox surface-ink"
+      onKeyDown={(event) => {
+        if (count < 2) return;
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          go(index + 1);
+        }
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          go(index - 1);
+        }
+      }}
+    >
+      <div className="flex h-full flex-col">
+        <div className="flex items-center justify-between gap-6 px-6 pt-5">
+          <span className="meta text-muted">{count > 1 ? `${index + 1} / ${count}` : ''}</span>
+          <LightboxButton label="Close" onClick={close} autoFocus>
+            <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3.5 w-3.5">
+              <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.4" />
+            </svg>
+          </LightboxButton>
+        </div>
+
+        <div className="relative min-h-0 flex-1">
+          <div
+            ref={stripRef}
+            className="giving-lightbox-strip flex h-full"
+            onScroll={(event) => {
+              const strip = event.currentTarget;
+              const settled = Math.round(strip.scrollLeft / strip.clientWidth);
+              if (settled !== index && settled >= 0 && settled < count) setIndex(settled);
+            }}
+          >
+            {gallery.map((photo, position) => (
+              <figure
+                key={photo.src}
+                aria-hidden={position !== index}
+                className="flex h-full w-full shrink-0 snap-center flex-col items-center justify-center px-20 py-4"
+                onClick={(event) => {
+                  // A click beside the photo closes, like a click on the backdrop.
+                  if (event.target === event.currentTarget) close();
+                }}
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={photo.width}
+                  height={photo.height}
+                  sizes="(min-width: 1024px) 80vw, 100vw"
+                  // Load the photo on screen and its neighbours straight away.
+                  loading={Math.abs(position - index) <= 1 ? 'eager' : 'lazy'}
+                  className="h-auto max-h-[calc(100%-2.5rem)] w-auto max-w-full object-contain"
+                />
+                <figcaption
+                  id={position === index ? captionId : undefined}
+                  className="meta mt-4 shrink-0 text-center text-muted"
+                >
+                  {photo.caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          {count > 1 ? (
+            <>
+              <span className="absolute top-1/2 left-5 -translate-y-1/2">
+                <LightboxButton label="Previous photo" onClick={() => go(index - 1)}>
+                  <Chevron direction="left" />
+                </LightboxButton>
+              </span>
+              <span className="absolute top-1/2 right-5 -translate-y-1/2">
+                <LightboxButton label="Next photo" onClick={() => go(index + 1)}>
+                  <Chevron direction="right" />
+                </LightboxButton>
+              </span>
+            </>
+          ) : null}
+        </div>
+
+        {count > 1 ? (
+          <div className="flex justify-center gap-2 overflow-x-auto px-6 pt-2 pb-5">
+            {gallery.map((photo, position) => (
+              <button
+                key={photo.src}
+                type="button"
+                aria-label={`Show photo ${position + 1}: ${photo.alt}`}
+                aria-current={position === index}
+                onClick={() => go(position)}
+                className={`h-14 shrink-0 overflow-hidden border transition-[opacity,border-color] duration-300 ${
+                  position === index
+                    ? 'border-detail opacity-100'
+                    : 'border-transparent opacity-50 hover:opacity-90'
+                }`}
+                style={{ aspectRatio: `${photo.width} / ${photo.height}` }}
+              >
+                <Image
+                  src={photo.src}
+                  alt=""
+                  width={photo.width}
+                  height={photo.height}
+                  sizes="96px"
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </dialog>
+  );
+
   return (
     <>
       <div className={`relative border border-rule bg-raised p-1.5 ${className}`.trim()}>
         <Corners />
-        {layout === 'mosaic' && count > 1 ? (
+        {layout === 'mosaic' && photos.length > 1 ? (
           <div className="grid h-56 grid-cols-3 grid-rows-2 gap-1.5 md:h-60">
             {photos.map((photo, position) =>
-              thumb(photo, position, position === 0 ? 'row-span-2' : 'col-span-2'),
+              thumb(photo, position === 0 ? 'row-span-2' : 'col-span-2'),
             )}
           </div>
-        ) : layout === 'natural' ? (
-          thumb(current, 0, '', false)
-        ) : (
-          thumb(current, 0, 'h-56 md:h-60')
-        )}
+        ) : layout === 'row' ? (
+          <div className="flex gap-1.5">
+            {photos.map((photo) =>
+              thumb(photo, 'min-w-0', true, {
+                // Grow factors are scaled up so they never sum below 1, where flex
+                // would leave part of the row empty.
+                flex: `${(100 * photo.width) / photo.height} 1 0%`,
+                aspectRatio: `${photo.width} / ${photo.height}`,
+              }),
+            )}
+          </div>
+        ) : lead ? (
+          layout === 'natural' ? (
+            thumb(lead, '', false)
+          ) : (
+            thumb(lead, 'h-56 md:h-60')
+          )
+        ) : null}
       </div>
 
-      <dialog
-        ref={dialogRef}
-        aria-labelledby={captionId}
-        className="giving-lightbox surface-ink"
-        onClick={(event) => {
-          // A click on the backdrop lands on the dialog itself.
-          if (event.target === event.currentTarget) close();
-        }}
-        onKeyDown={(event) => {
-          if (count < 2) return;
-          if (event.key === 'ArrowRight') step(1);
-          if (event.key === 'ArrowLeft') step(-1);
-        }}
-      >
-        <figure className="flex max-h-full flex-col items-center">
-          <Image
-            key={current.src}
-            src={current.src}
-            alt={current.alt}
-            width={current.width}
-            height={current.height}
-            sizes="(min-width: 1024px) 80vw, 100vw"
-            className="h-auto max-h-[calc(100dvh-9rem)] w-auto max-w-full border border-rule object-contain"
-          />
-          <figcaption
-            id={captionId}
-            className="mt-4 flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-3 text-fg"
-          >
-            <span className="meta text-muted">
-              {count > 1 ? `${index + 1} / ${count} · ` : ''}
-              {current.caption}
-            </span>
-            <span className="flex items-center gap-2">
-              {count > 1 ? (
-                <>
-                  <LightboxButton label="Previous photo" onClick={() => step(-1)}>
-                    <Chevron direction="left" />
-                  </LightboxButton>
-                  <LightboxButton label="Next photo" onClick={() => step(1)}>
-                    <Chevron direction="right" />
-                  </LightboxButton>
-                </>
-              ) : null}
-              <LightboxButton label="Close" onClick={close} autoFocus>
-                <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3.5 w-3.5">
-                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.4" />
-                </svg>
-              </LightboxButton>
-            </span>
-          </figcaption>
-        </figure>
-      </dialog>
+      {mounted ? createPortal(viewer, document.body) : null}
     </>
   );
 }
+
+const subscribeNothing = () => () => {};
+const onClient = () => true;
+const onServer = () => false;
 
 function LightboxButton({
   label,
