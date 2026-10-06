@@ -1,30 +1,29 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { createAudioRecord, hasPreview } from './record-audio';
 
 /**
- * One player for the site's pinned song, shared by every record on the site.
+ * One player for the site's records, shared by all of them.
  *
- * Spotify's iFrame API drives a single embed that lives in the root layout
- * (see `components/pinned-host.tsx`), so the song keeps playing across
- * client-side navigation. The home hero's mini record, the About page's
+ * It plays songs' 30-second previews through a single `<audio>` element
+ * (`lib/record-audio.ts`) that outlives client-side navigation, so the music
+ * keeps going as you browse. The home hero's mini record, the About page's
  * turntable, the live player's rows and the header's island all read this
  * store and call into it, which is what keeps them in step. Any other song
  * (one from the live player's history, say) can be put on the record with
  * `playOnRecord`, and `backToPinned` puts the pick back.
  *
- * The embed is a cross-origin iframe that answers late, out of order, or not
- * at all, so the store tracks what the visitor asked for (play or pause) and
- * shows that straight away, then only believes the embed again once it agrees
- * or a grace period runs out. Updates still in flight for the previous song,
- * a `play()` that lands before a new song has loaded, a sample that runs out
- * without saying so: each of those used to flip the record the wrong way, and
- * each is covered in `tests/pinned-player.test.ts`.
+ * The player answers late, out of order, or not at all (a slow network, a
+ * phone refusing to play), so the store tracks what the visitor asked for
+ * (play or pause) and shows that straight away, then only believes the
+ * player again once it agrees or a grace period runs out. The state machine
+ * takes the player as an `EmbedController`, the interface of Spotify's
+ * iFrame embed it used to drive, and is covered against a deliberately
+ * misbehaving one in `tests/pinned-player.test.ts`.
  */
 
-const IFRAME_API = 'https://open.spotify.com/embed/iframe-api/v1';
-/** The element in the layout that Spotify swaps its embed into. */
-export const PINNED_MOUNT_ID = 'pinned-player-mount';
+/** Height of Spotify's plain embed, the fallback when the player can't start. */
 export const PINNED_EMBED_HEIGHT = 80;
 
 /** What the embed reports, several times a second while it plays. */
@@ -53,20 +52,6 @@ export interface EmbedController {
   seek(seconds: number): void;
   togglePlay(): void;
   destroy(): void;
-}
-
-interface SpotifyIFrameApi {
-  createController(
-    element: HTMLElement,
-    options: { uri: string; width?: string | number; height?: string | number },
-    callback: (controller: EmbedController) => void,
-  ): void;
-}
-
-declare global {
-  interface Window {
-    onSpotifyIframeApiReady?: (api: SpotifyIFrameApi) => void;
-  }
 }
 
 export type PinnedStatus = 'idle' | 'loading' | 'ready' | 'failed';
@@ -131,6 +116,8 @@ export interface PlayerDeps {
   createEmbed(uri: string): Promise<EmbedController>;
   /** Opens a song on Spotify when the embed is unavailable. */
   openUrl(url: string): void;
+  /** False when a song is known to be unplayable here (no preview); it opens on Spotify instead. */
+  canPlay?: (id: string) => boolean;
   now?: () => number;
 }
 
@@ -387,6 +374,11 @@ export function createRecordPlayer(deps: PlayerDeps): RecordPlayerStore {
   /** Play or pause the song on the record; one that has run out starts again from the top. */
   function togglePinned() {
     if (!controller || state.status !== 'ready') return;
+    const song = state.track ?? state.pinned;
+    if (!state.playing && loadedId && deps.canPlay?.(loadedId) === false && song) {
+      deps.openUrl(song.url);
+      return;
+    }
     if (state.playing) pause();
     else play();
   }
@@ -396,7 +388,7 @@ export function createRecordPlayer(deps: PlayerDeps): RecordPlayerStore {
    * song already on the record plays or pauses instead of starting over.
    */
   function playOnRecord(track: RecordTrack) {
-    if (state.status === 'failed') {
+    if (state.status === 'failed' || deps.canPlay?.(track.id) === false) {
       deps.openUrl(track.url);
       return;
     }
@@ -436,47 +428,15 @@ export function createRecordPlayer(deps: PlayerDeps): RecordPlayerStore {
 }
 
 /* ---------------------------------------------------------------------------
-   The site's one record player, on Spotify's iFrame API
+   The site's one record player
    --------------------------------------------------------------------------- */
 
-/** Loads the iFrame API once per page, however many records ask for it. */
-let apiPromise: Promise<SpotifyIFrameApi> | null = null;
-
-function loadIframeApi(): Promise<SpotifyIFrameApi> {
-  if (apiPromise) return apiPromise;
-  apiPromise = new Promise((resolve, reject) => {
-    const previous = window.onSpotifyIframeApiReady;
-    window.onSpotifyIframeApiReady = (api) => {
-      previous?.(api);
-      resolve(api);
-    };
-    const script = document.createElement('script');
-    script.src = IFRAME_API;
-    script.async = true;
-    script.onerror = () => {
-      apiPromise = null;
-      script.remove();
-      reject(new Error('Spotify iFrame API failed to load'));
-    };
-    document.body.appendChild(script);
-  });
-  return apiPromise;
-}
-
 const player = createRecordPlayer({
-  async createEmbed(uri) {
-    const api = await loadIframeApi();
-    const mount = document.getElementById(PINNED_MOUNT_ID);
-    if (!mount) throw new Error('Pinned player mount missing');
-    const target = document.createElement('div');
-    mount.replaceChildren(target);
-    return new Promise((resolve) =>
-      api.createController(target, { uri, width: '100%', height: PINNED_EMBED_HEIGHT }, resolve),
-    );
-  },
+  createEmbed: async (uri) => createAudioRecord(uri),
   openUrl(url) {
     window.open(url, '_blank', 'noopener,noreferrer');
   },
+  canPlay: hasPreview,
 });
 
 export const { loadPinned, togglePinned, playOnRecord, backToPinned } = player;

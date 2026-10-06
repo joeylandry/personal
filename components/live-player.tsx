@@ -7,6 +7,7 @@ import type { NowPlaying, RecentPlay, Track } from '@/lib/spotify';
 import { canOptimizeImage } from '@/lib/spotify-images';
 import { refreshListening, useListening } from '@/lib/use-listening';
 import { playOnRecord, usePinned } from '@/lib/pinned-player';
+import { prefetchPreviews } from '@/lib/record-audio';
 
 /*
  * The Dynamic Island's music waveform, ported from anaclumos/dynamic-island
@@ -108,6 +109,14 @@ function usePlayer(): PlayerState | null | undefined {
     refreshedFor.current = current.track.id;
     refreshListening();
   }, [current, progress]);
+
+  // Look the songs' previews up now, so a tap on one can play at once.
+  const ids = [current?.track.id, ...(data?.recent ?? []).map((play) => play.track.id)]
+    .filter(Boolean)
+    .join(',');
+  useEffect(() => {
+    if (ids) prefetchPreviews(ids.split(','));
+  }, [ids]);
 
   if (data === null) return undefined;
   if (!data.configured || (!current && data.recent.length === 0)) return null;
