@@ -7,6 +7,7 @@ import type { NowPlaying, RecentPlay, Track } from '@/lib/spotify';
 import { canOptimizeImage } from '@/lib/spotify-images';
 import { refreshListening, useListening } from '@/lib/use-listening';
 import { playOnRecord, usePinned } from '@/lib/pinned-player';
+import { prefetchPreviews } from '@/lib/record-audio';
 
 /*
  * The Dynamic Island's music waveform, ported from anaclumos/dynamic-island
@@ -109,6 +110,14 @@ function usePlayer(): PlayerState | null | undefined {
     refreshListening();
   }, [current, progress]);
 
+  // Look the songs' previews up now, so a tap on one can play at once.
+  const ids = [current?.track.id, ...(data?.recent ?? []).map((play) => play.track.id)]
+    .filter(Boolean)
+    .join(',');
+  useEffect(() => {
+    if (ids) prefetchPreviews(ids.split(','));
+  }, [ids]);
+
   if (data === null) return undefined;
   if (!data.configured || (!current && data.recent.length === 0)) return null;
 
@@ -185,10 +194,21 @@ function sample(track: Track) {
   });
 }
 
-/** True while this song is the one spinning on the site's record. */
-function useOnRecord(track: Track): boolean {
-  const { track: onRecord, playing } = usePinned();
-  return playing && onRecord?.id === track.id;
+/**
+ * Whether this song is the one on the site's record (the pick counts too),
+ * whether it's spinning, and whether sound is coming out yet.
+ */
+function useOnRecord(track: Track): { onRecord: boolean; spinning: boolean; audible: boolean } {
+  const { track: sampled, pinned, playing, audible } = usePinned();
+  const onRecord = (sampled ?? pinned)?.id === track.id;
+  return { onRecord, spinning: onRecord && playing, audible: onRecord && audible };
+}
+
+/** What a press does: put the song on, or play or pause it if it's already there. */
+function sampleLabel(track: Track, onRecord: boolean, spinning: boolean): string {
+  if (spinning) return `Pause ${track.title} on the record player`;
+  if (onRecord) return `Play ${track.title} on the record player`;
+  return `Play ${track.title} by ${track.artist} on the record player`;
 }
 
 function SmallPlayGlyph() {
@@ -201,16 +221,15 @@ function SmallPlayGlyph() {
 
 /** A frosted play button over a song's artwork: "put this on the record". */
 function SampleButton({ track, className = '' }: { track: Track; className?: string }) {
-  const onRecord = useOnRecord(track);
-  const { audible } = usePinned();
+  const { onRecord, spinning, audible } = useOnRecord(track);
   return (
     <button
       type="button"
       onClick={() => sample(track)}
-      aria-label={`Play ${track.title} on the record player`}
+      aria-label={sampleLabel(track, onRecord, spinning)}
       className={`glass-sample ${className}`}
     >
-      {onRecord ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
+      {spinning ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
     </button>
   );
 }
@@ -243,7 +262,7 @@ function Ambient({ track }: { track: Track }) {
 
 /** The small capsule in the corner: equaliser plus state. */
 function StatusPill({ state }: { state: PlayerState }) {
-  const label = state.playing ? 'Now playing' : state.current ? 'Paused' : 'Last played';
+  const label = state.playing ? 'Now playing in my ears' : state.current ? 'Paused' : 'Last played';
   return (
     <p className="glass-pill">
       {state.current ? <EqBars playing={state.playing} /> : null}
@@ -438,21 +457,20 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
 }
 
 function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
-  const onRecord = useOnRecord(play.track);
-  const { audible } = usePinned();
+  const { onRecord, spinning, audible } = useOnRecord(play.track);
   return (
     <li className="ios-row flex items-center">
       <button
         type="button"
         onClick={() => sample(play.track)}
-        aria-label={`Play ${play.track.title} by ${play.track.artist} on the record player`}
+        aria-label={sampleLabel(play.track, onRecord, spinning)}
         className="ios-row-link min-w-0 flex-1 text-left"
-        data-on-record={onRecord}
+        data-on-record={spinning}
       >
         <span className="relative shrink-0">
           <Artwork track={play.track} sizes="44px" shadow={false} className="size-11 rounded-lg" />
           <span className="ios-row-play" aria-hidden="true">
-            {onRecord ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
+            {spinning ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
           </span>
         </span>
         <span className="min-w-0 flex-1">
@@ -462,7 +480,7 @@ function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
           <span className="block truncate text-[13px] text-white/55">{play.track.artist}</span>
         </span>
         <span className="shrink-0 text-xs text-white/40 tabular-nums">
-          {onRecord ? 'On the record' : timeAgo(play.playedAt, now)}
+          {spinning ? 'On the record' : timeAgo(play.playedAt, now)}
         </span>
       </button>
       <a

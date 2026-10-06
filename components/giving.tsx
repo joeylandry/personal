@@ -1,33 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { GivingChapter, StoryPhoto } from '@/content';
+import type { CSSProperties, ReactNode } from 'react';
+import type { GivingChapter } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
+import { Corners } from './frame';
 import { TimelineTrack } from './giving-timeline';
-import { Pennant } from './pennant';
 import { PhotoLightbox } from './photo-lightbox';
 import { Reveal } from './reveal';
 import { Section } from './section';
 import { ShootingStars } from './shooting-stars';
-
-/** A captioned photo at its natural aspect ratio, never cropped. */
-function Photo({ photo, sizes }: { photo: StoryPhoto; sizes: string }) {
-  return (
-    <figure>
-      <div className="overflow-hidden border border-rule bg-raised">
-        <Image
-          src={photo.src}
-          alt={photo.alt}
-          width={photo.width}
-          height={photo.height}
-          sizes={sizes}
-          className="h-auto w-full"
-        />
-      </div>
-      <figcaption className="meta mt-3 text-faint">{photo.caption}</figcaption>
-    </figure>
-  );
-}
+import { WishingFlight } from './wishing-flight';
 
 export function GivingIntro() {
   const { intro } = giving;
@@ -40,7 +23,8 @@ export function GivingIntro() {
       className="overflow-hidden"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <ShootingStars className="absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <ShootingStars className="giving-static absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <WishingFlight className="text-sea opacity-75" />
       </div>
 
       <div className="wrap relative grid gap-x-10 gap-y-12 pt-10 pb-20 md:grid-cols-12 md:pt-14 md:pb-28">
@@ -48,14 +32,14 @@ export function GivingIntro() {
           <h1 id="giving-heading" className="text-title font-medium">
             {intro.title}
           </h1>
-          <div className="measure mt-8 space-y-5 text-lead text-muted">
+          <div data-flight-from className="measure mt-8 space-y-5 text-lead text-muted">
             {intro.body.map((paragraph) => (
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
         </div>
 
-        <div className="md:col-span-4 md:col-start-9 md:pt-2">
+        <div data-flight-to className="md:col-span-4 md:col-start-9 md:pt-2">
           <dl className="space-y-6">
             {intro.stats.map((stat) => (
               <div key={stat.value} className="rule-t pt-5 first:border-t-0 first:pt-0">
@@ -77,23 +61,86 @@ export function GivingIntro() {
   );
 }
 
-/** One fundraiser: thumbnails that open full size, the caption, then the story. */
-function ChapterCard({ chapter }: { chapter: GivingChapter }) {
+/** Every timeline photo in order, so the gallery steps through them all. */
+const timelinePhotos = giving.chapters.flatMap((chapter) => chapter.photos);
+
+/**
+ * One fundraiser: the photos at their own aspect ratio (opening full size in a
+ * gallery), the caption, then the story. From md up the photos sit mini beside
+ * their year; TimelineTrack zooms them in from the middle of the timeline the
+ * first time the reader scrolls to them.
+ */
+function ChapterCard({ chapter, left }: { chapter: GivingChapter; left: boolean }) {
   const [first] = chapter.photos;
   const multiple = chapter.photos.length > 1;
+  // Width over height of the whole row of photos, so the stylesheet can size
+  // the row by its height.
+  const ratio = chapter.photos.reduce((sum, photo) => sum + photo.width / photo.height, 0);
   return (
     <article>
-      <PhotoLightbox
-        photos={chapter.photos}
-        layout={multiple ? 'mosaic' : 'single'}
-        sizes="(min-width: 768px) 36vw, 100vw"
-      />
+      <div
+        className={`giving-photo-slot ${left ? 'md:ml-auto' : ''}`}
+        style={{ '--ratio': ratio.toFixed(4) } as CSSProperties}
+      >
+        <div className="giving-photo">
+          <PhotoLightbox
+            photos={chapter.photos}
+            gallery={timelinePhotos}
+            layout="row"
+            sizes={`(min-width: 768px) ${Math.round(50 / chapter.photos.length)}vw, ${Math.round(100 / chapter.photos.length)}vw`}
+          />
+        </div>
+      </div>
       <p className="meta mt-3 text-faint">
         {multiple ? `${chapter.photos.length} photos` : first?.caption}
       </p>
       <h3 className="mt-5 text-xl font-medium tracking-tight md:text-2xl">{chapter.title}</h3>
       <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
     </article>
+  );
+}
+
+/**
+ * One stop on the spine: its node, the hairline over to the card, the year,
+ * then the card itself. Even steps sit left of the spine from md up, odd ones
+ * right.
+ */
+function TimelineStep({
+  index,
+  year,
+  tuck = false,
+  children,
+}: {
+  index: number;
+  year: string;
+  /** Pull the step up beside the one before so the two columns interleave. */
+  tuck?: boolean;
+  children: ReactNode;
+}) {
+  const left = index % 2 === 0;
+  return (
+    <li
+      data-step
+      className={`giving-step relative pl-10 md:grid md:grid-cols-2 md:gap-x-20 md:pl-0 ${
+        tuck ? 'md:-mt-48' : ''
+      }`}
+    >
+      <span aria-hidden="true" className="giving-node" />
+      <span
+        aria-hidden="true"
+        className={`giving-link hidden md:block ${left ? 'right-1/2' : 'left-1/2'}`}
+      />
+      <div className={left ? 'md:col-start-1' : 'md:col-start-2'}>
+        <p
+          className={`giving-year font-mono text-2xl leading-[44px] font-medium tracking-tight ${
+            left ? 'md:text-right' : ''
+          }`}
+        >
+          {year}
+        </p>
+        <Reveal className="mt-3">{children}</Reveal>
+      </div>
+    </li>
   );
 }
 
@@ -108,39 +155,19 @@ export function GivingTimeline() {
           </h2>
         </div>
 
-        {/* Cards alternate either side of the spine from md up, each tucked
-            up beside the one before so the two columns interleave. */}
+        {/* The spine fades out below the last step and fades back in at the
+            top of GivingNext, past the thank-you. */}
         <TimelineTrack className="mt-14 md:mt-20">
-          {giving.chapters.map((chapter, index) => {
-            const left = index % 2 === 0;
-            return (
-              <li
-                key={chapter.title}
-                data-step
-                className={`giving-step relative pl-10 md:grid md:grid-cols-2 md:gap-x-20 md:pl-0 ${
-                  index > 0 ? 'md:-mt-48' : ''
-                }`}
-              >
-                <span aria-hidden="true" className="giving-node" />
-                <span
-                  aria-hidden="true"
-                  className={`giving-link hidden md:block ${left ? 'right-1/2' : 'left-1/2'}`}
-                />
-                <div className={left ? 'md:col-start-1' : 'md:col-start-2'}>
-                  <p
-                    className={`giving-year font-mono text-2xl leading-[44px] font-medium tracking-tight ${
-                      left ? 'md:text-right' : ''
-                    }`}
-                  >
-                    {chapter.year ?? 'Early years'}
-                  </p>
-                  <Reveal className="mt-3">
-                    <ChapterCard chapter={chapter} />
-                  </Reveal>
-                </div>
-              </li>
-            );
-          })}
+          {giving.chapters.map((chapter, index) => (
+            <TimelineStep
+              key={chapter.title}
+              index={index}
+              year={chapter.year ?? 'Early years'}
+              tuck={index > 0}
+            >
+              <ChapterCard chapter={chapter} left={index % 2 === 0} />
+            </TimelineStep>
+          ))}
         </TimelineTrack>
       </div>
     </Section>
@@ -156,66 +183,85 @@ export function GivingThanks() {
           {thanks.title}
         </h2>
         <div className="mt-12 max-w-4xl">
-          <PhotoLightbox
-            photos={[thanks.image]}
-            layout="natural"
-            sizes="(min-width: 1024px) 56rem, 100vw"
-          />
+          <div className="relative border border-rule bg-raised p-1.5">
+            <Corners />
+            <Image
+              src={thanks.image.src}
+              alt={thanks.image.alt}
+              width={thanks.image.width}
+              height={thanks.image.height}
+              sizes="(min-width: 1024px) 56rem, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
           <p className="meta mt-3 text-faint">{thanks.image.caption}</p>
         </div>
+        <p className="measure mt-12 text-lead font-medium">{thanks.reply}</p>
       </div>
     </Section>
   );
 }
 
+/**
+ * The timeline after the thank-you. The spine fades in from the top of the
+ * band, as if it had run on behind the thank-you, passes the St. Jude stop and
+ * ends at the Now node.
+ */
 export function GivingNext() {
-  const { next } = giving;
+  const { next, now } = giving;
+  const first = giving.chapters.length;
   return (
     <Section surface="paper" labelledBy="giving-next-heading">
-      <div className="wrap grid items-center gap-x-10 gap-y-12 py-20 md:grid-cols-12 md:py-28">
-        <div className="md:col-span-5">
-          <div>
-            <Pennant className="h-9 w-auto" />
-            <h2 id="giving-next-heading" className="mt-6 text-title font-medium">
-              {next.title}
-            </h2>
-          </div>
-          <div className="mt-8 space-y-5 text-lead text-muted">
-            {next.body.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-            ))}
-          </div>
-          <div>
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-              <ExternalLink href={next.shopUrl} className="link-on font-medium text-fg" arrow>
-                Visit nyesneck.shop
-              </ExternalLink>
-              <Link href="/work/nyes-neck" className="link text-muted hover:text-fg">
-                How the shop is built
-              </Link>
-              <ExternalLink href={next.stJudeUrl} className="link text-muted hover:text-fg" arrow>
-                St. Jude
-              </ExternalLink>
-            </div>
-          </div>
-        </div>
-        <div className="md:col-span-7">
-          <Photo photo={next.photo} sizes="(min-width: 768px) 55vw, 100vw" />
-        </div>
-      </div>
-    </Section>
-  );
-}
+      <div className="wrap pb-20 md:pb-28">
+        <TimelineTrack continues>
+          <TimelineStep index={first} year={next.year}>
+            <article>
+              <PhotoLightbox
+                photos={[next.photo]}
+                layout="single"
+                sizes="(min-width: 768px) 36vw, 100vw"
+              />
+              <p className="meta mt-3 text-faint">{next.photo.caption}</p>
+              <h2
+                id="giving-next-heading"
+                className="mt-5 text-xl font-medium tracking-tight md:text-2xl"
+              >
+                {next.title}
+              </h2>
+              <div className="mt-3 space-y-3 text-[0.95rem] leading-relaxed text-muted">
+                {next.body.map((paragraph) => (
+                  <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+                ))}
+              </div>
+              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+                <ExternalLink href={next.shopUrl} className="link-on font-medium text-fg" arrow>
+                  Visit nyesneck.shop
+                </ExternalLink>
+                <Link href="/work/nyes-neck" className="link text-muted hover:text-fg">
+                  How the shop is built
+                </Link>
+                <ExternalLink href={next.stJudeUrl} className="link text-muted hover:text-fg" arrow>
+                  St. Jude
+                </ExternalLink>
+              </div>
+            </article>
+          </TimelineStep>
 
-export function GivingClosing() {
-  return (
-    <Section surface="ink">
-      <div className="wrap py-20 text-center md:py-28">
-        <div>
-          <p className="mx-auto max-w-3xl text-title font-medium tracking-tight">
-            {giving.closing}
-          </p>
-        </div>
+          <TimelineStep index={first + 1} year={now.year} tuck>
+            <article>
+              <h3 className="text-xl font-medium tracking-tight md:text-2xl">{now.title}</h3>
+              <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{now.body}</p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+                <Link href="/contact" className="link-on font-medium text-fg">
+                  Get involved <span aria-hidden="true">→</span>
+                </Link>
+                <ExternalLink href={next.shopUrl} className="link text-muted hover:text-fg" arrow>
+                  Shop the cause
+                </ExternalLink>
+              </div>
+            </article>
+          </TimelineStep>
+        </TimelineTrack>
       </div>
     </Section>
   );

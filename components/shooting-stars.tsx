@@ -7,10 +7,11 @@
  * shoot across now and then, and faint points of light.
  *
  * Everything sits at fixed positions so the server and client render the same
- * markup. The small streaks only move while animating; at rest, and under
- * reduced motion (the global rule cancels the animation), they sit at their
- * drawn positions, so the still frame is the full picture. Purely decorative;
- * never announced.
+ * markup. The small streaks only move, and the points of light only drift
+ * past, while animating; at rest, and under reduced motion (the global rule
+ * cancels the animation), they sit at their drawn positions, so the still
+ * frame is the full picture. Once WishingFlight takes over, this still frame
+ * steps aside for the live ride. Purely decorative; never announced.
  */
 
 /** A wishing star: its head, the heading of its trail, and the trail's shape. */
@@ -104,17 +105,24 @@ export function ShootingStars({ className = '' }: { className?: string }) {
         ))}
       </defs>
 
-      {POINTS.map(([cx, cy, r, delay]) => (
-        <circle
-          key={`${cx}-${cy}`}
-          cx={cx}
-          cy={cy}
-          r={r}
-          fill="currentColor"
-          className="giving-twinkle"
-          style={{ animationDelay: `-${delay}s` }}
-        />
-      ))}
+      {/* The field drifts left and wraps: a second copy follows one viewBox to the right. */}
+      <g className="giving-drift">
+        {[0, 1440].map((shift) => (
+          <g key={shift} transform={shift ? `translate(${shift} 0)` : undefined}>
+            {POINTS.map(([cx, cy, r, delay]) => (
+              <circle
+                key={`${cx}-${cy}`}
+                cx={cx}
+                cy={cy}
+                r={r}
+                fill="currentColor"
+                className="giving-twinkle"
+                style={{ animationDelay: `-${delay}s` }}
+              />
+            ))}
+          </g>
+        ))}
+      </g>
 
       {SWOOSHES.map((swoosh, index) => (
         <g

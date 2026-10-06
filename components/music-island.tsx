@@ -95,7 +95,7 @@ export function MusicIsland() {
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-white">{song.title}</p>
             <p className="truncate text-xs text-white/60">
-              {song.artist ?? (track ? 'Sampling' : 'My mind currently')}
+              {song.artist ?? (track ? 'Sampling' : 'Currently: Site sound')}
             </p>
           </div>
           <span className="flex items-center">

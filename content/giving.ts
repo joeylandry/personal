@@ -21,13 +21,17 @@ export const giving = {
       'When I was nine, I got my first glimpse of the joy Make-A-Wish brings to kids with critical illnesses, and I wanted to help. Then I read that granting one wish costs about $20,000, so that became my goal. I started where I was: a lemonade stand on the lawn in Nyes Neck, a small neighborhood on Cape Cod.',
       'It did not happen overnight. Every summer I tried something new (games nights, movie nights, raffles, apparel), and plenty of it flopped. I kept adapting, the neighborhood kept showing up, and by 2021 we had raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
     ],
-    /** Headline figures beside the title. The last one is the chapter still being written. */
+    /** Headline figures beside the title: the goal, the total raised, and where it goes now. */
     stats: [
-      { value: '$20,000+', label: 'Raised for Make-A-Wish Massachusetts and Rhode Island' },
-      { value: '9 years', label: '2013 to 2021, every summer in Nyes Neck' },
+      { value: '1 wish', label: 'The goal from the start. Granting one costs about $20,000' },
       {
-        value: 'Now',
-        label: 'Continuing the work for St. Jude through Nyes Neck Clothing & Apparel',
+        value: '$20,000+',
+        label: 'Raised for Make-A-Wish Massachusetts and Rhode Island, 2013 to 2021',
+      },
+      {
+        value: 'St. Jude',
+        label:
+          'Children’s Research Hospital, supported today by a portion of Nyes Neck Clothing & Apparel proceeds',
       },
     ],
     quote:
@@ -145,13 +149,17 @@ export const giving = {
       height: 1428,
       caption: 'Make-A-Wish Massachusetts and Rhode Island.',
     },
+    /** My reply, set under the graphic. */
+    reply:
+      'Thank you to my family, my neighbors, and everyone who showed up for Make-A-Wish along the way.',
   },
 
+  /** Picks the timeline back up past the thank-you: where the work went next. */
   next: {
+    year: '2026',
     title: 'Continuing where I left off, with St. Jude.',
     body: [
       'The Nyes Neck apparel started as a fundraiser under the tent in 2021. Now it is Nyes Neck Clothing & Apparel, a brand inspired by Nyes Neck and Cape Cod, and a portion of proceeds supports St. Jude Children’s Research Hospital.',
-      'Someday I would like to build a nonprofit around this work, helping children in need and people affected by domestic violence. Until then, the shop keeps giving back, one sweatshirt at a time.',
     ],
     photo: {
       src: '/images/giving/dock-sunset.jpg',
@@ -164,6 +172,13 @@ export const giving = {
     stJudeUrl: 'https://www.stjude.org',
   },
 
-  closing:
-    'Thank you to my family, my neighbors, and everyone who showed up for Make-A-Wish along the way.',
+  /**
+   * The timeline's last stop: the part still being written. The nonprofit is
+   * in the works, so the copy asks for help shaping it, not for donations.
+   */
+  now: {
+    year: 'Now',
+    title: 'Still going. Want to help?',
+    body: 'I’m working toward a nonprofit that helps children in need and people affected by domestic violence. It’s early, and I’d love help shaping it, whether that’s an idea, an introduction, or a hand at the next event under the tent.',
+  },
 };
