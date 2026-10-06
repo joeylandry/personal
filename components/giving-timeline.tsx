@@ -22,6 +22,11 @@ import { useEffect, useRef, type ReactNode } from 'react';
  * Without JavaScript the stylesheet shows the spine fully drawn, every node
  * lit and every photo at home, so the static page reads as a finished
  * timeline.
+ *
+ * The timeline can be split across bands: the spine fades out below the last
+ * step, and a `continues` track fades it back in from the top of a later band
+ * and stops it at that band's last node, so it reads as one line passing
+ * behind whatever sits between.
  */
 
 /** The reading line, as a fraction of the viewport height from the top. */
@@ -44,15 +49,19 @@ const ZOOM_MAX_WIDTH = 0.7;
 export function TimelineTrack({
   children,
   className = '',
+  continues = false,
 }: {
   children: ReactNode;
   className?: string;
+  /** Bring the spine in from the top of the band and end it at the last node. */
+  continues?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const list = ref.current;
     if (!list) return;
+    const spineEl = list.querySelector<HTMLElement>('.giving-spine');
     const steps = Array.from(list.querySelectorAll<HTMLElement>('[data-step]'));
     const photos = Array.from(list.querySelectorAll<HTMLElement>('.giving-photo'));
     const wide = window.matchMedia('(min-width: 48rem)');
@@ -64,14 +73,15 @@ export function TimelineTrack({
     const update = () => {
       frame = 0;
       const line = window.innerHeight * READING_LINE;
-      const box = list.getBoundingClientRect();
-      const progress = Math.min(Math.max((line - box.top) / box.height, 0), 1);
+      // Measured on the spine itself, which can start above the list.
+      const spine = (spineEl ?? list).getBoundingClientRect();
+      const progress = Math.min(Math.max((line - spine.top) / spine.height, 0), 1);
       list.style.setProperty('--spine-progress', progress.toFixed(4));
       for (const step of steps) {
         const reached = step.getBoundingClientRect().top + NODE_OFFSET <= line;
         step.setAttribute('data-reached', String(reached));
       }
-      zoom(box);
+      zoom(list.getBoundingClientRect());
     };
 
     function zoom(box: DOMRect) {
@@ -128,7 +138,11 @@ export function TimelineTrack({
   }, []);
 
   return (
-    <div ref={ref} className={`giving-track ${className}`.trim()}>
+    <div
+      ref={ref}
+      data-continues={continues || undefined}
+      className={`giving-track ${className}`.trim()}
+    >
       <span aria-hidden="true" className="giving-spine" />
       <ol className="relative space-y-14 md:space-y-16">{children}</ol>
     </div>
