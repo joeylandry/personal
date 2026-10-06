@@ -83,6 +83,17 @@ export async function Hero() {
               <Cta href={hero.secondaryCta.href} variant="sea" arrow={false} external>
                 {hero.secondaryCta.label}
               </Cta>
+              {/* The site's song, on the same player as the About turntable,
+                  in the open space beside the buttons; it wraps under them
+                  when the row runs out of room. */}
+              <div className="w-full sm:w-auto sm:max-w-sm sm:min-w-[17rem] sm:flex-1 lg:ml-4">
+                <PinnedMini
+                  trackId={pinned.spotifyId}
+                  eyebrow={pinned.label}
+                  preview={preview}
+                  trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
+                />
+              </div>
             </div>
           </Reveal>
         </div>
@@ -113,15 +124,6 @@ export async function Hero() {
               </span>
             </span>
           </Link>
-          {/* The site's song, on the same player as the About turntable. */}
-          <div className="mt-4">
-            <PinnedMini
-              trackId={pinned.spotifyId}
-              eyebrow={pinned.label}
-              preview={preview}
-              trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
-            />
-          </div>
         </Reveal>
       </div>
     </section>
