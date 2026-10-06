@@ -19,7 +19,14 @@ export const PINNED_MOUNT_ID = 'pinned-player-mount';
 export const PINNED_EMBED_HEIGHT = 80;
 
 interface PlaybackUpdate {
-  data: { isPaused: boolean; isBuffering?: boolean; position: number; duration: number };
+  data: {
+    isPaused: boolean;
+    isBuffering?: boolean;
+    position: number;
+    duration: number;
+    /** The song the update is about; older embeds leave it out. */
+    playingURI?: string;
+  };
 }
 
 interface EmbedController {
@@ -103,23 +110,45 @@ let controller: EmbedController | null = null;
 let pinnedId: string | null = null;
 /** A song asked for before the embed was ready; it goes on as soon as it is. */
 let queued: RecordTrack | null = null;
-/** Set when a new song is loaded and should start; cleared once it plays. */
-let wantPlay: ReturnType<typeof setTimeout> | null = null;
+/** A song just loaded that should start; cleared once it has. */
+let pending: { uri: string; checks: number; timer: ReturnType<typeof setTimeout> } | null = null;
+/** The embed's latest word on the pending song, if any since it was loaded. */
+let lastUpdate: PlaybackUpdate['data'] | null = null;
 
 /**
  * Loads a song into the embed and starts it. A `play()` sent straight after
- * `loadUri()` can land before the new song is ready (notably on phones), so
- * it is sent again shortly after if the song still hasn't started.
+ * `loadUri()` can be dropped before the new song is ready (notably on phones),
+ * so it is sent again, but only once the embed says the song is loaded and
+ * still sitting at the start. `play()` always starts from the top, so a blind
+ * retry would restart a song that had already begun.
  */
 function loadAndPlay(id: string) {
   if (!controller) return;
-  controller.loadUri(`spotify:track:${id}`);
+  const uri = `spotify:track:${id}`;
+  clearPending();
+  lastUpdate = null;
+  controller.loadUri(uri);
   controller.play();
-  if (wantPlay) clearTimeout(wantPlay);
-  wantPlay = setTimeout(() => {
-    wantPlay = null;
-    if (!state.playing) controller?.play();
-  }, 900);
+  pending = { uri, checks: 0, timer: setTimeout(checkStarted, 900) };
+}
+
+function checkStarted() {
+  if (!pending) return;
+  const update = lastUpdate;
+  if (update && update.isPaused && !update.isBuffering && update.position === 0) {
+    controller?.play();
+  }
+  pending.checks += 1;
+  if (pending.checks >= 5) {
+    pending = null;
+    return;
+  }
+  pending.timer = setTimeout(checkStarted, 900);
+}
+
+function clearPending() {
+  if (pending) clearTimeout(pending.timer);
+  pending = null;
 }
 
 function set(patch: Partial<PinnedState>) {
@@ -171,9 +200,11 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
           });
           created.addListener('playback_update', (event) => {
             const playing = !event.data.isPaused;
-            if (playing && wantPlay) {
-              clearTimeout(wantPlay);
-              wantPlay = null;
+            const { playingURI } = event.data;
+            if (pending && (!playingURI || playingURI === pending.uri)) {
+              lastUpdate = event.data;
+              // Playing, or paused part-way through by hand: either way it started.
+              if (playing || event.data.position > 0) clearPending();
             }
             set({ playing, started: state.started || playing });
           });
