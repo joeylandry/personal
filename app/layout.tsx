@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Ambient } from '@/components/ambient';
+import { PinnedDock } from '@/components/pinned-dock';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { profile } from '@/content';
+import { listening, profile } from '@/content';
+import { getTrackPreview } from '@/lib/spotify-cache';
 import { jsonLdString, personSchema, websiteSchema } from '@/lib/jsonld';
 import { siteTitle, siteUrl } from '@/lib/site';
 import './globals.css';
@@ -63,7 +65,9 @@ export const viewport: Viewport = {
  */
 const JS_FLAG = "document.documentElement.dataset.js='on'";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const pinnedPreview = await getTrackPreview(listening.pinned.spotifyId);
+
   return (
     // JS_FLAG adds data-js before hydration; the warning only covers <html>'s own attributes.
     <html
@@ -88,6 +92,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
+        {/* The site song's one player, kept here so it plays on across pages. */}
+        <PinnedDock eyebrow={listening.pinned.label} preview={pinnedPreview} />
         <Ambient />
       </body>
     </html>

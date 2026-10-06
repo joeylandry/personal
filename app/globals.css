@@ -876,6 +876,19 @@
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
   will-change: transform;
 }
+/* The same disc on its own, sized by its container (the hero's mini player
+   and the floating dock). */
+.record.record-solo {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  translate: none;
+}
+/* A small disc wears a bigger label, so the art still reads. */
+.record-solo .record-label {
+  inset: 26%;
+}
 .record-label {
   position: absolute;
   inset: 32%;
