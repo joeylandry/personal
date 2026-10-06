@@ -47,7 +47,7 @@ type Particle = {
 const LAYERS: Layer[] = [
   {
     depth: 0,
-    base: 0.34,
+    base: 0.2,
     swell: 0.012,
     breakerHeight: 0.1,
     breakerWidth: 0.09,
@@ -56,7 +56,7 @@ const LAYERS: Layer[] = [
   },
   {
     depth: 0.5,
-    base: 0.56,
+    base: 0.38,
     swell: 0.018,
     breakerHeight: 0.19,
     breakerWidth: 0.13,
@@ -65,7 +65,7 @@ const LAYERS: Layer[] = [
   },
   {
     depth: 1,
-    base: 0.82,
+    base: 0.58,
     swell: 0.024,
     breakerHeight: 0.34,
     breakerWidth: 0.18,
@@ -280,8 +280,8 @@ export function Sea({ className = '' }: { className?: string }) {
 
       for (const [layer, spec] of LAYERS.entries()) {
         const curls = (breakers[layer] ?? []).map((b) => curlOf(layer, b)).filter((c) => c.live);
-        const lines = 3 + Math.round(spec.depth * 3);
-        const gap = Math.max(4, (5 + spec.depth * 8) * (unit / 1000));
+        const lines = 2 + Math.round(spec.depth);
+        const gap = Math.max(4, (7 + spec.depth * 9) * (unit / 1000));
         const strength = 0.22 + spec.depth * 0.45;
 
         // Blank out whatever lies behind this band, so lines never tangle
