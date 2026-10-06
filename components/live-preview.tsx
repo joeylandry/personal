@@ -1,7 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+  type MouseEvent,
+} from 'react';
 import type { ProjectImage } from '@/content';
 import { Corners } from './frame';
 
@@ -15,10 +22,9 @@ const VIEWPORT = { width: 1440, height: 900 };
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
 
 /**
- * A live, scaled-down view of a project's production site. The static cover
- * shows until the iframe has loaded (or if the site refuses to be framed), and
- * clicking opens the site in a new tab — or, when `onOpen` is given, hands the
- * click to that instead.
+ * A live, scaled-down view of a project's production site, shown straight
+ * away with no static cover in front of it. Clicking opens the site in a new
+ * tab — or, when `onOpen` is given, hands the click to that instead.
  */
 export function LivePreview({
   url,
@@ -37,15 +43,15 @@ export function LivePreview({
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  // A page already inside a preview keeps its own previews still, so this
+  // site's thumbnail of itself stops at one level instead of nesting forever.
+  const nested = useSyncExternalStore(noop, isNested, () => false);
 
   // Scale the desktop-sized iframe to fit the card, and only load it on approach.
   useEffect(() => {
     const node = viewportRef.current;
     if (!node) return;
-    // A page already inside a preview keeps its own previews still, so this
-    // site's thumbnail of itself stops at one level instead of nesting forever.
-    if (window.self !== window.top) return;
+    if (nested) return;
     const resize = new ResizeObserver(([entry]) => {
       if (entry) setScale(entry.contentRect.width / VIEWPORT.width);
     });
@@ -64,7 +70,7 @@ export function LivePreview({
       resize.disconnect();
       reveal.disconnect();
     };
-  }, []);
+  }, [nested]);
 
   const open = (event: MouseEvent<HTMLAnchorElement>) => {
     if (!onOpen) return;
@@ -90,13 +96,15 @@ export function LivePreview({
         className="relative overflow-hidden"
         style={{ aspectRatio: `${VIEWPORT.width} / ${VIEWPORT.height}` }}
       >
-        <Image
-          src={fallback.src}
-          alt=""
-          fill
-          sizes="(min-width: 768px) 58vw, 100vw"
-          className="object-cover object-top"
-        />
+        {nested ? (
+          <Image
+            src={fallback.src}
+            alt=""
+            fill
+            sizes="(min-width: 768px) 58vw, 100vw"
+            className="object-cover object-top"
+          />
+        ) : null}
         {visible && scale > 0 ? (
           <iframe
             src={url}
@@ -107,11 +115,7 @@ export function LivePreview({
             scrolling="no"
             inert
             sandbox={SANDBOX}
-            onLoad={() => setLoaded(true)}
-            className={[
-              'preview-page pointer-events-none absolute top-0 left-0 origin-top-left border-0 bg-white',
-              loaded ? 'opacity-100' : 'opacity-0',
-            ].join(' ')}
+            className="preview-page pointer-events-none absolute top-0 left-0 origin-top-left border-0 bg-white"
             style={
               {
                 width: VIEWPORT.width,
@@ -131,3 +135,6 @@ export function LivePreview({
     </a>
   );
 }
+
+const noop = () => () => {};
+const isNested = () => window.self !== window.top;
