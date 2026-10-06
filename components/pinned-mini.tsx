@@ -43,7 +43,18 @@ export function PinnedMini({
   const artist = track ? track.artist : (preview?.artist ?? null);
 
   return (
-    <div className="flex w-full max-w-sm items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md transition-colors duration-300 hover:border-detail md:p-4">
+    // The whole card plays and pauses on a click; the play button stays the
+    // keyboard and screen-reader control, and links inside keep their own.
+    <div
+      onClick={(event) => {
+        if (status !== 'ready') return;
+        if ((event.target as HTMLElement).closest('a, button')) return;
+        togglePinned();
+      }}
+      className={`group flex w-full max-w-sm items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md transition-colors duration-300 hover:border-detail md:p-4 ${
+        status === 'ready' ? 'cursor-pointer' : ''
+      }`}
+    >
       <div className="relative size-[4.5rem] shrink-0">
         <Vinyl
           art={art}
@@ -56,7 +67,7 @@ export function PinnedMini({
             type="button"
             onClick={togglePinned}
             aria-label={playing ? `Pause ${title}` : `Play ${title}`}
-            className="absolute inset-0 m-auto grid size-7 place-items-center rounded-full bg-black/45 text-white backdrop-blur-sm transition-[scale,background-color] duration-200 hover:scale-110 hover:bg-black/60"
+            className="absolute inset-0 m-auto grid size-7 place-items-center rounded-full bg-black/45 text-white backdrop-blur-sm transition-[scale,background-color] duration-200 group-hover:scale-110 group-hover:bg-black/60"
           >
             <PlayGlyph playing={playing} size={12} />
           </button>
