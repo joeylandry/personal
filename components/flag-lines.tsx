@@ -10,7 +10,9 @@ import { useEffect, useRef } from 'react';
  * loose end reaches the box's left edge. A long wave runs from the pole out
  * to the loose end, growing as the cloth gets freer, and each edge lags the
  * one above it a touch so the folds cross the flag on a diagonal, the way
- * real cloth moves.
+ * real cloth moves. Near the pole the stripes bow up in an upside-down U
+ * and drop back down to where they are tied, the way cloth billows off a
+ * halyard.
  *
  * Geometry is worked in the box's own pixels (the viewBox tracks its size),
  * and each edge is a smooth spline, so the motion stays fluid at any size.
@@ -20,6 +22,7 @@ const EDGES = 12;
 const SAMPLES = 28;
 const PERIOD = 6.5; // seconds for one fold to pass a point
 const GUST_PERIOD = 19; // seconds for the breeze to swell and ease
+const ARCH_SPAN = 0.32; // share of the width, from the pole, that billows up
 
 // What the server renders, before the box is measured.
 const FALLBACK = { width: 1480, height: 1300 };
@@ -33,6 +36,7 @@ function edgePaths({ width, height }: Size, time: number): string[] {
   const wavelength = Math.min(Math.max(width * 0.42, 360), 720);
   const amplitude = Math.min(Math.max(spacing * 0.75, 26), 64);
   const tilt = Math.min(width * 0.06, 90); // loose end rides a little higher
+  const arch = Math.min(Math.max(spacing * 1.15, 40), 110); // the billow by the pole
   const k = (Math.PI * 2) / wavelength;
   const omega = (Math.PI * 2) / PERIOD;
   const gust = 0.86 + 0.14 * Math.sin((Math.PI * 2 * time) / GUST_PERIOD);
@@ -51,8 +55,11 @@ function edgePaths({ width, height }: Size, time: number): string[] {
       const phase = k * distance - omega * time - lag;
       const wave = Math.sin(phase) + 0.22 * Math.sin(1.9 * phase + 1.1);
       const lift = amplitude * gust * free * wave;
+      // An upside-down U over the stretch nearest the pole, breathing a little.
+      const billow =
+        s < ARCH_SPAN ? -arch * (0.9 + 0.1 * gust) * Math.sin((Math.PI * s) / ARCH_SPAN) : 0;
       xs[i] = width - distance + amplitude * 0.12 * gust * free * Math.cos(phase);
-      ys[i] = top + edge * spacing * (1 + 0.04 * s) - tilt * s + lift;
+      ys[i] = top + edge * spacing * (1 + 0.04 * s) - tilt * s + billow + lift;
     }
     paths.push(spline(xs, ys));
   }
