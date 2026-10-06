@@ -43,6 +43,7 @@ export async function ListeningSection() {
           <RecordPlayer
             trackId={pinned.spotifyId}
             eyebrow={pinned.label}
+            name={pinned.name}
             preview={preview}
             embedUrl={spotifyEmbedUrl(pinned.spotifyId)}
             trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}

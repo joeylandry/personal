@@ -7,7 +7,9 @@ export const listening = {
   title: 'What’s playing?',
   lead: 'Explore the music in my life.',
   pinned: {
-    label: 'Site sound currently',
+    label: 'Currently: Site sound',
+    /** How the pinned song is named in running text, e.g. "Back to site sound". */
+    name: 'site sound',
     /** The id from an open.spotify.com/track/… link. */
     spotifyId: '5HVcJTb111CdGVwJWPyZcn',
   },
