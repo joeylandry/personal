@@ -319,21 +319,31 @@ export function WishingFlight({ className = '' }: { className?: string }) {
         const y = wrap(star.y * spanY - (view.y + look.y) * star.depth * 0.6, spanY) - padY;
         const glint = 0.75 + 0.25 * Math.sin(time * (1 + star.depth * 2) + star.phase);
         context.globalAlpha = (0.12 + 0.7 * star.depth) * glint;
-        const radius = 0.4 + star.depth * 1.2;
         if (star.depth > 0.55) {
-          // A bright point with a fainter smear trailing behind it.
-          const smear = velocity * star.depth * 0.08;
-          context.lineWidth = radius * 1.2;
-          context.globalAlpha *= 0.4;
+          // Near stars blur into slivers of light: sharp at the leading end,
+          // tapering to nothing behind, the same shape as the drawn streaks.
+          const tailX = x + velocity * star.depth * 0.1;
+          const tailY = y + cameraRise * star.depth * 0.06;
+          const run = Math.hypot(tailX - x, tailY - y) || 1;
+          const half = 0.35 + star.depth * 0.45;
+          const nx = (-(tailY - y) / run) * half;
+          const ny = ((tailX - x) / run) * half;
+          const sliver = context.createLinearGradient(x, y, tailX, tailY);
+          sliver.addColorStop(0, color);
+          sliver.addColorStop(1, 'transparent');
+          context.fillStyle = sliver;
           context.beginPath();
-          context.moveTo(x, y);
-          context.lineTo(x + smear, y + cameraRise * star.depth * 0.048);
-          context.stroke();
-          context.globalAlpha /= 0.4;
+          context.moveTo(x + nx, y + ny);
+          context.lineTo(tailX, tailY);
+          context.lineTo(x - nx, y - ny);
+          context.closePath();
+          context.fill();
+          context.fillStyle = color;
+        } else {
+          context.beginPath();
+          context.arc(x, y, 0.4 + star.depth * 1.2, 0, Math.PI * 2);
+          context.fill();
         }
-        context.beginPath();
-        context.arc(x, y, radius, 0, Math.PI * 2);
-        context.fill();
       }
 
       for (const shot of shots) {
