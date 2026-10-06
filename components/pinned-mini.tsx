@@ -43,11 +43,7 @@ export function PinnedMini({
   const artist = track ? track.artist : (preview?.artist ?? null);
 
   return (
-    <div
-      className={`flex w-full max-w-sm items-center gap-4 border bg-ink/55 p-3.5 backdrop-blur-md transition-colors duration-300 md:p-4 ${
-        playing ? 'border-detail' : 'border-rule'
-      }`}
-    >
+    <div className="flex w-full max-w-sm items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md transition-colors duration-300 hover:border-detail md:p-4">
       <div className="relative size-[4.5rem] shrink-0">
         <Vinyl
           art={art}
@@ -70,7 +66,12 @@ export function PinnedMini({
       <div className="min-w-0 flex-1">
         <p className="meta flex items-center gap-2 text-accent">
           {track ? 'Sampling' : eyebrow}
-          {playing ? <EqBars playing={audible} /> : null}
+          {playing ? (
+            // The bars paint in --muted; tint them sea here.
+            <span className="inline-flex [--muted:var(--accent-detail)]">
+              <EqBars playing={audible} />
+            </span>
+          ) : null}
         </p>
         <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg">{title}</p>
         {status === 'failed' ? (
