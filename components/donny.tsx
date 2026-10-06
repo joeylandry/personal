@@ -12,7 +12,7 @@ function Tile({ photo }: { photo: StoryPhoto }) {
             src={photo.src}
             alt={photo.alt}
             fill
-            sizes="(min-width: 768px) 336px, 50vw"
+            sizes="(min-width: 768px) 25vw, 50vw"
             className="object-cover"
           />
         </div>
@@ -22,7 +22,7 @@ function Tile({ photo }: { photo: StoryPhoto }) {
   );
 }
 
-/** About page: Donny as a kitten and now, two photos each. */
+/** About page: Donny as a kitten and now, two photos each, all four in one row on desktop. */
 export function DonnySection() {
   const rows = [
     { label: 'Kitty', photos: donny.then },
@@ -42,11 +42,11 @@ export function DonnySection() {
           </p>
         </div>
 
-        <div className="mt-12 space-y-12">
+        <div className="mt-12 grid gap-x-6 gap-y-12 md:grid-cols-2">
           {rows.map((row) => (
-            <div key={row.label} className="grid gap-x-6 gap-y-6 md:grid-cols-12">
-              <p className="meta text-detail md:col-span-1 md:pt-1">{row.label}</p>
-              <div className="grid max-w-2xl grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:col-span-11">
+            <div key={row.label}>
+              <p className="meta text-detail">{row.label}</p>
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6">
                 {row.photos.map((photo) => (
                   <Tile key={photo.src} photo={photo} />
                 ))}
