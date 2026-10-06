@@ -1300,8 +1300,6 @@
   }
 }
 
-/* The spine runs down the left edge on phones and the center from md up.
-   --run-on is how far a continued spine runs in from the top of its band. */
 /* One full viewBox width, so the trailing copy lands where the first began. */
 .giving-drift {
   animation: giving-drift 150s linear infinite;
@@ -1324,7 +1322,8 @@
   opacity: 1;
 }
 
-/* The spine runs down the left edge on phones and the center from md up. */
+/* The spine runs down the left edge on phones and the center from md up.
+   --run-on is how far a continued spine runs in from the top of its band. */
 .giving-track {
   position: relative;
   --spine-x: 0.4375rem;

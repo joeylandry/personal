@@ -181,7 +181,4 @@ export const giving = {
     title: 'Still going. Want to help?',
     body: 'I’m working toward a nonprofit that helps children in need and people affected by domestic violence. It’s early, and I’d love help shaping it, whether that’s an idea, an introduction, or a hand at the next event under the tent.',
   },
-
-  closing:
-    'Thank you to my family, my neighbors, and everyone who showed up for Make-A-Wish along the way.',
 };
