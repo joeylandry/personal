@@ -14,10 +14,10 @@ import { useEffect, useRef, type ReactNode } from 'react';
  * Without JavaScript the stylesheet shows the spine fully drawn and every node
  * lit, so the static page reads as a finished timeline.
  *
- * The timeline can be split across bands: `runsOn` carries the spine past the
- * last step to the bottom of its band, and `continues` brings it in from the
- * top of a later band and stops it at that band's last node, so the spine
- * reads as one line passing behind whatever sits between.
+ * The timeline can be split across bands: the spine fades out below the last
+ * step, and a `continues` track fades it back in from the top of a later band
+ * and stops it at that band's last node, so it reads as one line passing
+ * behind whatever sits between.
  */
 
 /** The reading line, as a fraction of the viewport height from the top. */
@@ -28,13 +28,10 @@ const NODE_OFFSET = 22;
 export function TimelineTrack({
   children,
   className = '',
-  runsOn = false,
   continues = false,
 }: {
   children: ReactNode;
   className?: string;
-  /** Run the spine on past the last step, off the bottom of the band. */
-  runsOn?: boolean;
   /** Bring the spine in from the top of the band and end it at the last node. */
   continues?: boolean;
 }) {
@@ -77,7 +74,6 @@ export function TimelineTrack({
   return (
     <div
       ref={ref}
-      data-runs-on={runsOn || undefined}
       data-continues={continues || undefined}
       className={`giving-track ${className}`.trim()}
     >

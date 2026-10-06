@@ -132,9 +132,9 @@ export function GivingTimeline() {
           </h2>
         </div>
 
-        {/* The spine runs on off the bottom of this band, behind the
-            thank-you, and picks up again in GivingNext. */}
-        <TimelineTrack runsOn className="mt-14 md:mt-20">
+        {/* The spine fades out below the last step and fades back in at the
+            top of GivingNext, past the thank-you. */}
+        <TimelineTrack className="mt-14 md:mt-20">
           {giving.chapters.map((chapter, index) => (
             <TimelineStep
               key={chapter.title}
@@ -173,7 +173,7 @@ export function GivingThanks() {
 }
 
 /**
- * The timeline's last stop. The spine comes in from the top of the band, as if
+ * The timeline's last stop. The spine fades in from the top of the band, as if
  * it had run on behind the thank-you, and ends at this step's node.
  */
 export function GivingNext() {

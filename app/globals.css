@@ -1278,8 +1278,7 @@
 }
 
 /* The spine runs down the left edge on phones and the center from md up.
-   --run-on matches the band padding (py-20, md:py-28) the spine crosses when
-   the timeline is split across bands. */
+   --run-on is how far a continued spine runs in from the top of its band. */
 .giving-track {
   position: relative;
   --spine-x: 0.4375rem;
@@ -1302,12 +1301,9 @@
   background-color: var(--rule-strong);
   mask-image: linear-gradient(to bottom, #000 88%, transparent);
 }
-/* Off the bottom of the band, to pass behind the next one. */
-.giving-track[data-runs-on] .giving-spine {
-  bottom: calc(-1 * var(--run-on));
-  mask-image: none;
-}
-/* In from the top of a later band, ending at its node. */
+/* A later band picks the spine up again: it fades in from the top, the way
+   the first band's spine fades out at the bottom, and ends at the node. The
+   mask covers the head too, so it fades out and back in with the line. */
 .giving-track[data-continues] {
   padding-top: var(--run-on);
 }
@@ -1315,7 +1311,7 @@
   top: 0;
   bottom: auto;
   height: calc(var(--run-on) + var(--node-y));
-  mask-image: none;
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--run-on));
 }
 .giving-spine::before {
   content: '';
