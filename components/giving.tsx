@@ -9,6 +9,7 @@ import { PhotoLightbox } from './photo-lightbox';
 import { Reveal } from './reveal';
 import { Section } from './section';
 import { ShootingStars } from './shooting-stars';
+import { WishingFlight } from './wishing-flight';
 
 /** A captioned photo at its natural aspect ratio, never cropped. */
 function Photo({ photo, sizes }: { photo: StoryPhoto; sizes: string }) {
@@ -41,6 +42,7 @@ export function GivingIntro() {
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <ShootingStars className="absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <WishingFlight className="text-sea opacity-75" />
       </div>
 
       <div className="wrap relative grid gap-x-10 gap-y-12 pt-10 pb-20 md:grid-cols-12 md:pt-14 md:pb-28">
