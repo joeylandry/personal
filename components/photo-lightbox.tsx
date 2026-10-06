@@ -74,7 +74,15 @@ export function PhotoLightbox({
 
   if (!current) return null;
 
-  const thumb = (photo: StoryPhoto, position: number, tileClass: string, fit = true) => (
+  // `cover` crops to the tile like object-cover, but lays the image out at its
+  // own aspect ratio (overflow clipped by the tile) so the Giving timeline can
+  // open the tile up to show the whole photo before it settles into a thumbnail.
+  const thumb = (
+    photo: StoryPhoto,
+    position: number,
+    tileClass: string,
+    fit: 'fill' | 'cover' | 'natural' = 'fill',
+  ) => (
     <a
       key={photo.src}
       href={photo.src}
@@ -90,9 +98,13 @@ export function PhotoLightbox({
         height={photo.height}
         sizes={sizes}
         className={
-          fit
-            ? 'h-full w-full object-cover transition-transform duration-700 ease-out-soft group-hover/thumb:scale-[1.03]'
-            : 'h-auto w-full'
+          fit === 'natural'
+            ? 'h-auto w-full'
+            : `${
+                fit === 'cover'
+                  ? 'absolute top-1/2 left-0 h-auto min-h-full w-full max-w-none -translate-y-1/2'
+                  : 'h-full w-full'
+              } object-cover transition-[scale] duration-700 ease-out-soft group-hover/thumb:scale-[1.03]`
         }
       />
       <span
@@ -116,9 +128,9 @@ export function PhotoLightbox({
             )}
           </div>
         ) : layout === 'natural' ? (
-          thumb(current, 0, '', false)
+          thumb(current, 0, '', 'natural')
         ) : (
-          thumb(current, 0, 'h-56 md:h-60')
+          thumb(current, 0, 'h-56 md:h-60', 'cover')
         )}
       </div>
 

@@ -7,7 +7,6 @@ import { Corners } from './frame';
 import { TimelineTrack } from './giving-timeline';
 import { Pennant } from './pennant';
 import { PhotoLightbox } from './photo-lightbox';
-import { Reveal } from './reveal';
 import { Section } from './section';
 import { ShootingStars } from './shooting-stars';
 import { WishingFlight } from './wishing-flight';
@@ -80,22 +79,33 @@ export function GivingIntro() {
   );
 }
 
-/** One fundraiser: thumbnails that open full size, the caption, then the story. */
+/**
+ * One fundraiser: thumbnails that open full size, the caption, then the story.
+ * `data-grow` marks the photos the timeline shows at full size before they
+ * shrink into their thumbnail (see TimelineTrack).
+ */
 function ChapterCard({ chapter }: { chapter: GivingChapter }) {
   const [first] = chapter.photos;
   const multiple = chapter.photos.length > 1;
   return (
     <article>
-      <PhotoLightbox
-        photos={chapter.photos}
-        layout={multiple ? 'mosaic' : 'single'}
-        sizes="(min-width: 768px) 36vw, 100vw"
-      />
-      <p className="meta mt-3 text-faint">
-        {multiple ? `${chapter.photos.length} photos` : first?.caption}
-      </p>
-      <h3 className="mt-5 text-xl font-medium tracking-tight md:text-2xl">{chapter.title}</h3>
-      <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
+      <div
+        data-grow
+        data-aspect={!multiple && first ? (first.width / first.height).toFixed(4) : undefined}
+      >
+        <PhotoLightbox
+          photos={chapter.photos}
+          layout={multiple ? 'mosaic' : 'single'}
+          sizes="(min-width: 768px) 60vw, 100vw"
+        />
+      </div>
+      <div className="giving-card-text">
+        <p className="meta mt-3 text-faint">
+          {multiple ? `${chapter.photos.length} photos` : first?.caption}
+        </p>
+        <h3 className="mt-5 text-xl font-medium tracking-tight md:text-2xl">{chapter.title}</h3>
+        <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
+      </div>
     </article>
   );
 }
@@ -137,9 +147,9 @@ export function GivingTimeline() {
                   >
                     {chapter.year ?? 'Early years'}
                   </p>
-                  <Reveal className="mt-3">
+                  <div className="mt-3">
                     <ChapterCard chapter={chapter} />
-                  </Reveal>
+                  </div>
                 </div>
               </li>
             );

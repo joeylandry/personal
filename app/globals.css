@@ -1408,6 +1408,28 @@
   color: var(--faint);
 }
 
+/* Photos open at full size and shrink into their cards as the timeline forms.
+   Only set by TimelineTrack, never under reduced motion, so without it every
+   card simply shows its thumbnail. The frame scales from its top-left corner;
+   the image inside is counter-scaled so it stays undistorted while the crop
+   closes in. */
+.giving-track[data-growing] [data-grow] {
+  position: relative;
+  z-index: 1;
+}
+.giving-track[data-growing] [data-grow] > div {
+  transform-origin: 0 0;
+  transform: translate3d(var(--grow-shift, 0px), 0, 0) scale(var(--grow-x, 1), var(--grow-y, 1));
+  will-change: transform;
+}
+.giving-track[data-growing] [data-grow] > div img {
+  transform: scale(var(--grow-image-x, 1), var(--grow-image-y, 1));
+}
+.giving-track[data-growing] .giving-card-text {
+  opacity: var(--grow-text, 1);
+  transform: translate3d(0, calc((1 - var(--grow-text, 1)) * 1.25rem), 0);
+}
+
 /* Full-size photo viewer: a native modal dialog. */
 .giving-lightbox {
   margin: auto;
