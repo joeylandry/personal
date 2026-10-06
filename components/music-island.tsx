@@ -41,7 +41,7 @@ function Art({ song, className }: { song: RecordTrack; className: string }) {
  * record and the About turntable.
  */
 export function MusicIsland() {
-  const { status, playing, started, track, pinned } = usePinned();
+  const { status, playing, audible, started, track, pinned } = usePinned();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const hold = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -99,7 +99,7 @@ export function MusicIsland() {
             </p>
           </div>
           <span className="flex items-center">
-            <EqBars playing={playing} />
+            <EqBars playing={audible} />
           </span>
           <button
             type="button"
@@ -131,7 +131,7 @@ export function MusicIsland() {
         >
           <Art song={song} className="size-[1.375rem] rounded-[0.4rem]" />
           <span className="flex h-full items-center">
-            <EqBars playing={playing} />
+            <EqBars playing={audible} />
           </span>
         </button>
       )}
