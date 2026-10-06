@@ -20,6 +20,7 @@ export function OriginStory() {
           opacity={0.42}
           lines={11}
           gap={19}
+          breeze
         />
       </div>
 
