@@ -30,7 +30,7 @@ type Wave = {
 };
 type Spray = { x: number; y: number; vx: number; vy: number; life: number; max: number };
 
-const CURL = Math.PI * 1.75;
+const CURL = Math.PI * 2.5;
 const MAX_SPRAY = 240;
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
@@ -120,12 +120,12 @@ export function Sea({ className = '' }: { className?: string }) {
       const p = w.age / w.life;
       const drift = w.length * 0.12 * w.age;
       const rise = smooth(0.08, 0.5, p);
-      const sweep = CURL * smooth(0.42, 0.8, p);
+      const sweep = CURL * smooth(0.42, 0.86, p);
       const radius = w.height * 0.55;
       const gap = Math.max(3.5, w.height * 0.13);
       // The run-up draws on quickly, easing as it reaches the crest.
       const head = w.length * (1 - (1 - clamp(p / 0.45)) ** 2);
-      const curlLength = radius * CURL * 0.7;
+      const curlLength = radius * CURL * 0.66;
       const tail = smooth(0.55, 1, p) * (w.length + curlLength);
 
       const point = (s: number, offset: number) => {
@@ -143,7 +143,7 @@ export function Sea({ className = '' }: { className?: string }) {
       const top = point(w.length, 0);
       const center = { x: top.x, y: top.y + radius };
       const curlAt = (start: number, angle: number) => {
-        const r = start * (1 - (0.55 * angle) / CURL);
+        const r = start * (1 - (0.65 * angle) / CURL);
         const theta = -Math.PI / 2 + angle;
         return { x: center.x + r * Math.cos(theta), y: center.y + r * Math.sin(theta) };
       };
@@ -171,7 +171,7 @@ export function Sea({ className = '' }: { className?: string }) {
         const size = 0.5 + w.near * 0.5;
 
         // Wind tears spray off the lip as it curls over.
-        if (g.p > 0.5 && g.p < 0.85 && Math.random() < dt * 22 * size && spray.length < MAX_SPRAY) {
+        if (g.p > 0.5 && g.p < 0.9 && Math.random() < dt * 22 * size && spray.length < MAX_SPRAY) {
           const life = random(0.4, 0.9);
           spray.push({
             x: tip.x,
