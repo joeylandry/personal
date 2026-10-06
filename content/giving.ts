@@ -147,13 +147,12 @@ export const giving = {
     },
   },
 
-  /** The timeline's last stop, past the thank-you: where the work goes on now. */
+  /** Picks the timeline back up past the thank-you: where the work went next. */
   next: {
-    year: 'Now',
+    year: '2026',
     title: 'Continuing where I left off, with St. Jude.',
     body: [
       'The Nyes Neck apparel started as a fundraiser under the tent in 2021. Now it is Nyes Neck Clothing & Apparel, a brand inspired by Nyes Neck and Cape Cod, and a portion of proceeds supports St. Jude Children’s Research Hospital.',
-      'Someday I would like to build a nonprofit around this work, helping children in need and people affected by domestic violence. Until then, the shop keeps giving back, one sweatshirt at a time.',
     ],
     photo: {
       src: '/images/giving/dock-sunset.jpg',
@@ -164,6 +163,16 @@ export const giving = {
     },
     shopUrl: 'https://www.nyesneck.shop',
     stJudeUrl: 'https://www.stjude.org',
+  },
+
+  /**
+   * The timeline's last stop: the part still being written. The nonprofit is
+   * in the works, so the copy asks for help shaping it, not for donations.
+   */
+  now: {
+    year: 'Now',
+    title: 'Still going. Want to help?',
+    body: 'I’m working toward a nonprofit that helps children in need and people affected by domestic violence. It’s early, and I’d love help shaping it, whether that’s an idea, an introduction, or a hand at the next event under the tent.',
   },
 
   closing:

@@ -1302,16 +1302,26 @@
   mask-image: linear-gradient(to bottom, #000 88%, transparent);
 }
 /* A later band picks the spine up again: it fades in from the top, the way
-   the first band's spine fades out at the bottom, and ends at the node. The
-   mask covers the head too, so it fades out and back in with the line. */
+   the first band's spine fades out at the bottom, and ends at the last node.
+   The mask covers the head too, so it fades out and back in with the line. */
 .giving-track[data-continues] {
   padding-top: var(--run-on);
 }
 .giving-track[data-continues] .giving-spine {
   top: 0;
-  bottom: auto;
-  height: calc(var(--run-on) + var(--node-y));
   mask-image: linear-gradient(to bottom, transparent, #000 var(--run-on));
+}
+/* Below the last node, cover the spine in the band's own color so the line
+   stops there. The node paints over the cover's top end. */
+.giving-track[data-continues] .giving-step:last-child::before {
+  content: '';
+  position: absolute;
+  top: var(--node-y);
+  bottom: 0;
+  left: var(--spine-x);
+  width: 7px;
+  transform: translateX(-50%);
+  background-color: var(--bg);
 }
 .giving-spine::before {
   content: '';

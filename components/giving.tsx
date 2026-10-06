@@ -173,16 +173,18 @@ export function GivingThanks() {
 }
 
 /**
- * The timeline's last stop. The spine fades in from the top of the band, as if
- * it had run on behind the thank-you, and ends at this step's node.
+ * The timeline after the thank-you. The spine fades in from the top of the
+ * band, as if it had run on behind the thank-you, passes the St. Jude stop and
+ * ends at the Now node.
  */
 export function GivingNext() {
-  const { next } = giving;
+  const { next, now } = giving;
+  const first = giving.chapters.length;
   return (
     <Section surface="paper" labelledBy="giving-next-heading">
       <div className="wrap pb-20 md:pb-28">
         <TimelineTrack continues>
-          <TimelineStep index={giving.chapters.length} year={next.year}>
+          <TimelineStep index={first} year={next.year}>
             <article>
               <PhotoLightbox
                 photos={[next.photo]}
@@ -210,6 +212,21 @@ export function GivingNext() {
                 </Link>
                 <ExternalLink href={next.stJudeUrl} className="link text-muted hover:text-fg" arrow>
                   St. Jude
+                </ExternalLink>
+              </div>
+            </article>
+          </TimelineStep>
+
+          <TimelineStep index={first + 1} year={now.year} tuck>
+            <article>
+              <h3 className="text-xl font-medium tracking-tight md:text-2xl">{now.title}</h3>
+              <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{now.body}</p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+                <Link href="/contact" className="link-on font-medium text-fg">
+                  Get involved <span aria-hidden="true">→</span>
+                </Link>
+                <ExternalLink href={next.shopUrl} className="link text-muted hover:text-fg" arrow>
+                  Shop the cause
                 </ExternalLink>
               </div>
             </article>
