@@ -33,9 +33,9 @@ export const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || nul
 
 export const navLinks = [
   { label: 'Work', href: '/work' },
-  { label: 'About', href: '/about' },
   { label: 'Giving', href: '/giving' },
   { label: 'Blog', href: '/blog' },
+  { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ] as const;
 
