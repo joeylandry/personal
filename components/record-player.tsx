@@ -30,7 +30,7 @@ export function RecordPlayer({
   trackUrl,
 }: {
   trackId: string;
-  /** Small label above the title, e.g. "My mind currently". */
+  /** Small label above the title, e.g. "Site sound currently". */
   eyebrow: string;
   /** Title, artist and art for the label; null shows a neutral label. */
   preview: TrackPreview | null;
@@ -62,6 +62,60 @@ export function RecordPlayer({
     <div className="@container">
       {/* Laid out by its own width, so it stacks when it shares a row with the live player. */}
       <div className="grid items-center gap-10 @2xl:grid-cols-12 @2xl:gap-12">
+        <div className="@2xl:col-span-5">
+          <p className="meta text-detail">{heading}</p>
+          <h3 className="mt-4 text-heading font-semibold text-fg">{title}</h3>
+          {artist ? <p className="mt-2 text-lead text-muted">{artist}</p> : null}
+
+          <p className="mt-6 flex items-center gap-2.5 text-sm text-muted" aria-live="polite">
+            <EqBars playing={audible} />
+            <span>
+              {playing ? 'Spinning now, all over the site' : 'Press play to drop the needle'}
+            </span>
+          </p>
+
+          {status === 'failed' ? (
+            <iframe
+              title={`${title}, Spotify player`}
+              src={embedUrl}
+              width="100%"
+              height={PINNED_EMBED_HEIGHT}
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              className="mt-4 block rounded-xl border-0"
+            />
+          ) : null}
+          <noscript>
+            <iframe
+              title={`${title}, Spotify player`}
+              src={embedUrl}
+              width="100%"
+              height={PINNED_EMBED_HEIGHT}
+              loading="lazy"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              style={{ display: 'block', marginTop: 16, border: 0, borderRadius: 12 }}
+            />
+          </noscript>
+
+          <p className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+            {track ? (
+              <button
+                type="button"
+                onClick={backToPinned}
+                className="link meta text-muted hover:text-fg"
+              >
+                Back to {eyebrow.toLowerCase()}
+              </button>
+            ) : null}
+            <ExternalLink
+              href={track?.url ?? trackUrl}
+              arrow
+              className="link meta inline-flex items-center text-faint hover:text-fg"
+            >
+              Open in Spotify
+            </ExternalLink>
+          </p>
+        </div>
+
         {/* The turntable. Decorative apart from the play button on the label. */}
         <div id="record" className="@2xl:col-span-7">
           <div className="turntable" data-playing={playing}>
@@ -118,70 +172,6 @@ export function RecordPlayer({
           </div>
         </div>
 
-        <div className="@2xl:col-span-5">
-          <p className="meta text-detail">{heading}</p>
-          <h3 className="mt-4 text-heading font-semibold text-fg">{title}</h3>
-          {artist ? <p className="mt-2 text-lead text-muted">{artist}</p> : null}
-
-          <p className="mt-6 flex items-center gap-2.5 text-sm text-muted" aria-live="polite">
-            <EqBars playing={audible} />
-            <span>
-              {playing ? 'Spinning now, all over the site' : 'Press play to drop the needle'}
-            </span>
-          </p>
-
-          {status === 'failed' ? (
-            <iframe
-              title={`${title}, Spotify player`}
-              src={embedUrl}
-              width="100%"
-              height={PINNED_EMBED_HEIGHT}
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              className="mt-4 block rounded-xl border-0"
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={togglePinned}
-              disabled={status !== 'ready'}
-              aria-label={label}
-              className="glass-cta mt-5 disabled:cursor-wait disabled:opacity-60"
-            >
-              <PlayGlyph playing={playing} size={16} />
-              {playing ? 'Pause' : 'Play'}
-            </button>
-          )}
-          <noscript>
-            <iframe
-              title={`${title}, Spotify player`}
-              src={embedUrl}
-              width="100%"
-              height={PINNED_EMBED_HEIGHT}
-              loading="lazy"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              style={{ display: 'block', marginTop: 16, border: 0, borderRadius: 12 }}
-            />
-          </noscript>
-
-          <p className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
-            {track ? (
-              <button
-                type="button"
-                onClick={backToPinned}
-                className="link meta text-muted hover:text-fg"
-              >
-                Back to {eyebrow.toLowerCase()}
-              </button>
-            ) : null}
-            <ExternalLink
-              href={track?.url ?? trackUrl}
-              arrow
-              className="link meta inline-flex items-center text-faint hover:text-fg"
-            >
-              Open in Spotify
-            </ExternalLink>
-          </p>
-        </div>
       </div>
     </div>
   );
