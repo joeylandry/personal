@@ -1566,3 +1566,65 @@
     scale: 1.08;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Mobile nav drawer (components/site-header.tsx)
+   --------------------------------------------------------------------------
+   Slides in from the right below the header, so the menu toggle stays in reach.
+   While a swipe is in progress the script sets --drawer-progress (0 closed,
+   1 open) and data-dragging, and the drawer follows the finger untransitioned.
+   Visibility waits for the slide-out to finish so the closed drawer leaves the
+   accessibility tree and tab order.
+   -------------------------------------------------------------------------- */
+.nav-drawer,
+.nav-drawer-overlay {
+  position: fixed;
+  top: 4rem;
+  bottom: 0;
+  z-index: 40;
+}
+
+.nav-drawer {
+  --drawer-progress: 0;
+  right: 0;
+  width: min(20rem, 85vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateX(calc((1 - var(--drawer-progress)) * 100%));
+  visibility: hidden;
+  transition:
+    transform 0.32s var(--ease-out-soft),
+    visibility 0s linear 0.32s;
+}
+
+.nav-drawer-overlay {
+  --drawer-progress: 0;
+  left: 0;
+  right: 0;
+  background: rgb(0 0 0 / 0.5);
+  opacity: var(--drawer-progress);
+  pointer-events: none;
+  transition: opacity 0.32s var(--ease-out-soft);
+}
+
+.nav-drawer[data-open='true'],
+.nav-drawer-overlay[data-open='true'] {
+  --drawer-progress: 1;
+}
+
+.nav-drawer[data-open='true'],
+.nav-drawer[data-dragging] {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.nav-drawer-overlay[data-open='true'] {
+  pointer-events: auto;
+}
+
+.nav-drawer[data-dragging],
+.nav-drawer-overlay[data-dragging] {
+  transition: none;
+}
+/* End mobile nav drawer. */
