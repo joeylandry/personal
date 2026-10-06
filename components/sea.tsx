@@ -3,12 +3,12 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Breaking sea.
+ * Breaking sea, drawn in line.
  *
- * Three bands of water in perspective, painted back to front so each hides the
- * one behind it. Breakers rise out of the swell, steepen, throw a lip forward
- * and plunge, bursting into spray and leaving whitewater that drifts on with
- * the wave.
+ * Three bands of water in perspective, each a stack of contour lines, drawn
+ * back to front so each band hides the lines behind it. Breakers rise out of
+ * the swell and steepen, and their lines curl over into nested spirals before
+ * collapsing in a burst of spray.
  *
  * Purely decorative and never announced. It pauses off-screen and in
  * background tabs, and under `prefers-reduced-motion` it draws one still frame.
@@ -39,13 +39,9 @@ type Particle = {
   y: number;
   vx: number;
   vy: number;
-  r: number;
   life: number;
   max: number;
   layer: number;
-  /** Whitewater rides the surface; spray flies free until it lands. */
-  surface: boolean;
-  offset: number;
 };
 
 const LAYERS: Layer[] = [
@@ -64,7 +60,7 @@ const LAYERS: Layer[] = [
     swell: 0.018,
     breakerHeight: 0.19,
     breakerWidth: 0.13,
-    maxBreakers: 2,
+    maxBreakers: 3,
     speed: 30,
   },
   {
@@ -73,11 +69,11 @@ const LAYERS: Layer[] = [
     swell: 0.024,
     breakerHeight: 0.34,
     breakerWidth: 0.18,
-    maxBreakers: 2,
+    maxBreakers: 3,
     speed: 44,
   },
 ];
-const MAX_PARTICLES = 700;
+const MAX_PARTICLES = 300;
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 const smooth = (from: number, to: number, value: number) => {
@@ -114,9 +110,8 @@ export function Sea({ className = '' }: { className?: string }) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const styles = getComputedStyle(canvas);
     const sea = parseColor(styles.getPropertyValue('--accent-graphic'), [114, 214, 201]);
-    const ink = parseColor(styles.getPropertyValue('--bg'), [7, 16, 24]);
     const white: Rgb = [240, 252, 250];
-    const foam = mix(sea, white, 0.6);
+    const fog = mix(parseColor(styles.color, [159, 177, 189]), white, 0);
 
     let width = 0;
     let height = 0;
@@ -176,7 +171,7 @@ export function Sea({ className = '' }: { className?: string }) {
       for (let attempt = 0; attempt < 6; attempt++) {
         const x = random(-0.05 * width, 0.7 * width);
         if (list.some((b) => Math.abs(b.x - x) < w * 3)) continue;
-        const life = random(6.5, 9.5);
+        const life = random(5.5, 8);
         list.push({
           x,
           age: age ?? 0,
@@ -190,28 +185,29 @@ export function Sea({ className = '' }: { className?: string }) {
       }
     };
 
-    const emit = (particle: Omit<Particle, 'max' | 'offset'> & { offset?: number }) => {
+    const emit = (particle: Omit<Particle, 'max'>) => {
       if (particles.length >= MAX_PARTICLES) return;
-      particles.push({ offset: 0, ...particle, max: particle.life });
+      particles.push({ ...particle, max: particle.life });
     };
 
-    const lipOf = (layer: number, b: Breaker) => {
+    /**
+     * The curl of a pitching lip: a spiral that leaves the crest, runs forward
+     * and down, and winds back in on itself. Lines further down the wave start
+     * on a smaller radius, so their curls nest inside the first one.
+     */
+    const curlOf = (layer: number, b: Breaker) => {
       const { p, h, front } = shape(b);
-      const out = smooth(0.45, 0.7, p) * (1 - smooth(0.8, 0.95, p));
-      const fall = smooth(0.62, 0.82, p);
+      const out = smooth(0.4, 0.72, p) * (1 - smooth(0.8, 0.96, p));
       const crestY = surface(layer, b.x);
-      const reach = front * (0.6 + 1.7 * out);
-      return {
-        p,
-        h,
-        front,
-        crestY,
-        live: p > 0.42 && p < 0.95,
-        tip: { x: b.x + reach, y: crestY + h * (0.04 + 0.92 * fall) },
-        outer: { x: b.x + reach * 0.85, y: crestY - h * 0.2 * out },
-        inner: { x: b.x + reach * 0.72, y: crestY + h * 0.38 },
-        face: b.x + front * 0.55,
+      const radius = h * 0.55;
+      const sweep = out * Math.PI * 1.75;
+      const center = { x: b.x, y: crestY + radius };
+      const at = (start: number, angle: number) => {
+        const r = start * (1 - (0.55 * angle) / (Math.PI * 1.75));
+        const theta = -Math.PI / 2 + angle;
+        return { x: center.x + r * Math.cos(theta), y: center.y + r * Math.sin(theta) };
       };
+      return { p, h, front, crestY, radius, sweep, at, tip: at(radius, sweep), live: out > 0.02 };
     };
 
     const step = (dt: number) => {
@@ -222,56 +218,39 @@ export function Sea({ className = '' }: { className?: string }) {
         timers[layer] = (timers[layer] ?? 0) - dt;
         if (list.length < spec.maxBreakers && (timers[layer] ?? 0) <= 0) {
           spawn(layer);
-          timers[layer] = random(1.5, 3.5);
+          timers[layer] = random(0.8, 2.2);
         }
         for (let i = list.length - 1; i >= 0; i--) {
           const b = list[i];
           if (!b) continue;
           b.age += dt;
           b.x += b.speed * dt;
-          const lip = lipOf(layer, b);
+          const lip = curlOf(layer, b);
           const size = 0.4 + spec.depth * 0.6;
 
           // Wind tears spray off the lip as it pitches.
           if (lip.p > 0.5 && lip.p < 0.82 && Math.random() < dt * 40 * size) {
             emit({
-              x: lip.tip.x - random(0, lip.front),
+              x: lip.tip.x + random(-0.5, 0.5) * lip.radius,
               y: lip.crestY + random(-4, 4) * scale,
               vx: random(40, 140) * scale,
               vy: -random(30, 110) * scale,
-              r: random(0.8, 2) * size,
               life: random(0.5, 1.1),
               layer,
-              surface: false,
             });
           }
 
-          // The plunge: a burst of spray and a bank of whitewater.
-          if (!b.crashed && lip.p >= 0.8) {
+          // The plunge: a burst of spray as the lip hits the water.
+          if (!b.crashed && lip.p >= 0.78) {
             b.crashed = true;
-            for (let n = 0; n < 110 * size; n++) {
+            for (let n = 0; n < 40 * size; n++) {
               emit({
                 x: lip.tip.x + random(-0.3, 0.3) * lip.front,
-                y: lip.tip.y,
+                y: lip.crestY + lip.radius * 2,
                 vx: b.speed + random(-80, 180) * scale,
                 vy: -random(80, 420) * scale * size,
-                r: random(1, 3.2) * size,
                 life: random(0.7, 1.6),
                 layer,
-                surface: false,
-              });
-            }
-            for (let n = 0; n < 95 * size; n++) {
-              emit({
-                x: lip.tip.x + random(-1, 2.2) * lip.front,
-                y: 0,
-                vx: b.speed * random(0.5, 1.5),
-                vy: 0,
-                r: random(3, 13) * size * (unit / 1000 + 0.3),
-                life: random(2.5, 5),
-                layer,
-                surface: true,
-                offset: random(-4, 16) * size,
               });
             }
           }
@@ -281,65 +260,14 @@ export function Sea({ className = '' }: { className?: string }) {
 
       for (const s of particles) {
         s.life -= dt;
-        if (s.surface) {
-          s.x += s.vx * dt;
-          s.vx *= 1 - dt * 0.6;
-        } else {
-          s.vy += 420 * scale * dt;
-          s.x += s.vx * dt;
-          s.y += s.vy * dt;
-          // Spray that falls back in becomes a fleck of foam on the water.
-          if (s.vy > 0 && s.y > surface(s.layer, s.x)) {
-            s.surface = true;
-            s.vx *= 0.4;
-            s.r *= 1.6;
-            s.life = Math.min(s.life + 0.8, 1.6);
-            s.max = s.life;
-          }
-        }
+        s.vy += 420 * scale * dt;
+        s.x += s.vx * dt;
+        s.y += s.vy * dt;
+        // Spray that falls back into the water is gone.
+        if (s.vy > 0 && s.y > surface(s.layer, s.x)) s.life = 0;
       }
       for (let i = particles.length - 1; i >= 0; i--) {
         if ((particles[i]?.life ?? 0) <= 0) particles.splice(i, 1);
-      }
-    };
-
-    // A soft round dab of foam, stamped for every bubble of whitewater and spray.
-    const dab = document.createElement('canvas');
-    dab.width = dab.height = 64;
-    const dabCtx = dab.getContext('2d');
-    if (dabCtx) {
-      const glow = dabCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      glow.addColorStop(0, foam);
-      glow.addColorStop(0.45, mix(sea, white, 0.6, 0.55));
-      glow.addColorStop(1, mix(sea, white, 0.6, 0));
-      dabCtx.fillStyle = glow;
-      dabCtx.fillRect(0, 0, 64, 64);
-    }
-
-    /**
-     * Traces one band's surface left to right. Where a breaker is pitching,
-     * the path runs over the crest, out along the lip to its tip and back
-     * underneath to the face, so the lip is part of the wave and the hollow
-     * under it stays open: the barrel.
-     */
-    const trace = (layer: number, stride: number, lips: ReturnType<typeof lipOf>[]) => {
-      const sorted = [...lips].sort((a, b) => a.face - b.face);
-      let next = 0;
-      let x = -20;
-      ctx.moveTo(x, surface(layer, x));
-      while (x <= width + 20) {
-        const lip = sorted[next];
-        const root = lip ? lip.face - lip.front * 0.55 : Infinity;
-        if (lip && x >= root) {
-          ctx.lineTo(root, lip.crestY);
-          ctx.quadraticCurveTo(lip.outer.x, lip.outer.y, lip.tip.x, lip.tip.y);
-          ctx.quadraticCurveTo(lip.inner.x, lip.inner.y, lip.face, surface(layer, lip.face));
-          x = lip.face;
-          next++;
-        } else {
-          ctx.lineTo(x, surface(layer, x));
-        }
-        x += stride;
       }
     };
 
@@ -347,68 +275,70 @@ export function Sea({ className = '' }: { className?: string }) {
       ctx.clearRect(0, 0, width, height);
       if (width === 0 || height === 0) return;
       const stride = width < 640 ? 5 : 4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
 
       for (const [layer, spec] of LAYERS.entries()) {
-        const top = seaTop + spec.base * seaHeight - spec.breakerHeight * unit * 0.6;
-        const tone = 0.1 + spec.depth * 0.2;
-        const lips = (breakers[layer] ?? []).map((b) => lipOf(layer, b)).filter((l) => l.live);
+        const curls = (breakers[layer] ?? []).map((b) => curlOf(layer, b)).filter((c) => c.live);
+        const lines = 3 + Math.round(spec.depth * 3);
+        const gap = Math.max(4, (5 + spec.depth * 8) * (unit / 1000));
+        const strength = 0.22 + spec.depth * 0.45;
 
-        // The shadowed inside of each barrel, seen through the hollow.
+        // Blank out whatever lies behind this band, so lines never tangle
+        // through the water in front of them. Nothing is painted, only erased.
+        ctx.globalCompositeOperation = 'destination-out';
         ctx.globalAlpha = 1;
-        ctx.fillStyle = mix(ink, sea, tone * 0.35);
-        for (const lip of lips) {
-          ctx.beginPath();
-          ctx.moveTo(lip.face, surface(layer, lip.face));
-          ctx.quadraticCurveTo(lip.inner.x, lip.inner.y, lip.tip.x, lip.tip.y);
-          ctx.lineTo(lip.tip.x, surface(layer, lip.tip.x) + 2);
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        // The body of the water.
-        const body = ctx.createLinearGradient(0, top, 0, height);
-        body.addColorStop(0, mix(ink, sea, tone + 0.12));
-        body.addColorStop(0.35, mix(ink, sea, tone * 0.55));
-        body.addColorStop(1, mix(ink, sea, 0.03));
-        ctx.fillStyle = body;
         ctx.beginPath();
-        trace(layer, stride, lips);
+        ctx.moveTo(-20, height);
+        for (let x = -20; x <= width + 20; x += stride) ctx.lineTo(x, surface(layer, x));
         ctx.lineTo(width + 20, height);
-        ctx.lineTo(-20, height);
         ctx.closePath();
         ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
 
-        // A glint along the surface, brightest close up.
-        ctx.strokeStyle = mix(sea, white, 0.15, 0.18 + spec.depth * 0.3);
-        ctx.lineWidth = 1 + spec.depth * 0.6;
-        ctx.beginPath();
-        trace(layer, stride, lips);
-        ctx.stroke();
+        for (let line = 0; line < lines; line++) {
+          const offset = line * gap;
+          const fade = 1 - (line / lines) * 0.7;
+          ctx.strokeStyle =
+            line === 0 ? mix(sea, white, 0.2) : line % 3 === 0 ? mix(sea, white, 0) : fog;
+          ctx.globalAlpha = strength * fade;
+          ctx.lineWidth = (line === 0 ? 1.4 : 1) * (0.8 + spec.depth * 0.6);
 
-        // White water feathering off each lip.
-        ctx.strokeStyle = foam;
-        ctx.lineCap = 'round';
-        for (const lip of lips) {
-          const strength = smooth(0.42, 0.6, lip.p);
-          ctx.globalAlpha = strength * (0.3 + spec.depth * 0.35);
-          ctx.lineWidth = 1.5 + spec.depth * 2.5;
           ctx.beginPath();
-          const root = lip.face - lip.front * 0.55;
-          ctx.moveTo(root - lip.front * 0.5, surface(layer, root - lip.front * 0.5));
-          ctx.quadraticCurveTo(root - lip.front * 0.1, lip.crestY, root, lip.crestY);
-          ctx.quadraticCurveTo(lip.outer.x, lip.outer.y, lip.tip.x, lip.tip.y);
+          for (let x = -20; x <= width + 20; x += stride) {
+            const y = surface(layer, x) + offset;
+            if (x === -20) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
           ctx.stroke();
+
+          // Each line curls over at the crest, nested inside the line above.
+          for (const curl of curls) {
+            const start = curl.radius - offset;
+            if (start < 3) continue;
+            ctx.beginPath();
+            const first = curl.at(start, 0);
+            ctx.moveTo(first.x, first.y);
+            for (let angle = 0.12; angle <= curl.sweep; angle += 0.12) {
+              const point = curl.at(start, angle);
+              ctx.lineTo(point.x, point.y);
+            }
+            const end = curl.at(start, curl.sweep);
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+          }
         }
 
-        // Whitewater and spray belonging to this band.
+        // Spray: short streaks thrown off the lip.
+        ctx.strokeStyle = mix(sea, white, 0.35);
+        ctx.lineWidth = 1;
         for (const s of particles) {
           if (s.layer !== layer) continue;
-          const t = s.life / s.max;
-          const y = s.surface ? surface(layer, s.x) + s.offset : s.y;
-          const r = s.r * (s.surface ? 1.4 + 0.6 * (1 - t) : 1.6);
-          ctx.globalAlpha =
-            (s.surface ? 0.38 : 0.65) * Math.min(1, t * 1.5) * (0.55 + spec.depth * 0.45);
-          ctx.drawImage(dab, s.x - r, y - r, r * 2, r * 2);
+          ctx.globalAlpha = strength * (s.life / s.max);
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(s.x - s.vx * 0.04, s.y - s.vy * 0.04);
+          ctx.stroke();
         }
       }
       ctx.globalAlpha = 1;

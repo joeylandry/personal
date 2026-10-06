@@ -14,7 +14,7 @@ export function OriginStory() {
       className="overflow-hidden"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Sea />
+        <Sea className="text-fog" />
       </div>
 
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">
