@@ -107,6 +107,13 @@ let pinnedId: string | null = null;
 let queued: RecordTrack | null = null;
 /** Set when a new song is loaded and should start; cleared once it plays. */
 let wantPlay: ReturnType<typeof setTimeout> | null = null;
+/**
+ * Set while a newly loaded song is getting going. Until it is audibly
+ * playing, the embed's updates (paused, buffering, or stragglers from the
+ * song it replaced) are ignored, so jumping between songs keeps the needle
+ * down instead of flickering it up and down. Gives up after a few seconds.
+ */
+let switching: ReturnType<typeof setTimeout> | null = null;
 /** True once the song (or its 30-second sample) has run out. */
 let ended = false;
 /**
@@ -118,10 +125,19 @@ let ended = false;
 let endTimer: ReturnType<typeof setTimeout> | null = null;
 /** How close to the end counts as the end, in ms. */
 const END_SLACK = 250;
+/** How long a new song gets to start before the record believes the embed again. */
+const SWITCH_GRACE = 4000;
 
 function clearEndTimer() {
   if (endTimer) clearTimeout(endTimer);
   endTimer = null;
+}
+
+function clearSwitching() {
+  if (wantPlay) clearTimeout(wantPlay);
+  if (switching) clearTimeout(switching);
+  wantPlay = null;
+  switching = null;
 }
 
 /** The song ran out: lift the needle and let the record stop. */
@@ -133,6 +149,12 @@ function finish() {
 
 function onPlaybackUpdate({ data }: PlaybackUpdate) {
   const { isPaused, isBuffering, position, duration } = data;
+  // Spin only once sound is actually coming out, not while it loads.
+  const playing = !isPaused && !isBuffering;
+  if (switching) {
+    if (!playing || position <= 0) return;
+    clearSwitching();
+  }
   const atEnd = duration > 0 && position >= duration - END_SLACK;
   if (!isPaused && atEnd) {
     // Still "playing" at the end of the sample: pause it so it agrees with the record.
@@ -141,19 +163,13 @@ function onPlaybackUpdate({ data }: PlaybackUpdate) {
     return;
   }
   // A paused embed back at the start after playing through is a finished sample too.
-  if (isPaused && (atEnd || (state.playing && position === 0 && !wantPlay))) {
+  if (isPaused && (atEnd || (state.playing && position === 0))) {
     finish();
     return;
   }
-  // Spin only once sound is actually coming out, not while it loads.
-  const playing = !isPaused && !isBuffering;
   clearEndTimer();
   if (playing) {
     ended = false;
-    if (wantPlay) {
-      clearTimeout(wantPlay);
-      wantPlay = null;
-    }
     if (duration > 0) endTimer = setTimeout(finish, duration - position + 400);
   }
   set({ playing, started: state.started || playing });
@@ -162,19 +178,26 @@ function onPlaybackUpdate({ data }: PlaybackUpdate) {
 /**
  * Loads a song into the embed and starts it. A `play()` sent straight after
  * `loadUri()` can land before the new song is ready (notably on phones), so
- * it is sent again shortly after if the song still hasn't started.
+ * it is sent again shortly after if the song still hasn't started. The record
+ * keeps spinning through the switch.
  */
 function loadAndPlay(id: string) {
   if (!controller) return;
   ended = false;
   clearEndTimer();
+  clearSwitching();
   controller.loadUri(`spotify:track:${id}`);
   controller.play();
-  if (wantPlay) clearTimeout(wantPlay);
   wantPlay = setTimeout(() => {
     wantPlay = null;
-    if (!state.playing) controller?.play();
+    if (switching) controller?.play();
   }, 900);
+  switching = setTimeout(() => {
+    // It never got going: stop pretending, and let the next update decide.
+    clearSwitching();
+    set({ playing: false });
+  }, SWITCH_GRACE);
+  set({ playing: true, started: true });
 }
 
 function set(patch: Partial<PinnedState>) {
@@ -240,6 +263,13 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
  */
 export function togglePinned() {
   if (!controller) return;
+  if (switching) {
+    // Paused while the new song was still loading.
+    clearSwitching();
+    controller.pause();
+    set({ playing: false });
+    return;
+  }
   if (ended && !state.playing) {
     ended = false;
     controller.seek(0);
