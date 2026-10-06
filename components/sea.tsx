@@ -30,7 +30,7 @@ type Wave = {
 };
 type Spray = { x: number; y: number; vx: number; vy: number; life: number; max: number };
 
-const CURL = Math.PI * 4;
+const CURL = Math.PI * 5;
 const MAX_SPRAY = 240;
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
@@ -142,8 +142,8 @@ export function Sea({ className = '' }: { className?: string }) {
       };
       const top = point(w.length, 0);
       const center = { x: top.x, y: top.y + radius };
-      // The curl winds twice, tightening to almost nothing. The lines start
-      // nested and draw together as they wind, ending as a single line.
+      // The curl winds two and a half times, tightening to almost nothing. The
+      // lines start nested and draw together as they wind, ending as one line.
       const curlAt = (offset: number, angle: number) => {
         const t = angle / CURL;
         const start = radius - offset * (1 - smooth(0, 0.6, t));
