@@ -63,7 +63,7 @@ export function PinnedMini({
   preview: TrackPreview | null;
   trackUrl: string;
 }) {
-  const { status, playing, track, position, duration, at } = usePinned();
+  const { status, playing, audible, track, position, duration, at } = usePinned();
   const elapsed = usePosition(playing, position, duration, at);
 
   useEffect(
@@ -105,7 +105,7 @@ export function PinnedMini({
           Site sound
           {playing ? (
             <span className="ml-1 flex scale-75 items-center">
-              <EqBars playing />
+              <EqBars playing={audible} />
             </span>
           ) : null}
         </p>

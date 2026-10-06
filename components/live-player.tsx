@@ -202,6 +202,7 @@ function SmallPlayGlyph() {
 /** A frosted play button over a song's artwork: "put this on the record". */
 function SampleButton({ track, className = '' }: { track: Track; className?: string }) {
   const onRecord = useOnRecord(track);
+  const { audible } = usePinned();
   return (
     <button
       type="button"
@@ -209,7 +210,7 @@ function SampleButton({ track, className = '' }: { track: Track; className?: str
       aria-label={`Play ${track.title} on the record player`}
       className={`glass-sample ${className}`}
     >
-      {onRecord ? <EqBars playing /> : <SmallPlayGlyph />}
+      {onRecord ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
     </button>
   );
 }
@@ -290,7 +291,9 @@ function TrackTitle({ track, size }: { track: Track; size: 'lg' | 'sm' }) {
         target="_blank"
         rel="noopener noreferrer"
         className={`block truncate font-semibold tracking-tight text-white transition-opacity hover:opacity-75 ${
-          size === 'lg' ? 'text-xl sm:text-2xl lg:text-[1.75rem] lg:leading-tight' : 'text-[15px]'
+          size === 'lg'
+            ? 'text-xl sm:text-2xl @4xl:text-[1.75rem] @4xl:leading-tight'
+            : 'text-[15px]'
         }`}
       >
         {track.title}
@@ -334,7 +337,7 @@ function Skeleton({ variant }: { variant: 'full' | 'compact' }) {
     <div
       aria-hidden="true"
       className={`animate-pulse bg-raised ${
-        variant === 'full' ? 'h-[30rem] rounded-[28px] lg:h-[24rem]' : 'h-28 rounded-[22px]'
+        variant === 'full' ? 'h-[30rem] rounded-[28px]' : 'h-28 rounded-[22px]'
       }`}
     />
   );
@@ -385,12 +388,13 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
   }
 
   const recent = history.slice(0, 5);
+  // Laid out by its own width (a container), so it stacks when it shares a row with the record.
   return (
-    <div className="glass-card rounded-[24px] sm:rounded-[32px]" data-playing={playing}>
+    <div className="glass-card @container rounded-[24px] sm:rounded-[32px]" data-playing={playing}>
       <Ambient track={lead} />
       <div
-        className={`relative grid gap-6 p-4 sm:p-7 lg:gap-8 lg:p-8 ${
-          recent.length > 0 ? 'lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]' : ''
+        className={`relative grid gap-6 p-4 sm:p-7 @4xl:gap-8 @4xl:p-8 ${
+          recent.length > 0 ? '@4xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]' : ''
         }`}
       >
         <div className="flex min-w-0 flex-col p-1 sm:p-0">
@@ -405,12 +409,12 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
             )}
           </div>
 
-          <div className="mt-6 flex items-center gap-4 sm:mt-8 sm:gap-6 lg:flex-1">
+          <div className="mt-6 flex items-center gap-4 sm:mt-8 sm:gap-6 @4xl:flex-1">
             <div className="relative shrink-0">
               <Artwork
                 track={lead}
-                sizes="(min-width: 1024px) 224px, (min-width: 640px) 168px, 96px"
-                className="glass-art size-24 rounded-2xl sm:size-42 lg:size-56"
+                sizes="(min-width: 640px) 224px, 96px"
+                className="glass-art size-24 rounded-2xl sm:size-42 @4xl:size-56"
               />
               <SampleButton
                 track={lead}
@@ -435,6 +439,7 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
 
 function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
   const onRecord = useOnRecord(play.track);
+  const { audible } = usePinned();
   return (
     <li className="ios-row flex items-center">
       <button
@@ -447,7 +452,7 @@ function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
         <span className="relative shrink-0">
           <Artwork track={play.track} sizes="44px" shadow={false} className="size-11 rounded-lg" />
           <span className="ios-row-play" aria-hidden="true">
-            {onRecord ? <EqBars playing /> : <SmallPlayGlyph />}
+            {onRecord ? <EqBars playing={audible} /> : <SmallPlayGlyph />}
           </span>
         </span>
         <span className="min-w-0 flex-1">
