@@ -14,12 +14,15 @@ export function OriginStory() {
       labelledBy="about-heading"
       className="overflow-hidden"
     >
+      {/* The strings are tied off past the right edge of the screen and fly
+          loose to the left, just reaching its left edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <Coastline
-          className="absolute -top-[18%] -left-[20%] h-[110%] w-[90%] text-fog"
+          className="absolute -top-[18%] left-0 h-[110%] w-[112%] text-fog"
           opacity={0.42}
           lines={11}
           gap={19}
+          breeze
         />
       </div>
 
