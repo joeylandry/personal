@@ -85,6 +85,12 @@ export interface RecordTrack {
 export interface PinnedState {
   status: PinnedStatus;
   playing: boolean;
+  /**
+   * Sound is actually coming out: playing, not buffering, and past the start.
+   * Spotify reports a new song as playing while it is still loading; the
+   * waveforms follow this so they only move with the music.
+   */
+  audible: boolean;
   /** The song on the record when it isn't the pinned one; null means the pick. */
   track: RecordTrack | null;
   /** The pick itself, as the records describe it; for the header's island. */
@@ -96,6 +102,7 @@ export interface PinnedState {
 let state: PinnedState = {
   status: 'idle',
   playing: false,
+  audible: false,
   track: null,
   pinned: null,
   started: false,
@@ -144,7 +151,7 @@ function clearSwitching() {
 function finish() {
   clearEndTimer();
   ended = true;
-  if (state.playing) set({ playing: false });
+  if (state.playing || state.audible) set({ playing: false, audible: false });
 }
 
 function onPlaybackUpdate({ data }: PlaybackUpdate) {
@@ -172,7 +179,7 @@ function onPlaybackUpdate({ data }: PlaybackUpdate) {
     ended = false;
     if (duration > 0) endTimer = setTimeout(finish, duration - position + 400);
   }
-  set({ playing, started: state.started || playing });
+  set({ playing, audible: playing && position > 0, started: state.started || playing });
 }
 
 /**
@@ -197,7 +204,7 @@ function loadAndPlay(id: string) {
     clearSwitching();
     set({ playing: false });
   }, SWITCH_GRACE);
-  set({ playing: true, started: true });
+  set({ playing: true, audible: false, started: true });
 }
 
 function set(patch: Partial<PinnedState>) {
@@ -221,7 +228,7 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
     if (ready) return;
     controller?.destroy();
     controller = null;
-    set({ status: 'failed', playing: false });
+    set({ status: 'failed', playing: false, audible: false });
   };
   const timeout = setTimeout(giveUp, 12_000);
 
@@ -309,6 +316,7 @@ function subscribe(listener: () => void) {
 const serverState: PinnedState = {
   status: 'idle',
   playing: false,
+  audible: false,
   track: null,
   pinned: null,
   started: false,
