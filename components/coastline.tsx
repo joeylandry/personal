@@ -7,11 +7,16 @@ import { CoastlineBreeze } from './coastline-breeze';
  * falling opacity — the look of a topographic survey of a neck of land.
  * Purely decorative; never announced.
  *
- * With `breeze`, the lines flap together like strings in an onshore wind
- * (coastline-breeze.tsx). Under reduced motion they sit still as drawn.
+ * With `breeze`, the field is pinned to its right edge and the lines fly
+ * together from there like strings in an onshore wind (coastline-breeze.tsx),
+ * cropped at the box's left edge. Under reduced motion they sit still.
  */
 const CURVE =
   'M-40 232C60 214 118 236 186 206c58-26 74-74 148-88 78-15 132 30 196 2 62-27 70-84 140-100 44-10 78 2 116 18';
+
+// With `breeze`, the field ends (and the strings are tied) here, on the
+// curve's gentler middle stretch rather than its steep climb at the far end.
+const BREEZE_POLE = 560;
 
 export function Coastline({
   lines = 9,
@@ -28,8 +33,8 @@ export function Coastline({
 }) {
   return (
     <svg
-      viewBox="0 0 700 400"
-      preserveAspectRatio="xMidYMid slice"
+      viewBox={`0 0 ${breeze ? BREEZE_POLE : 700} 400`}
+      preserveAspectRatio={breeze ? 'xMaxYMid slice' : 'xMidYMid slice'}
       fill="none"
       aria-hidden="true"
       focusable="false"
@@ -51,7 +56,7 @@ export function Coastline({
           />
         );
       })}
-      {breeze ? <CoastlineBreeze curve={CURVE} /> : null}
+      {breeze ? <CoastlineBreeze curve={CURVE} pole={BREEZE_POLE} /> : null}
     </svg>
   );
 }

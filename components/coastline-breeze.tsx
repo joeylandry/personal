@@ -6,18 +6,20 @@ import { useEffect, useRef } from 'react';
  * Wind for the contour field (coastline.tsx).
  *
  * Renders nothing visible: it finds the field's lines and, every frame,
- * redraws the shared curve with a long, slow wave rolling in from the right,
- * so the lines drift together like loose strings in a beach breeze. Nothing
- * holds either end down; the whole length moves alike, swelling and easing
- * with the gusts. Never starts under reduced motion, and idles while the
- * field is off screen.
+ * redraws the shared curve like strings tied to an invisible flag pole at
+ * the field's right edge. The breeze comes off the water from the right; a
+ * slow wave runs from the pole out to the loose ends, which fly the most.
+ * Never starts under reduced motion, and idles while the field is off
+ * screen.
  */
 const SAMPLES = 120;
-const WAVELENGTH = 520;
-const SPEED = 38; // viewBox units per second, right to left
-const AMPLITUDE = 13;
+const WAVELENGTH = 300;
+const SPEED = 46; // viewBox units per second, from the pole outward (leftward)
+const AMPLITUDE = 18; // at the loose ends
+const REACH = 260; // how far from the pole the strings fly fully loose
 
-export function CoastlineBreeze({ curve }: { curve: string }) {
+/** `pole` is the viewBox x of the field's right edge, where the strings are tied. */
+export function CoastlineBreeze({ curve, pole }: { curve: string; pole: number }) {
   const anchor = useRef<SVGGElement>(null);
 
   useEffect(() => {
@@ -50,17 +52,20 @@ export function CoastlineBreeze({ curve }: { curve: string }) {
     const draw = (now: number) => {
       const t = (now - start) / 1000;
       // Gusts: slow, uneven swells in strength, like an onshore breeze.
-      const gust = 0.75 + 0.18 * Math.sin(t * 0.16) + 0.1 * Math.sin(t * 0.41 + 1.7);
+      const gust = 0.8 + 0.2 * Math.sin(t * 0.21) + 0.12 * Math.sin(t * 0.53 + 1.7);
       let d = '';
       for (let i = 0; i <= SAMPLES; i++) {
         const x = xs[i] ?? 0;
         const y = ys[i] ?? 0;
-        // Plus sign: the wave travels toward smaller x, downwind from the right.
+        // Still at the pole, freer the farther the string flies from it.
+        const loose = Math.min(Math.max((pole - x) / REACH, 0), 1);
+        const slack = loose * loose * (3 - 2 * loose);
+        // Plus sign: the wave travels toward smaller x, downwind from the pole.
         const phase = k * x + t * SPEED * k;
         const wave = Math.sin(phase) + 0.3 * Math.sin(phase * 1.7 + 0.8);
-        const dy = AMPLITUDE * gust * wave;
-        // The breeze also nudges the lines a touch downwind (leftward).
-        const dx = -4 * gust * (1 + Math.cos(phase)) * 0.5;
+        const dy = AMPLITUDE * gust * slack * wave;
+        // The loose ends also pull a touch downwind (leftward).
+        const dx = -5 * gust * slack * (1 + Math.cos(phase)) * 0.5;
         d += `${i === 0 ? 'M' : 'L'}${(x + dx).toFixed(1)} ${(y + dy).toFixed(1)}`;
       }
       for (const line of lines) line.setAttribute('d', d);
@@ -79,7 +84,7 @@ export function CoastlineBreeze({ curve }: { curve: string }) {
       cancelAnimationFrame(frame);
       for (const line of lines) line.setAttribute('d', curve);
     };
-  }, [curve]);
+  }, [curve, pole]);
 
   return <g ref={anchor} />;
 }
