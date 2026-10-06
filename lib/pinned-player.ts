@@ -27,6 +27,8 @@ interface EmbedController {
   addListener(event: 'playback_update', callback: (event: PlaybackUpdate) => void): void;
   loadUri(uri: string): void;
   play(): void;
+  pause(): void;
+  seek(seconds: number): void;
   togglePlay(): void;
   destroy(): void;
 }
@@ -105,6 +107,57 @@ let pinnedId: string | null = null;
 let queued: RecordTrack | null = null;
 /** Set when a new song is loaded and should start; cleared once it plays. */
 let wantPlay: ReturnType<typeof setTimeout> | null = null;
+/** True once the song (or its 30-second sample) has run out. */
+let ended = false;
+/**
+ * Fires when the song should have run out. The embed doesn't always say when
+ * a sample ends (it can stop sending updates while still reporting "playing"),
+ * so every update pushes this back to the song's remaining time; if no update
+ * arrives by then, the record stops anyway.
+ */
+let endTimer: ReturnType<typeof setTimeout> | null = null;
+/** How close to the end counts as the end, in ms. */
+const END_SLACK = 250;
+
+function clearEndTimer() {
+  if (endTimer) clearTimeout(endTimer);
+  endTimer = null;
+}
+
+/** The song ran out: lift the needle and let the record stop. */
+function finish() {
+  clearEndTimer();
+  ended = true;
+  if (state.playing) set({ playing: false });
+}
+
+function onPlaybackUpdate({ data }: PlaybackUpdate) {
+  const { isPaused, isBuffering, position, duration } = data;
+  const atEnd = duration > 0 && position >= duration - END_SLACK;
+  if (!isPaused && atEnd) {
+    // Still "playing" at the end of the sample: pause it so it agrees with the record.
+    controller?.pause();
+    finish();
+    return;
+  }
+  // A paused embed back at the start after playing through is a finished sample too.
+  if (isPaused && (atEnd || (state.playing && position === 0 && !wantPlay))) {
+    finish();
+    return;
+  }
+  // Spin only once sound is actually coming out, not while it loads.
+  const playing = !isPaused && !isBuffering;
+  clearEndTimer();
+  if (playing) {
+    ended = false;
+    if (wantPlay) {
+      clearTimeout(wantPlay);
+      wantPlay = null;
+    }
+    if (duration > 0) endTimer = setTimeout(finish, duration - position + 400);
+  }
+  set({ playing, started: state.started || playing });
+}
 
 /**
  * Loads a song into the embed and starts it. A `play()` sent straight after
@@ -113,6 +166,8 @@ let wantPlay: ReturnType<typeof setTimeout> | null = null;
  */
 function loadAndPlay(id: string) {
   if (!controller) return;
+  ended = false;
+  clearEndTimer();
   controller.loadUri(`spotify:track:${id}`);
   controller.play();
   if (wantPlay) clearTimeout(wantPlay);
@@ -169,14 +224,7 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
               playOnRecord(next);
             }
           });
-          created.addListener('playback_update', (event) => {
-            const playing = !event.data.isPaused;
-            if (playing && wantPlay) {
-              clearTimeout(wantPlay);
-              wantPlay = null;
-            }
-            set({ playing, started: state.started || playing });
-          });
+          created.addListener('playback_update', onPlaybackUpdate);
         },
       );
     })
@@ -186,9 +234,19 @@ export function loadPinned(trackId: string, pinned?: RecordTrack) {
     });
 }
 
-/** Play or pause the shared song. A no-op until the embed is ready. */
+/**
+ * Play or pause the shared song; a song that has run out starts again from
+ * the top. A no-op until the embed is ready.
+ */
 export function togglePinned() {
-  controller?.togglePlay();
+  if (!controller) return;
+  if (ended && !state.playing) {
+    ended = false;
+    controller.seek(0);
+    controller.play();
+    return;
+  }
+  controller.togglePlay();
 }
 
 /** Puts a song on the record and starts it, on every record at once. */

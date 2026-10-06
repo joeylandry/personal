@@ -10,7 +10,7 @@ const RPM_33 = (100 / 3) * (360 / 60_000);
 
 /**
  * Spins the element at 33⅓ rpm while `playing`, easing up to speed and
- * coasting down afterwards. Does nothing under reduced motion.
+ * braking to a stop afterwards. Does nothing under reduced motion.
  */
 function useSpin(ref: RefObject<HTMLElement | null>, playing: boolean) {
   const playingRef = useRef(playing);
@@ -28,8 +28,9 @@ function useSpin(ref: RefObject<HTMLElement | null>, playing: boolean) {
       const dt = Math.min(64, time - last);
       last = time;
       const target = playingRef.current ? 1 : 0;
-      // Spin-up is quick like a direct-drive deck; spin-down coasts.
-      const tau = target ? 320 : 1100;
+      // Quick both ways, like a direct-drive deck: the record is up to speed
+      // as the needle lands and has stopped by the time it's lifted clear.
+      const tau = target ? 280 : 220;
       speed.current += (target - speed.current) * (1 - Math.exp(-dt / tau));
       angle.current = (angle.current + speed.current * RPM_33 * dt) % 360;
       if (ref.current) ref.current.style.transform = `rotate(${angle.current}deg)`;
