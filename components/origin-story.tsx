@@ -1,5 +1,5 @@
 import { profile, timeline } from '@/content';
-import { Coastline } from './coastline';
+import { Sea } from './sea';
 import { Section } from './section';
 
 export function OriginStory() {
@@ -14,16 +14,8 @@ export function OriginStory() {
       labelledBy="about-heading"
       className="overflow-hidden"
     >
-      {/* The strings are tied off past the right edge of the screen and fly
-          loose to the left, just reaching its left edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Coastline
-          className="absolute -top-[18%] left-0 h-[110%] w-[112%] text-fog"
-          opacity={0.42}
-          lines={11}
-          gap={19}
-          breeze
-        />
+        <Sea className="text-fog" />
       </div>
 
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Coastline } from '@/components/coastline';
 import { Section, SectionHeading } from '@/components/section';
 import { publishedNotes } from '@/content';
 import { formatDate } from '@/lib/format';
@@ -19,6 +20,17 @@ export default function BlogPage() {
         aria-hidden="true"
         className="grid-field grid-field-drift pointer-events-none absolute inset-0 opacity-60"
       />
+      {/* The breeze lines are tied off past the right edge of the screen and
+          fly loose to the left, just reaching its left edge. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <Coastline
+          className="absolute -top-[18%] left-0 h-[110%] w-[112%] text-fog"
+          opacity={0.42}
+          lines={11}
+          gap={19}
+          breeze
+        />
+      </div>
 
       <div className="wrap relative py-16 md:py-24">
         <SectionHeading
