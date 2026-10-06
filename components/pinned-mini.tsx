@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { TrackPreview } from '@/lib/spotify';
-import { backToPinned, loadPinned, togglePinned, usePinned } from '@/lib/pinned-player';
+import { loadPinned, togglePinned, usePinned } from '@/lib/pinned-player';
 import { canOptimizeImage } from '@/lib/spotify-images';
 import { ExternalLink } from './external-link';
 import { EqBars } from './live-player';
@@ -46,18 +46,10 @@ function SpeakerGlyph() {
   );
 }
 
-function SkipGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden="true" fill="currentColor">
-      <path d="M3 6.9v10.2a.9.9 0 0 0 1.4.75L11.5 13v4.1a.9.9 0 0 0 1.4.75l7.7-5.1a.9.9 0 0 0 0-1.5L12.9 6.15a.9.9 0 0 0-1.4.75V11L4.4 6.15A.9.9 0 0 0 3 6.9Z" />
-    </svg>
-  );
-}
-
 /**
  * The site's sound, for the home hero, as a mini Now Playing: one compact
  * row of album art, the song and artist, a progress bar beside them, and
- * play / forward, on Apple's frosted dark card. It drives the same
+ * play / pause, on Apple's frosted dark card. It drives the same
  * shared player as the About page's turntable and the header's island.
  */
 export function PinnedMini({
@@ -157,26 +149,15 @@ export function PinnedMini({
           Spotify
         </ExternalLink>
       ) : (
-        <div className="flex shrink-0 items-center">
-          <button
-            type="button"
-            onClick={togglePinned}
-            disabled={!ready}
-            aria-label={playing ? `Pause ${title}` : `Play ${title}`}
-            className="grid size-9 place-items-center rounded-full transition-[scale] duration-200 active:scale-90 disabled:opacity-40"
-          >
-            <PlayGlyph playing={playing} size={22} />
-          </button>
-          <button
-            type="button"
-            onClick={backToPinned}
-            disabled={!ready || !track}
-            aria-label="Back to the site's song"
-            className="grid size-9 place-items-center rounded-full text-white/85 transition-[scale,color] duration-200 hover:text-white active:scale-90 disabled:opacity-35"
-          >
-            <SkipGlyph />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={togglePinned}
+          disabled={!ready}
+          aria-label={playing ? `Pause ${title}` : `Play ${title}`}
+          className="grid size-9 shrink-0 place-items-center rounded-full transition-[scale] duration-200 active:scale-90 disabled:opacity-40"
+        >
+          <PlayGlyph playing={playing} size={22} />
+        </button>
       )}
     </div>
   );
