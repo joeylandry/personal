@@ -7,14 +7,20 @@ import { useEffect, useRef, type ReactNode } from 'react';
  *
  * Writes how far the reader has scrolled through the list to `--spine-progress`
  * (0 to 1), which draws the spine's fill, and marks each step `data-reached`
- * once its node crosses the reading line so the node lights up. Each step's
- * photos get `--shrink` (0 to 1): they sit at full size until their top meets
- * the reading line, then shrink as they rise toward the top of the viewport.
+ * once its node crosses the reading line so the node lights up.
+ *
+ * From md up, each chapter's photos also zoom home. Laid out mini beside their
+ * year, they are scaled up and centered on the spine while still below the
+ * reading line, then shrink by their corners into place as they rise toward
+ * the top of the viewport. Once a photo is home it stays there for the rest of
+ * the visit, even when the reader scrolls back up. Phones and reduced motion
+ * skip the zoom.
+ *
  * All of it is written straight to the DOM on an animation frame: it drives
  * CSS and nothing renders from it.
  *
  * Without JavaScript the stylesheet shows the spine fully drawn, every node
- * lit and every photo at full size, so the static page reads as a finished
+ * lit and every photo at home, so the static page reads as a finished
  * timeline.
  */
 
@@ -22,8 +28,13 @@ import { useEffect, useRef, type ReactNode } from 'react';
 const READING_LINE = 0.62;
 /** Where a step's node sits below the top of the step, in pixels. */
 const NODE_OFFSET = 22;
-/** Where a photo finishes shrinking, as a fraction of the viewport height. */
-const SHRINK_END = 0.18;
+/** Where a photo is home, as a fraction of the viewport height from the top. */
+const ZOOM_END = 0.3;
+/** The zoomed photo's largest height, in pixels, and share of the viewport height. */
+const ZOOM_MAX_HEIGHT = 320;
+const ZOOM_VIEWPORT_HEIGHT = 0.45;
+/** The zoomed photo's largest width, as a share of the timeline's width. */
+const ZOOM_MAX_WIDTH = 0.7;
 
 export function TimelineTrack({
   children,
@@ -39,6 +50,10 @@ export function TimelineTrack({
     if (!list) return;
     const steps = Array.from(list.querySelectorAll<HTMLElement>('[data-step]'));
     const photos = Array.from(list.querySelectorAll<HTMLElement>('.giving-photo'));
+    const wide = window.matchMedia('(min-width: 48rem)');
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // How far each photo has come home, which only ever grows.
+    const home = new Map<HTMLElement, number>();
     let frame = 0;
 
     const update = () => {
@@ -51,14 +66,42 @@ export function TimelineTrack({
         const reached = step.getBoundingClientRect().top + NODE_OFFSET <= line;
         step.setAttribute('data-reached', String(reached));
       }
-      const end = window.innerHeight * SHRINK_END;
-      for (const photo of photos) {
-        // Measured from the photo's wrapper, whose top does not move as it shrinks.
-        const top = (photo.parentElement ?? photo).getBoundingClientRect().top;
-        const shrink = Math.min(Math.max((line - top) / (line - end), 0), 1);
-        photo.style.setProperty('--shrink', shrink.toFixed(4));
-      }
+      zoom(line, box);
     };
+
+    function zoom(line: number, box: DOMRect) {
+      const animate = wide.matches && !still.matches;
+      const end = window.innerHeight * ZOOM_END;
+      const spine = box.left + box.width / 2;
+      const maxHeight = Math.min(ZOOM_MAX_HEIGHT, window.innerHeight * ZOOM_VIEWPORT_HEIGHT);
+      for (const photo of photos) {
+        // The slot keeps the photo's home size and position; only the photo moves.
+        const slot = photo.parentElement ?? photo;
+        const rect = slot.getBoundingClientRect();
+        const reached = Math.min(Math.max((line - rect.top) / (line - end), 0), 1);
+        const progress = Math.max(home.get(photo) ?? 0, reached);
+        home.set(photo, progress);
+
+        const step = photo.closest<HTMLElement>('[data-step]');
+        if (!animate || progress >= 1 || rect.width === 0) {
+          photo.style.transform = '';
+          photo.removeAttribute('data-zoom');
+          if (step) step.style.zIndex = '';
+          continue;
+        }
+
+        const ratio = rect.width / rect.height;
+        const width = Math.min(maxHeight * ratio, box.width * ZOOM_MAX_WIDTH);
+        const scale = Math.max(width / rect.width, 1);
+        const shift = spine - (rect.left + rect.width / 2);
+        // Ease out, so the photo settles gently into place.
+        const away = (1 - progress) ** 2;
+        photo.style.transform = `translateX(${(shift * away).toFixed(1)}px) scale(${(1 + (scale - 1) * away).toFixed(4)})`;
+        photo.setAttribute('data-zoom', 'true');
+        // Lift the step so the zoomed photo floats over its neighbours.
+        if (step) step.style.zIndex = '1';
+      }
+    }
 
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -67,7 +110,11 @@ export function TimelineTrack({
     update();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
+    wide.addEventListener('change', schedule);
+    still.addEventListener('change', schedule);
     return () => {
+      wide.removeEventListener('change', schedule);
+      still.removeEventListener('change', schedule);
       cancelAnimationFrame(frame);
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);

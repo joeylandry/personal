@@ -1363,27 +1363,24 @@
   color: var(--faint);
 }
 
-/* A chapter's photos, at their own aspect ratio. They start at full size,
-   capped so the row never runs taller than --photo-max-h, then shrink toward
-   the spine as the reader scrolls past. The giving-timeline script writes
-   --shrink; without it, or under reduced motion, they stay full size. */
-.giving-photo {
-  --photo-max-h: min(32rem, 70svh);
-  --photo-min: 0.72;
-  width: calc(
-    min(100%, var(--photo-max-h) * var(--ratio, 1)) *
-      (1 - (1 - var(--photo-min)) * var(--shrink, 0))
-  );
+/* A chapter's photos, at their own aspect ratio, sized by height so the
+   timeline reads evenly. On phones they fill the column, capped so a tall
+   photo never runs taller than the screen. From md up the slot holds the mini
+   size beside the year; the giving-timeline script scales the photo up from
+   there, centered on the spine, and shrinks it home as the reader scrolls. */
+.giving-photo-slot {
+  width: min(100%, min(30rem, 70svh) * var(--ratio, 1));
 }
 @media (min-width: 48rem) {
-  .giving-photo {
-    --photo-min: 0.55;
+  .giving-photo-slot {
+    width: min(100%, 12rem * var(--ratio, 1));
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .giving-photo {
-    --shrink: 0 !important;
-  }
+.giving-photo {
+  transform-origin: 50% 0;
+}
+.giving-photo[data-zoom='true'] {
+  box-shadow: 0 24px 60px -24px rgb(7 16 24 / 0.45);
 }
 
 /* Full-size photo viewer: a native modal dialog. */

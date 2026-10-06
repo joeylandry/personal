@@ -79,27 +79,30 @@ export function GivingIntro() {
 }
 
 /**
- * One fundraiser: the photos at their own aspect ratio (opening full size),
- * the caption, then the story. The photos start large and shrink toward the
- * spine as the reader scrolls past (see TimelineTrack).
+ * One fundraiser: the photos at their own aspect ratio (opening full size in a
+ * gallery), the caption, then the story. From md up the photos sit mini beside
+ * their year; TimelineTrack zooms them in from the middle of the timeline the
+ * first time the reader scrolls to them.
  */
 function ChapterCard({ chapter, left }: { chapter: GivingChapter; left: boolean }) {
   const [first] = chapter.photos;
   const multiple = chapter.photos.length > 1;
-  // Width over height of the whole row of photos, which caps how wide it may
-  // grow so a tall photo never runs taller than the viewport.
+  // Width over height of the whole row of photos, so the stylesheet can size
+  // the row by its height.
   const ratio = chapter.photos.reduce((sum, photo) => sum + photo.width / photo.height, 0);
   return (
     <article>
       <div
-        className={`giving-photo ${left ? 'md:ml-auto' : ''}`}
+        className={`giving-photo-slot ${left ? 'md:ml-auto' : ''}`}
         style={{ '--ratio': ratio.toFixed(4) } as CSSProperties}
       >
-        <PhotoLightbox
-          photos={chapter.photos}
-          layout="row"
-          sizes={`(min-width: 768px) ${Math.round(40 / chapter.photos.length)}vw, ${Math.round(100 / chapter.photos.length)}vw`}
-        />
+        <div className="giving-photo">
+          <PhotoLightbox
+            photos={chapter.photos}
+            layout="row"
+            sizes={`(min-width: 768px) ${Math.round(50 / chapter.photos.length)}vw, ${Math.round(100 / chapter.photos.length)}vw`}
+          />
+        </div>
       </div>
       <p className="meta mt-3 text-faint">
         {multiple ? `${chapter.photos.length} photos` : first?.caption}
