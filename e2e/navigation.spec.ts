@@ -33,12 +33,12 @@ test.describe('homepage', () => {
     const pages = [
       { label: 'Work', path: '/work', ids: ['work'] },
       { label: 'Giving', path: '/giving', ids: ['giving'] },
+      { label: 'Blog', path: '/blog', ids: ['blog'] },
       {
         label: 'About',
         path: '/about',
         ids: ['about', 'donny', 'listening', 'toolbox', 'exploring'],
       },
-      { label: 'Blog', path: '/blog', ids: ['blog'] },
       { label: 'Contact', path: '/contact', ids: ['contact'] },
     ];
 
@@ -81,7 +81,7 @@ test.describe('homepage', () => {
   });
 
   test('never scrolls horizontally, from 320px up', async ({ page }) => {
-    for (const route of ['/', '/work', '/giving', '/about', '/blog', '/contact']) {
+    for (const route of ['/', '/work', '/giving', '/blog', '/about', '/contact']) {
       for (const width of [320, 390, 768, 1024, 1440]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(route);

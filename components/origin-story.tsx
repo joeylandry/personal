@@ -1,9 +1,10 @@
-import { profile } from '@/content';
+import { profile, timeline } from '@/content';
 import { Coastline } from './coastline';
 import { Section } from './section';
 
 export function OriginStory() {
   const { about, offClock } = profile;
+  const degrees = timeline.filter((entry) => entry.kind === 'education');
 
   return (
     <Section
@@ -47,17 +48,44 @@ export function OriginStory() {
           </div>
         </div>
 
-        {/* Off the clock: the things that aren't on a resume. */}
-        <div className="md:col-span-4 md:col-start-9">
-          <h2 className="meta text-faint">Off the clock</h2>
-          <ul className="mt-6">
-            {offClock.map((entry) => (
-              <li key={entry.label} className="rule-t py-5 first:border-t-0 first:pt-0">
-                <p className="meta text-detail">{entry.label}</p>
-                <p className="mt-2 text-base leading-snug text-fg">{entry.detail}</p>
-              </li>
-            ))}
-          </ul>
+        {/* The degree, then off the clock: the things that aren't on a resume.
+            The full work history lives on LinkedIn, so the degree is the only
+            part of it the site repeats. */}
+        <div className="space-y-14 md:col-span-4 md:col-start-9">
+          {degrees.length > 0 ? (
+            <div>
+              <h2 className="meta text-faint">Education</h2>
+              <ul className="mt-6">
+                {degrees.map((entry) => (
+                  <li
+                    key={`${entry.org}-${entry.start}`}
+                    className="rule-t py-5 first:border-t-0 first:pt-0"
+                  >
+                    <p className="meta text-detail">{entry.org}</p>
+                    <p className="mt-2 text-base leading-snug text-fg">
+                      {entry.title}
+                      {entry.distinction ? (
+                        <span className="ml-2 text-accent italic">{entry.distinction}</span>
+                      ) : null}
+                    </p>
+                    <p className="meta mt-2 text-faint">{entry.period}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          <div>
+            <h2 className="meta text-faint">Off the clock</h2>
+            <ul className="mt-6">
+              {offClock.map((entry) => (
+                <li key={entry.label} className="rule-t py-5 first:border-t-0 first:pt-0">
+                  <p className="meta text-detail">{entry.label}</p>
+                  <p className="mt-2 text-base leading-snug text-fg">{entry.detail}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </Section>

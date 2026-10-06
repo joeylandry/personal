@@ -978,10 +978,6 @@
     opacity 300ms ease,
     background-color 200ms ease;
 }
-.record-button:hover {
-  scale: 1.06;
-  background: rgb(20 24 28 / 0.55);
-}
 .record-button:active {
   scale: 0.96;
 }
@@ -989,8 +985,21 @@
   border-radius: 999px;
 }
 /* While it plays, the pause control fades back so the label shows. */
-.turntable[data-playing='true'] .record-button:not(:hover, :focus-visible) {
+.turntable[data-playing='true'] .record-button:not(:focus-visible) {
   opacity: 0.35;
+}
+/* Hover only where there is a pointer to hover with; on touch screens it sticks. */
+@media (hover: hover) {
+  .record-button:hover {
+    scale: 1.06;
+    background: rgb(20 24 28 / 0.55);
+  }
+  .turntable[data-playing='true'] .record-button:hover {
+    opacity: 1;
+  }
+  .record-button:active {
+    scale: 0.96;
+  }
 }
 .tonearm {
   position: absolute;
@@ -1128,6 +1137,10 @@
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
 }
+/* The muted sticks vanish into the glass; draw them in the pill's white. */
+.glass-pill .eq > span {
+  background-color: currentColor;
+}
 
 .glass-progress {
   height: 6px;
@@ -1167,12 +1180,18 @@
   background: rgb(255 255 255 / 0.1);
   transition: opacity 150ms ease;
 }
-/* A highlighted row hides the separators on both of its edges, as iOS does. */
-.ios-row:hover::before,
-.ios-row:hover + .ios-row::before,
+/* A highlighted row hides the separators on both of its edges, as iOS does.
+   Hover only where there is a pointer to hover with: on touch screens it
+   sticks to the last row tapped. */
 .ios-row:focus-within::before,
 .ios-row:focus-within + .ios-row::before {
   opacity: 0;
+}
+@media (hover: hover) {
+  .ios-row:hover::before,
+  .ios-row:hover + .ios-row::before {
+    opacity: 0;
+  }
 }
 .ios-row-link {
   display: flex;
@@ -1182,8 +1201,10 @@
   border-radius: 14px;
   transition: background-color 150ms ease;
 }
-.ios-row-link:hover {
-  background: rgb(255 255 255 / 0.1);
+@media (hover: hover) {
+  .ios-row-link:hover {
+    background: rgb(255 255 255 / 0.1);
+  }
 }
 .ios-row-link:active {
   background: rgb(255 255 255 / 0.16);
@@ -1237,8 +1258,10 @@
    Giving page (components/giving.tsx, giving-timeline.tsx, shooting-stars.tsx,
    photo-lightbox.tsx)
    --------------------------------------------------------------------------
-   Shooting stars streak now and then; at rest, and under reduced motion, each
-   streak sits at its drawn position. The timeline spine and nodes start drawn
+   Shooting stars streak now and then and the points of light drift past; at
+   rest, and under reduced motion, each sits at its drawn position. With
+   JavaScript and motion allowed, WishingFlight (wishing-flight.tsx) swaps the
+   whole still frame for a live ride through space with the two wishing stars. The timeline spine and nodes start drawn
    and lit; only a page with JavaScript ties them to scroll.
    -------------------------------------------------------------------------- */
 
@@ -1279,6 +1302,29 @@
 
 /* The spine runs down the left edge on phones and the center from md up.
    --run-on is how far a continued spine runs in from the top of its band. */
+/* One full viewBox width, so the trailing copy lands where the first began. */
+.giving-drift {
+  animation: giving-drift 150s linear infinite;
+}
+@keyframes giving-drift {
+  to {
+    transform: translateX(-1440px);
+  }
+}
+
+/* The live ride replaces the still frame; the canvas fades in once it runs. */
+[data-flight='on'] .giving-static {
+  display: none;
+}
+.giving-flight {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+[data-flight='on'] .giving-flight {
+  opacity: 1;
+}
+
+/* The spine runs down the left edge on phones and the center from md up. */
 .giving-track {
   position: relative;
   --spine-x: 0.4375rem;
@@ -1434,9 +1480,11 @@
     scale 200ms var(--ease-out-soft),
     background-color 200ms ease;
 }
-.glass-sample:hover {
-  scale: 1.08;
-  background: rgb(20 24 28 / 0.6);
+@media (hover: hover) {
+  .glass-sample:hover {
+    scale: 1.08;
+    background: rgb(20 24 28 / 0.6);
+  }
 }
 .glass-sample:active {
   scale: 0.95;
@@ -1466,13 +1514,17 @@
     background: rgb(0 0 0 / 0.28);
   }
 }
-.ios-row-link:hover .ios-row-play,
 .ios-row-link:focus-visible .ios-row-play,
 .ios-row-link[data-on-record='true'] .ios-row-play {
   opacity: 1;
 }
 .ios-row-link[data-on-record='true'] {
   background: rgb(255 255 255 / 0.08);
+}
+@media (hover: hover) {
+  .ios-row-link:hover .ios-row-play {
+    opacity: 1;
+  }
 }
 /* The way out to Spotify, beside each row. */
 .ios-row-out {
@@ -1487,10 +1539,15 @@
     color 150ms ease,
     background-color 150ms ease;
 }
-.ios-row-out:hover,
 .ios-row-out:focus-visible {
   color: #fff;
   background: rgb(255 255 255 / 0.1);
+}
+@media (hover: hover) {
+  .ios-row-out:hover {
+    color: #fff;
+    background: rgb(255 255 255 / 0.1);
+  }
 }
 
 /* --- Music island (components/music-island.tsx) -------------------------- */
@@ -1559,3 +1616,65 @@
     scale: 1.08;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Mobile nav drawer (components/site-header.tsx)
+   --------------------------------------------------------------------------
+   Slides in from the right below the header, so the menu toggle stays in reach.
+   While a swipe is in progress the script sets --drawer-progress (0 closed,
+   1 open) and data-dragging, and the drawer follows the finger untransitioned.
+   Visibility waits for the slide-out to finish so the closed drawer leaves the
+   accessibility tree and tab order.
+   -------------------------------------------------------------------------- */
+.nav-drawer,
+.nav-drawer-overlay {
+  position: fixed;
+  top: 4rem;
+  bottom: 0;
+  z-index: 40;
+}
+
+.nav-drawer {
+  --drawer-progress: 0;
+  right: 0;
+  width: min(20rem, 85vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateX(calc((1 - var(--drawer-progress)) * 100%));
+  visibility: hidden;
+  transition:
+    transform 0.32s var(--ease-out-soft),
+    visibility 0s linear 0.32s;
+}
+
+.nav-drawer-overlay {
+  --drawer-progress: 0;
+  left: 0;
+  right: 0;
+  background: rgb(0 0 0 / 0.5);
+  opacity: var(--drawer-progress);
+  pointer-events: none;
+  transition: opacity 0.32s var(--ease-out-soft);
+}
+
+.nav-drawer[data-open='true'],
+.nav-drawer-overlay[data-open='true'] {
+  --drawer-progress: 1;
+}
+
+.nav-drawer[data-open='true'],
+.nav-drawer[data-dragging] {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.nav-drawer-overlay[data-open='true'] {
+  pointer-events: auto;
+}
+
+.nav-drawer[data-dragging],
+.nav-drawer-overlay[data-dragging] {
+  transition: none;
+}
+/* End mobile nav drawer. */

@@ -116,7 +116,7 @@ with none of them set.
 
 ## Listening and notes
 
-**Pinned song.** `content/listening.ts` holds the "My mind currently" track id; swap it for any
+**Pinned song.** `content/listening.ts` holds the "Currently: Site sound" track id; swap it for any
 `open.spotify.com/track/<id>`. It renders with Spotify's embed, so it needs no setup.
 
 **Live player.** `GET /api/now-playing` reads your currently-playing track and recent plays

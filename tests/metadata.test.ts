@@ -29,7 +29,7 @@ describe('site urls', () => {
   });
 
   it('points every nav link at a real destination', () => {
-    const routes = ['/work', '/giving', '/about', '/blog', '/contact'];
+    const routes = ['/work', '/giving', '/blog', '/about', '/contact'];
     expect(navLinks.map((link) => link.href)).toEqual(routes);
   });
 });

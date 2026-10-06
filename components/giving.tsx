@@ -3,11 +3,13 @@ import type { ReactNode } from 'react';
 import type { GivingChapter } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
+import { Corners } from './frame';
 import { TimelineTrack } from './giving-timeline';
 import { PhotoLightbox } from './photo-lightbox';
 import { Reveal } from './reveal';
 import { Section } from './section';
 import { ShootingStars } from './shooting-stars';
+import { WishingFlight } from './wishing-flight';
 
 export function GivingIntro() {
   const { intro } = giving;
@@ -20,7 +22,8 @@ export function GivingIntro() {
       className="overflow-hidden"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <ShootingStars className="absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <ShootingStars className="giving-static absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <WishingFlight className="text-sea opacity-75" />
       </div>
 
       <div className="wrap relative grid gap-x-10 gap-y-12 pt-10 pb-20 md:grid-cols-12 md:pt-14 md:pb-28">
@@ -28,14 +31,14 @@ export function GivingIntro() {
           <h1 id="giving-heading" className="text-title font-medium">
             {intro.title}
           </h1>
-          <div className="measure mt-8 space-y-5 text-lead text-muted">
+          <div data-flight-from className="measure mt-8 space-y-5 text-lead text-muted">
             {intro.body.map((paragraph) => (
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
         </div>
 
-        <div className="md:col-span-4 md:col-start-9 md:pt-2">
+        <div data-flight-to className="md:col-span-4 md:col-start-9 md:pt-2">
           <dl className="space-y-6">
             {intro.stats.map((stat) => (
               <div key={stat.value} className="rule-t pt-5 first:border-t-0 first:pt-0">
@@ -160,13 +163,20 @@ export function GivingThanks() {
           {thanks.title}
         </h2>
         <div className="mt-12 max-w-4xl">
-          <PhotoLightbox
-            photos={[thanks.image]}
-            layout="natural"
-            sizes="(min-width: 1024px) 56rem, 100vw"
-          />
+          <div className="relative border border-rule bg-raised p-1.5">
+            <Corners />
+            <Image
+              src={thanks.image.src}
+              alt={thanks.image.alt}
+              width={thanks.image.width}
+              height={thanks.image.height}
+              sizes="(min-width: 1024px) 56rem, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
           <p className="meta mt-3 text-faint">{thanks.image.caption}</p>
         </div>
+        <p className="measure mt-12 text-lead font-medium">{thanks.reply}</p>
       </div>
     </Section>
   );
@@ -232,20 +242,6 @@ export function GivingNext() {
             </article>
           </TimelineStep>
         </TimelineTrack>
-      </div>
-    </Section>
-  );
-}
-
-export function GivingClosing() {
-  return (
-    <Section surface="ink">
-      <div className="wrap py-20 text-center md:py-28">
-        <div>
-          <p className="mx-auto max-w-3xl text-title font-medium tracking-tight">
-            {giving.closing}
-          </p>
-        </div>
       </div>
     </Section>
   );

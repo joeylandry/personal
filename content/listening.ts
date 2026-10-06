@@ -4,10 +4,12 @@
  */
 export const listening = {
   label: 'On the Sonos',
-  title: 'What’s playing.',
-  lead: 'Play my current selection of background music for my site.',
+  title: 'What’s playing?',
+  lead: 'Explore the music in my life.',
   pinned: {
-    label: 'My mind currently',
+    label: 'Currently: Site sound',
+    /** How the pinned song is named in running text, e.g. "Back to site sound". */
+    name: 'site sound',
     /** The id from an open.spotify.com/track/… link. */
     spotifyId: '5HVcJTb111CdGVwJWPyZcn',
   },
