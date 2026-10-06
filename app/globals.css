@@ -1461,7 +1461,7 @@
   left: 50%;
   z-index: 10;
   translate: -50% 0;
-  width: 6.25rem;
+  width: 6.75rem;
   height: 2.125rem;
   overflow: hidden;
   border-radius: 999px;
@@ -1499,7 +1499,7 @@
   height: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0.75rem 0 0.375rem;
+  padding: 0 0.875rem 0 0.625rem;
   -webkit-touch-callout: none;
   user-select: none;
   touch-action: manipulation;
