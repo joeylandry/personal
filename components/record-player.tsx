@@ -39,7 +39,17 @@ export function RecordPlayer({
 }) {
   const { status, playing, track } = usePinned();
 
-  useEffect(() => loadPinned(trackId), [trackId]);
+  useEffect(
+    () =>
+      loadPinned(trackId, {
+        id: trackId,
+        title: preview?.title ?? eyebrow,
+        artist: preview?.artist ?? null,
+        art: preview?.art ?? null,
+        url: trackUrl,
+      }),
+    [trackId, preview, eyebrow, trackUrl],
+  );
 
   // A song sampled from the live player takes the record until the pick is put back.
   const title = track?.title ?? preview?.title ?? eyebrow;

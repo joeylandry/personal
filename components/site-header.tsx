@@ -7,6 +7,7 @@ import { navLinks } from '@/lib/site';
 import { profile } from '@/content';
 import { Monogram } from './monogram';
 import { LinkedInGlyph } from './glyphs';
+import { MusicIsland } from './music-island';
 
 /**
  * Sticky header.
@@ -79,14 +80,15 @@ export function SiteHeader() {
           : 'border-b border-transparent bg-transparent backdrop-blur-[0px]',
       ].join(' ')}
     >
-      <div className="wrap flex h-16 items-center justify-between gap-6 md:h-[4.5rem]">
+      <div className="wrap relative flex h-16 items-center justify-between gap-6 md:h-[4.5rem]">
+        <MusicIsland />
         <Link
           href="/"
           className="group flex items-center gap-3 focus-visible:outline-offset-4"
           aria-label={`${profile.name}, home`}
         >
           <Monogram className="h-6 w-8 text-fg transition-colors duration-200 group-hover:text-detail" />
-          <span className="flex flex-col leading-none">
+          <span className="header-name flex flex-col leading-none">
             <span className="text-sm font-medium tracking-tight">{profile.name}</span>
             <span className="meta mt-1 hidden text-[0.625rem] text-faint sm:block">
               Software Engineer

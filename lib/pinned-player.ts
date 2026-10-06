@@ -85,12 +85,18 @@ export interface PinnedState {
   playing: boolean;
   /** The song on the record when it isn't the pinned one; null means the pick. */
   track: RecordTrack | null;
+  /** The pick itself, as the records describe it; for the header's island. */
+  pinned: RecordTrack | null;
+  /** True once anything has played; the header's island shows from then on. */
+  started: boolean;
 }
 
 let state: PinnedState = {
   status: 'idle',
   playing: false,
   track: null,
+  pinned: null,
+  started: false,
 };
 const listeners = new Set<() => void>();
 let controller: EmbedController | null = null;
@@ -108,8 +114,9 @@ function set(patch: Partial<PinnedState>) {
  * after 12 seconds (a blocked or slow script), and the records fall back to
  * Spotify's plain embed or a link.
  */
-export function loadPinned(trackId: string) {
+export function loadPinned(trackId: string, pinned?: RecordTrack) {
   pinnedId ??= trackId;
+  if (pinned && !state.pinned) set({ pinned });
   if (state.status !== 'idle') return;
   set({ status: 'loading' });
   let ready = false;
@@ -146,7 +153,7 @@ export function loadPinned(trackId: string) {
           });
           created.addListener('playback_update', (event) => {
             const playing = !event.data.isPaused;
-            set({ playing });
+            set({ playing, started: state.started || playing });
           });
         },
       );
@@ -195,6 +202,8 @@ const serverState: PinnedState = {
   status: 'idle',
   playing: false,
   track: null,
+  pinned: null,
+  started: false,
 };
 
 export function usePinned(): PinnedState {

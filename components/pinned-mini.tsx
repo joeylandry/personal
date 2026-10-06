@@ -26,7 +26,17 @@ export function PinnedMini({
 }) {
   const { status, playing, track } = usePinned();
 
-  useEffect(() => loadPinned(trackId), [trackId]);
+  useEffect(
+    () =>
+      loadPinned(trackId, {
+        id: trackId,
+        title: preview?.title ?? eyebrow,
+        artist: preview?.artist ?? null,
+        art: preview?.art ?? null,
+        url: trackUrl,
+      }),
+    [trackId, preview, eyebrow, trackUrl],
+  );
 
   const title = track?.title ?? preview?.title ?? eyebrow;
   const art = track ? track.art : (preview?.art ?? null);
