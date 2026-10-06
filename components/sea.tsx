@@ -30,7 +30,7 @@ type Wave = {
 };
 type Spray = { x: number; y: number; vx: number; vy: number; life: number; max: number };
 
-const CURL = Math.PI * 2.5;
+const CURL = Math.PI * 4;
 const MAX_SPRAY = 240;
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
@@ -120,12 +120,12 @@ export function Sea({ className = '' }: { className?: string }) {
       const p = w.age / w.life;
       const drift = w.length * 0.12 * w.age;
       const rise = smooth(0.08, 0.5, p);
-      const sweep = CURL * smooth(0.42, 0.86, p);
+      const sweep = CURL * smooth(0.42, 0.88, p);
       const radius = w.height * 0.55;
       const gap = Math.max(3.5, w.height * 0.13);
       // The run-up draws on quickly, easing as it reaches the crest.
       const head = w.length * (1 - (1 - clamp(p / 0.45)) ** 2);
-      const curlLength = radius * CURL * 0.66;
+      const curlLength = radius * CURL * 0.43;
       const tail = smooth(0.55, 1, p) * (w.length + curlLength);
 
       const point = (s: number, offset: number) => {
@@ -142,8 +142,12 @@ export function Sea({ className = '' }: { className?: string }) {
       };
       const top = point(w.length, 0);
       const center = { x: top.x, y: top.y + radius };
-      const curlAt = (start: number, angle: number) => {
-        const r = start * (1 - (0.65 * angle) / CURL);
+      // The curl winds twice, tightening to almost nothing. The lines start
+      // nested and draw together as they wind, ending as a single line.
+      const curlAt = (offset: number, angle: number) => {
+        const t = angle / CURL;
+        const start = radius - offset * (1 - smooth(0, 0.6, t));
+        const r = start * Math.max(0.03, (1 - t) ** 1.3);
         const theta = -Math.PI / 2 + angle;
         return { x: center.x + r * Math.cos(theta), y: center.y + r * Math.sin(theta) };
       };
@@ -167,7 +171,7 @@ export function Sea({ className = '' }: { className?: string }) {
           continue;
         }
         const g = geometry(w);
-        const tip = g.curlAt(g.radius, g.sweep);
+        const tip = g.curlAt(0, g.sweep);
         const size = 0.5 + w.near * 0.5;
 
         // Wind tears spray off the lip as it curls over.
@@ -233,14 +237,13 @@ export function Sea({ className = '' }: { className?: string }) {
 
           // The curl, nested inside the line above. Once the tail reaches it,
           // it unwinds from the outside in.
-          const start = g.radius - offset;
           const unwound = Math.max(0, (g.tail - w.length) / g.curlLength) * CURL;
-          if (start >= 3 && g.sweep > unwound) {
-            for (let angle = unwound; angle < g.sweep; angle += 0.1) {
-              const pt = g.curlAt(start, angle);
+          if (g.radius > offset && g.sweep > unwound) {
+            for (let angle = unwound; angle < g.sweep; angle += 0.08) {
+              const pt = g.curlAt(offset, angle);
               to(pt.x, pt.y);
             }
-            const end = g.curlAt(start, g.sweep);
+            const end = g.curlAt(offset, g.sweep);
             to(end.x, end.y);
           }
           ctx.stroke();
