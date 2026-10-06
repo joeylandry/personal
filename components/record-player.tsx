@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import type { TrackPreview } from '@/lib/spotify';
 import {
   PINNED_EMBED_HEIGHT,
@@ -8,7 +8,6 @@ import {
   loadPinned,
   togglePinned,
   usePinned,
-  useRecordOnScreen,
 } from '@/lib/pinned-player';
 import { ExternalLink } from './external-link';
 import { EqBars } from './live-player';
@@ -18,8 +17,8 @@ import { PlayGlyph, Vinyl } from './vinyl';
  * The pinned song as a record on a turntable.
  *
  * It plays through the site's one shared Spotify player (`lib/pinned-player`),
- * so it is the same song, in the same state, as the hero's mini record and
- * the floating dock: start it here and it keeps playing as you browse. If
+ * so it is the same song, in the same state, as the hero's mini record: start
+ * it here and it keeps playing as you browse. If
  * Spotify's iFrame API never arrives, Spotify's plain embed takes the place of
  * the controls, and without JavaScript a `<noscript>` embed still plays it.
  */
@@ -39,8 +38,6 @@ export function RecordPlayer({
   trackUrl: string;
 }) {
   const { status, playing, track } = usePinned();
-  const deckRef = useRef<HTMLDivElement>(null);
-  useRecordOnScreen(deckRef);
 
   useEffect(() => loadPinned(trackId), [trackId]);
 
@@ -55,7 +52,7 @@ export function RecordPlayer({
     <div className="grid items-center gap-10 md:grid-cols-12 md:gap-12">
       {/* The turntable. Decorative apart from the play button on the label. */}
       <div className="md:col-span-7">
-        <div ref={deckRef} className="turntable" data-playing={playing}>
+        <div className="turntable" data-playing={playing}>
           <div className="turntable-platter" aria-hidden="true" />
           <Vinyl
             art={art}

@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import type { TrackPreview } from '@/lib/spotify';
-import { loadPinned, togglePinned, usePinned, useRecordOnScreen } from '@/lib/pinned-player';
+import { loadPinned, togglePinned, usePinned } from '@/lib/pinned-player';
 import { ExternalLink } from './external-link';
 import { EqBars } from './live-player';
 import { PlayGlyph, Vinyl } from './vinyl';
@@ -11,7 +11,7 @@ import { PlayGlyph, Vinyl } from './vinyl';
 /**
  * The site's song in miniature, for the home hero: a small spinning record
  * with a play button, wired to the same shared player as the About page's
- * turntable and the floating dock.
+ * turntable.
  */
 export function PinnedMini({
   trackId,
@@ -25,8 +25,6 @@ export function PinnedMini({
   trackUrl: string;
 }) {
   const { status, playing, track } = usePinned();
-  const ref = useRef<HTMLDivElement>(null);
-  useRecordOnScreen(ref);
 
   useEffect(() => loadPinned(trackId), [trackId]);
 
@@ -35,10 +33,7 @@ export function PinnedMini({
   const artist = track ? track.artist : (preview?.artist ?? null);
 
   return (
-    <div
-      ref={ref}
-      className="flex items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md md:p-4"
-    >
+    <div className="flex items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md md:p-4">
       <div className="relative size-[4.5rem] shrink-0">
         <Vinyl
           art={art}

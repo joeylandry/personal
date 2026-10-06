@@ -876,8 +876,7 @@
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
   will-change: transform;
 }
-/* The same disc on its own, sized by its container (the hero's mini player
-   and the floating dock). */
+/* The same disc on its own, sized by its container (the hero's mini player). */
 .record.record-solo {
   position: relative;
   top: auto;

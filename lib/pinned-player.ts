@@ -1,17 +1,15 @@
 'use client';
 
-import { useEffect, useId, useSyncExternalStore } from 'react';
-import type { RefObject } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * One player for the site's pinned song, shared by every record on the site.
  *
  * Spotify's iFrame API drives a single embed that lives in the root layout
- * (see `components/pinned-dock.tsx`), so the song keeps playing across
- * client-side navigation. The home hero's mini record, the About page's
- * turntable and the floating dock all read this store and call `togglePinned`,
- * which is what keeps them in step: press play on any of them and they all
- * spin. Any other song (one from the live player's history, say) can be put
+ * (see `components/pinned-host.tsx`), so the song keeps playing across
+ * client-side navigation. The home hero's mini record and the About page's
+ * turntable both read this store and call `togglePinned`, which is what keeps
+ * them in step: press play on either and both spin. Any other song (one from the live player's history, say) can be put
  * on the record with `playOnRecord`, and `backToPinned` puts the pick back.
  */
 
@@ -85,10 +83,6 @@ export interface RecordTrack {
 export interface PinnedState {
   status: PinnedStatus;
   playing: boolean;
-  /** True once the song has played at all; the dock only shows after that. */
-  started: boolean;
-  /** How many records are on screen right now; the dock hides while any is. */
-  visibleRecords: number;
   /** The song on the record when it isn't the pinned one; null means the pick. */
   track: RecordTrack | null;
 }
@@ -96,12 +90,9 @@ export interface PinnedState {
 let state: PinnedState = {
   status: 'idle',
   playing: false,
-  started: false,
-  visibleRecords: 0,
   track: null,
 };
 const listeners = new Set<() => void>();
-const visible = new Set<string>();
 let controller: EmbedController | null = null;
 let pinnedId: string | null = null;
 /** A song asked for before the embed was ready; it goes on as soon as it is. */
@@ -155,7 +146,7 @@ export function loadPinned(trackId: string) {
           });
           created.addListener('playback_update', (event) => {
             const playing = !event.data.isPaused;
-            set({ playing, started: state.started || playing });
+            set({ playing });
           });
         },
       );
@@ -184,7 +175,7 @@ export function playOnRecord(track: RecordTrack) {
   }
   controller.loadUri(`spotify:track:${track.id}`);
   controller.play();
-  set({ track: track.id === pinnedId ? null : track, started: true });
+  set({ track: track.id === pinnedId ? null : track });
 }
 
 /** Puts the pinned song back on the record. */
@@ -203,8 +194,6 @@ function subscribe(listener: () => void) {
 const serverState: PinnedState = {
   status: 'idle',
   playing: false,
-  started: false,
-  visibleRecords: 0,
   track: null,
 };
 
@@ -214,24 +203,4 @@ export function usePinned(): PinnedState {
     () => state,
     () => serverState,
   );
-}
-
-/** Counts a record as on screen while it is, so the floating dock can step aside. */
-export function useRecordOnScreen(ref: RefObject<HTMLElement | null>) {
-  const id = useId();
-  useEffect(() => {
-    const element = ref.current;
-    if (!element || typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry?.isIntersecting) visible.add(id);
-      else visible.delete(id);
-      set({ visibleRecords: visible.size });
-    });
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      visible.delete(id);
-      set({ visibleRecords: visible.size });
-    };
-  }, [id, ref]);
 }

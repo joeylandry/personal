@@ -54,8 +54,8 @@ function useSpin(ref: RefObject<HTMLElement | null>, playing: boolean) {
 
 /**
  * The record itself: grooves, the album art as its label, and the spin.
- * Sized by its container; the turntable, the hero's mini player and the
- * floating dock all draw this same disc.
+ * Sized by its container; the turntable and the hero's mini player both draw
+ * this same disc.
  */
 export function Vinyl({
   art,
