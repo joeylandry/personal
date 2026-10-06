@@ -174,7 +174,6 @@ export function RecordPlayer({
             </svg>
           </div>
         </div>
-
       </div>
     </div>
   );
