@@ -21,7 +21,7 @@ export const giving = {
       'When I was nine, I got my first glimpse of the joy Make-A-Wish brings to kids with critical illnesses, and I wanted to help. Then I read that granting one wish costs about $20,000, so that became my goal. I started where I was: a lemonade stand on the lawn in Nyes Neck, a small neighborhood on Cape Cod.',
       'It did not happen overnight. Every summer I tried something new (games nights, movie nights, raffles, apparel), and plenty of it flopped. I kept adapting, the neighborhood kept showing up, and by 2021 we had raised more than $20,000 for Make-A-Wish Massachusetts and Rhode Island.',
     ],
-    /** Headline figures beside the title: the total, what it paid for, and when it started. */
+    /** Headline figures beside the title: the total, what it paid for, and where it goes now. */
     stats: [
       {
         value: '$20,000+',
@@ -29,8 +29,9 @@ export const giving = {
       },
       { value: '1 wish', label: 'About what it costs to grant one, the goal from the start' },
       {
-        value: 'Age 9',
-        label: 'When it started, with a lemonade stand on the lawn in Nyes Neck',
+        value: 'St. Jude',
+        label:
+          'Children’s Research Hospital, supported today by Nyes Neck Clothing & Apparel proceeds',
       },
     ],
     quote:
