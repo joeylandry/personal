@@ -170,6 +170,7 @@ export function GivingThanks() {
           </div>
           <p className="meta mt-3 text-faint">{thanks.image.caption}</p>
         </div>
+        <p className="measure mt-12 text-lead font-medium">{thanks.reply}</p>
       </div>
     </Section>
   );
@@ -208,20 +209,6 @@ export function GivingNext() {
         </div>
         <div className="md:col-span-7">
           <Photo photo={next.photo} sizes="(min-width: 768px) 55vw, 100vw" />
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-export function GivingClosing() {
-  return (
-    <Section surface="ink">
-      <div className="wrap py-20 text-center md:py-28">
-        <div>
-          <p className="mx-auto max-w-3xl text-title font-medium tracking-tight">
-            {giving.closing}
-          </p>
         </div>
       </div>
     </Section>

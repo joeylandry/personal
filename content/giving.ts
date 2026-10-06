@@ -145,6 +145,9 @@ export const giving = {
       height: 1428,
       caption: 'Make-A-Wish Massachusetts and Rhode Island.',
     },
+    /** My reply, set under the graphic. */
+    reply:
+      'Thank you to my family, my neighbors, and everyone who showed up for Make-A-Wish along the way.',
   },
 
   next: {
@@ -163,7 +166,4 @@ export const giving = {
     shopUrl: 'https://www.nyesneck.shop',
     stJudeUrl: 'https://www.stjude.org',
   },
-
-  closing:
-    'Thank you to my family, my neighbors, and everyone who showed up for Make-A-Wish along the way.',
 };

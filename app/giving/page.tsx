@@ -1,11 +1,5 @@
 import type { Metadata } from 'next';
-import {
-  GivingClosing,
-  GivingIntro,
-  GivingNext,
-  GivingThanks,
-  GivingTimeline,
-} from '@/components/giving';
+import { GivingIntro, GivingNext, GivingThanks, GivingTimeline } from '@/components/giving';
 
 export const metadata: Metadata = {
   title: 'Giving',
@@ -22,7 +16,6 @@ export default function GivingPage() {
       <GivingTimeline />
       <GivingThanks />
       <GivingNext />
-      <GivingClosing />
     </>
   );
 }
