@@ -22,9 +22,10 @@ const VIEWPORT = { width: 1440, height: 900 };
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups';
 
 /**
- * A live, scaled-down view of a project's production site, shown straight
- * away with no static cover in front of it. Clicking opens the site in a new
- * tab — or, when `onOpen` is given, hands the click to that instead.
+ * A live, scaled-down view of a project's production site, with no static
+ * cover in front of it. It loads before it scrolls into view, so the site is
+ * already there when you reach it. Clicking opens the site in a new tab — or,
+ * when `onOpen` is given, hands the click to that instead.
  */
 export function LivePreview({
   url,
@@ -43,11 +44,14 @@ export function LivePreview({
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   // A page already inside a preview keeps its own previews still, so this
   // site's thumbnail of itself stops at one level instead of nesting forever.
   const nested = useSyncExternalStore(noop, isNested, () => false);
 
-  // Scale the desktop-sized iframe to fit the card, and only load it on approach.
+  // Scale the desktop-sized iframe to fit the card, and load it well ahead of
+  // time: once the page itself has settled, or sooner if the card is near.
+  // By the time it scrolls into view the site has already drawn.
   useEffect(() => {
     const node = viewportRef.current;
     if (!node) return;
@@ -63,12 +67,21 @@ export function LivePreview({
           reveal.disconnect();
         }
       },
-      { rootMargin: '400px' },
+      { rootMargin: '300% 0px' },
     );
     reveal.observe(node);
+    const preload = () => setVisible(true);
+    let idle = 0;
+    const settle = () => {
+      idle = window.setTimeout(preload, 500);
+    };
+    if (document.readyState === 'complete') settle();
+    else window.addEventListener('load', settle, { once: true });
     return () => {
       resize.disconnect();
       reveal.disconnect();
+      window.removeEventListener('load', settle);
+      window.clearTimeout(idle);
     };
   }, [nested]);
 
@@ -111,11 +124,17 @@ export function LivePreview({
             title={`${name}, live site`}
             tabIndex={-1}
             aria-hidden="true"
-            loading="lazy"
             scrolling="no"
             inert
             sandbox={SANDBOX}
-            className="preview-page pointer-events-none absolute top-0 left-0 origin-top-left border-0 bg-white"
+            // A beat past the load event, for sites that draw after it.
+            onLoad={() => window.setTimeout(() => setLoaded(true), 200)}
+            className={[
+              'preview-page pointer-events-none absolute top-0 left-0 origin-top-left border-0',
+              // Kept out of sight until the site has drawn, so there is never
+              // a blank white frame — just the card surface, then the site.
+              loaded ? 'opacity-100' : 'opacity-0',
+            ].join(' ')}
             style={
               {
                 width: VIEWPORT.width,
