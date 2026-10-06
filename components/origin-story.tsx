@@ -1,9 +1,10 @@
-import { profile } from '@/content';
+import { profile, timeline } from '@/content';
 import { Coastline } from './coastline';
 import { Section } from './section';
 
 export function OriginStory() {
   const { about, offClock } = profile;
+  const degrees = timeline.filter((entry) => entry.kind === 'education');
 
   return (
     <Section
@@ -58,6 +59,31 @@ export function OriginStory() {
               </li>
             ))}
           </ul>
+
+          {/* The degree. The full work history lives on LinkedIn, so this is
+              the only part of it the site repeats. */}
+          {degrees.length > 0 ? (
+            <>
+              <h2 className="meta mt-14 text-faint">Education</h2>
+              <ul className="mt-6">
+                {degrees.map((entry) => (
+                  <li
+                    key={`${entry.org}-${entry.start}`}
+                    className="rule-t py-5 first:border-t-0 first:pt-0"
+                  >
+                    <p className="meta text-detail">{entry.org}</p>
+                    <p className="mt-2 text-base leading-snug text-fg">
+                      {entry.title}
+                      {entry.distinction ? (
+                        <span className="ml-2 text-accent italic">{entry.distinction}</span>
+                      ) : null}
+                    </p>
+                    <p className="meta mt-2 text-faint">{entry.period}</p>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
         </div>
       </div>
     </Section>
