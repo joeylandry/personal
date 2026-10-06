@@ -86,15 +86,20 @@ export async function Hero() {
               {/* The site's song, on the same player as the About turntable,
                   centred in the open space between the buttons and the Donny
                   card (the negative margin reaches across the column gap); it
-                  wraps under the buttons when the row runs out of room. */}
-              <div className="flex w-full sm:w-auto sm:min-w-[17rem] sm:flex-1 lg:-mr-6 lg:justify-center">
+                  wraps under the buttons when the row runs out of room. It lands a
+                  beat after the Donny card, so each piece arrives on its own. */}
+              <Reveal
+                immediate
+                delay={1000}
+                className="flex w-full sm:w-auto sm:min-w-[17rem] sm:flex-1 lg:-mr-6 lg:justify-center"
+              >
                 <PinnedMini
                   trackId={pinned.spotifyId}
                   eyebrow={pinned.label}
                   preview={preview}
                   trackUrl={preview?.url ?? spotifyTrackUrl(pinned.spotifyId)}
                 />
-              </div>
+              </Reveal>
             </div>
           </Reveal>
         </div>
