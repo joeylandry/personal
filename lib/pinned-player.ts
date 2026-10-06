@@ -11,7 +11,8 @@ import type { RefObject } from 'react';
  * client-side navigation. The home hero's mini record, the About page's
  * turntable and the floating dock all read this store and call `togglePinned`,
  * which is what keeps them in step: press play on any of them and they all
- * spin.
+ * spin. Any other song (one from the live player's history, say) can be put
+ * on the record with `playOnRecord`, and `backToPinned` puts the pick back.
  */
 
 const IFRAME_API = 'https://open.spotify.com/embed/iframe-api/v1';
@@ -26,6 +27,8 @@ interface PlaybackUpdate {
 interface EmbedController {
   addListener(event: 'ready', callback: () => void): void;
   addListener(event: 'playback_update', callback: (event: PlaybackUpdate) => void): void;
+  loadUri(uri: string): void;
+  play(): void;
   togglePlay(): void;
   destroy(): void;
 }
@@ -70,6 +73,15 @@ function loadIframeApi(): Promise<SpotifyIFrameApi> {
 
 export type PinnedStatus = 'idle' | 'loading' | 'ready' | 'failed';
 
+/** A song on the record other than the pinned one. */
+export interface RecordTrack {
+  id: string;
+  title: string;
+  artist: string | null;
+  art: string | null;
+  url: string;
+}
+
 export interface PinnedState {
   status: PinnedStatus;
   playing: boolean;
@@ -77,12 +89,23 @@ export interface PinnedState {
   started: boolean;
   /** How many records are on screen right now; the dock hides while any is. */
   visibleRecords: number;
+  /** The song on the record when it isn't the pinned one; null means the pick. */
+  track: RecordTrack | null;
 }
 
-let state: PinnedState = { status: 'idle', playing: false, started: false, visibleRecords: 0 };
+let state: PinnedState = {
+  status: 'idle',
+  playing: false,
+  started: false,
+  visibleRecords: 0,
+  track: null,
+};
 const listeners = new Set<() => void>();
 const visible = new Set<string>();
 let controller: EmbedController | null = null;
+let pinnedId: string | null = null;
+/** A song asked for before the embed was ready; it goes on as soon as it is. */
+let queued: RecordTrack | null = null;
 
 function set(patch: Partial<PinnedState>) {
   state = { ...state, ...patch };
@@ -95,6 +118,7 @@ function set(patch: Partial<PinnedState>) {
  * Spotify's plain embed or a link.
  */
 export function loadPinned(trackId: string) {
+  pinnedId ??= trackId;
   if (state.status !== 'idle') return;
   set({ status: 'loading' });
   let ready = false;
@@ -119,9 +143,15 @@ export function loadPinned(trackId: string) {
         (created) => {
           controller = created;
           created.addListener('ready', () => {
+            if (ready) return;
             ready = true;
             clearTimeout(timeout);
             set({ status: 'ready' });
+            if (queued) {
+              const next = queued;
+              queued = null;
+              playOnRecord(next);
+            }
           });
           created.addListener('playback_update', (event) => {
             const playing = !event.data.isPaused;
@@ -141,6 +171,30 @@ export function togglePinned() {
   controller?.togglePlay();
 }
 
+/** Puts a song on the record and starts it, on every record at once. */
+export function playOnRecord(track: RecordTrack) {
+  if (state.status === 'failed') {
+    window.open(track.url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+  if (!controller || state.status !== 'ready') {
+    queued = track;
+    if (pinnedId) loadPinned(pinnedId);
+    return;
+  }
+  controller.loadUri(`spotify:track:${track.id}`);
+  controller.play();
+  set({ track: track.id === pinnedId ? null : track, started: true });
+}
+
+/** Puts the pinned song back on the record. */
+export function backToPinned() {
+  if (!controller || !pinnedId) return;
+  controller.loadUri(`spotify:track:${pinnedId}`);
+  controller.play();
+  set({ track: null });
+}
+
 function subscribe(listener: () => void) {
   listeners.add(listener);
   return () => listeners.delete(listener);
@@ -151,6 +205,7 @@ const serverState: PinnedState = {
   playing: false,
   started: false,
   visibleRecords: 0,
+  track: null,
 };
 
 export function usePinned(): PinnedState {

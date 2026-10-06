@@ -24,13 +24,15 @@ export function PinnedMini({
   preview: TrackPreview | null;
   trackUrl: string;
 }) {
-  const { status, playing } = usePinned();
+  const { status, playing, track } = usePinned();
   const ref = useRef<HTMLDivElement>(null);
   useRecordOnScreen(ref);
 
   useEffect(() => loadPinned(trackId), [trackId]);
 
-  const title = preview?.title ?? eyebrow;
+  const title = track?.title ?? preview?.title ?? eyebrow;
+  const art = track ? track.art : (preview?.art ?? null);
+  const artist = track ? track.artist : (preview?.artist ?? null);
 
   return (
     <div
@@ -39,7 +41,7 @@ export function PinnedMini({
     >
       <div className="relative size-[4.5rem] shrink-0">
         <Vinyl
-          art={preview?.art ?? null}
+          art={art}
           playing={playing}
           sizes="72px"
           className="record-solo shadow-[0_6px_16px_rgb(0_0_0/0.55)]"
@@ -58,7 +60,7 @@ export function PinnedMini({
 
       <div className="min-w-0 flex-1">
         <p className="meta flex items-center gap-2 text-detail">
-          {eyebrow}
+          {track ? 'Sampling' : eyebrow}
           {playing ? <EqBars playing /> : null}
         </p>
         <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg">{title}</p>
@@ -72,7 +74,7 @@ export function PinnedMini({
           </ExternalLink>
         ) : (
           <p className="mt-0.5 truncate text-sm text-muted">
-            {preview?.artist ?? (
+            {artist ?? (
               <Link href="/about#listening" className="link hover:text-fg">
                 On the turntable
               </Link>

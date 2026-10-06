@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import type { TrackPreview } from '@/lib/spotify';
 import {
   PINNED_EMBED_HEIGHT,
+  backToPinned,
   loadPinned,
   togglePinned,
   usePinned,
@@ -37,14 +38,17 @@ export function RecordPlayer({
   embedUrl: string;
   trackUrl: string;
 }) {
-  const { status, playing } = usePinned();
+  const { status, playing, track } = usePinned();
   const deckRef = useRef<HTMLDivElement>(null);
   useRecordOnScreen(deckRef);
 
   useEffect(() => loadPinned(trackId), [trackId]);
 
-  const title = preview?.title ?? eyebrow;
-  const art = preview?.art ?? null;
+  // A song sampled from the live player takes the record until the pick is put back.
+  const title = track?.title ?? preview?.title ?? eyebrow;
+  const art = track ? track.art : (preview?.art ?? null);
+  const artist = track ? track.artist : (preview?.artist ?? null);
+  const heading = track ? 'Sampling' : eyebrow;
   const label = playing ? `Pause ${title}` : `Play ${title}`;
 
   return (
@@ -104,9 +108,9 @@ export function RecordPlayer({
       </div>
 
       <div className="md:col-span-5">
-        <p className="meta text-detail">{eyebrow}</p>
+        <p className="meta text-detail">{heading}</p>
         <h3 className="mt-4 text-heading font-semibold text-fg">{title}</h3>
-        {preview?.artist ? <p className="mt-2 text-lead text-muted">{preview.artist}</p> : null}
+        {artist ? <p className="mt-2 text-lead text-muted">{artist}</p> : null}
 
         <p className="mt-6 flex items-center gap-2.5 text-sm text-muted" aria-live="polite">
           <EqBars playing={playing} />
@@ -148,9 +152,18 @@ export function RecordPlayer({
           />
         </noscript>
 
-        <p className="mt-5">
+        <p className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+          {track ? (
+            <button
+              type="button"
+              onClick={backToPinned}
+              className="link meta text-muted hover:text-fg"
+            >
+              Back to {eyebrow.toLowerCase()}
+            </button>
+          ) : null}
           <ExternalLink
-            href={trackUrl}
+            href={track?.url ?? trackUrl}
             arrow
             className="link meta inline-flex items-center text-faint hover:text-fg"
           >

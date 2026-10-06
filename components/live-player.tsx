@@ -6,6 +6,7 @@ import { formatDuration, timeAgo } from '@/lib/format';
 import type { NowPlaying, RecentPlay, Track } from '@/lib/spotify';
 import { canOptimizeImage } from '@/lib/spotify-images';
 import { refreshListening, useListening } from '@/lib/use-listening';
+import { playOnRecord, usePinned } from '@/lib/pinned-player';
 
 /*
  * The Dynamic Island's music waveform, ported from anaclumos/dynamic-island
@@ -173,6 +174,46 @@ function NoteGlyph() {
   );
 }
 
+/** Puts a song from Spotify's history on the site's record player. */
+function sample(track: Track) {
+  playOnRecord({
+    id: track.id,
+    title: track.title,
+    artist: track.artist,
+    art: track.art,
+    url: track.url,
+  });
+}
+
+/** True while this song is the one spinning on the site's record. */
+function useOnRecord(track: Track): boolean {
+  const { track: onRecord, playing } = usePinned();
+  return playing && onRecord?.id === track.id;
+}
+
+function SmallPlayGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="40%" height="40%" fill="currentColor" aria-hidden="true">
+      <path d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6Z" />
+    </svg>
+  );
+}
+
+/** A frosted play button over a song's artwork: "put this on the record". */
+function SampleButton({ track, className = '' }: { track: Track; className?: string }) {
+  const onRecord = useOnRecord(track);
+  return (
+    <button
+      type="button"
+      onClick={() => sample(track)}
+      aria-label={`Play ${track.title} on the record player`}
+      className={`glass-sample ${className}`}
+    >
+      {onRecord ? <EqBars playing /> : <SmallPlayGlyph />}
+    </button>
+  );
+}
+
 /** The album art again, blown up and blurred into a coloured glow behind the glass. */
 function Ambient({ track }: { track: Track }) {
   return (
@@ -269,7 +310,8 @@ function TrackTitle({ track, size }: { track: Track; size: 'lg' | 'sm' }) {
 
 /**
  * "Recently played" as an iOS list: rounded art, inset separators, and a
- * rounded highlight across the whole row, which is one link.
+ * rounded highlight across the whole row. Tapping a row puts that song on the
+ * site's record player; the arrow beside it opens it in Spotify.
  */
 function RecentList({ plays, now }: { plays: RecentPlay[]; now: number }) {
   const headingId = useId();
@@ -280,33 +322,7 @@ function RecentList({ plays, now }: { plays: RecentPlay[]; now: number }) {
       </h3>
       <ol className="mt-1">
         {plays.map((play) => (
-          <li key={play.playedAt} className="ios-row">
-            <a
-              href={play.track.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ios-row-link"
-            >
-              <Artwork
-                track={play.track}
-                sizes="44px"
-                shadow={false}
-                className="size-11 rounded-lg"
-              />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[15px] font-medium text-white">
-                  {play.track.title}
-                </span>
-                <span className="block truncate text-[13px] text-white/55">
-                  {play.track.artist}
-                </span>
-              </span>
-              <span className="shrink-0 text-xs text-white/40 tabular-nums">
-                {timeAgo(play.playedAt, now)}
-              </span>
-              <span className="sr-only"> (opens in a new tab)</span>
-            </a>
-          </li>
+          <RecentRow key={play.playedAt} play={play} now={now} />
         ))}
       </ol>
     </section>
@@ -390,11 +406,17 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
           </div>
 
           <div className="mt-6 flex items-center gap-4 sm:mt-8 sm:gap-6 lg:flex-1">
-            <Artwork
-              track={lead}
-              sizes="(min-width: 1024px) 224px, (min-width: 640px) 168px, 96px"
-              className="glass-art size-24 rounded-2xl sm:size-42 lg:size-56"
-            />
+            <div className="relative shrink-0">
+              <Artwork
+                track={lead}
+                sizes="(min-width: 1024px) 224px, (min-width: 640px) 168px, 96px"
+                className="glass-art size-24 rounded-2xl sm:size-42 lg:size-56"
+              />
+              <SampleButton
+                track={lead}
+                className="absolute right-2 bottom-2 sm:right-3 sm:bottom-3"
+              />
+            </div>
             <TrackTitle track={lead} size="lg" />
           </div>
 
@@ -408,5 +430,47 @@ export function LivePlayer({ variant = 'full' }: { variant?: 'full' | 'compact' 
         {recent.length > 0 ? <RecentList plays={recent} now={now} /> : null}
       </div>
     </div>
+  );
+}
+
+function RecentRow({ play, now }: { play: RecentPlay; now: number }) {
+  const onRecord = useOnRecord(play.track);
+  return (
+    <li className="ios-row flex items-center">
+      <button
+        type="button"
+        onClick={() => sample(play.track)}
+        aria-label={`Play ${play.track.title} by ${play.track.artist} on the record player`}
+        className="ios-row-link min-w-0 flex-1 text-left"
+        data-on-record={onRecord}
+      >
+        <span className="relative shrink-0">
+          <Artwork track={play.track} sizes="44px" shadow={false} className="size-11 rounded-lg" />
+          <span className="ios-row-play" aria-hidden="true">
+            {onRecord ? <EqBars playing /> : <SmallPlayGlyph />}
+          </span>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[15px] font-medium text-white">
+            {play.track.title}
+          </span>
+          <span className="block truncate text-[13px] text-white/55">{play.track.artist}</span>
+        </span>
+        <span className="shrink-0 text-xs text-white/40 tabular-nums">
+          {onRecord ? 'On the record' : timeAgo(play.playedAt, now)}
+        </span>
+      </button>
+      <a
+        href={play.track.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${play.track.title} on Spotify (opens in a new tab)`}
+        className="ios-row-out"
+      >
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+          <path d="M5 11 11 5M6 5h5v5" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+      </a>
+    </li>
   );
 }

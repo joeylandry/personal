@@ -20,8 +20,8 @@ export function PinnedDock({
   eyebrow: string;
   preview: TrackPreview | null;
 }) {
-  const { status, playing, started, visibleRecords } = usePinned();
-  const title = preview?.title ?? eyebrow;
+  const { status, playing, started, visibleRecords, track } = usePinned();
+  const title = track?.title ?? preview?.title ?? eyebrow;
   const shown = started && status === 'ready' && visibleRecords === 0;
 
   return (
@@ -52,14 +52,16 @@ export function PinnedDock({
             className="block size-11 shrink-0"
           >
             <Vinyl
-              art={preview?.art ?? null}
+              art={track ? track.art : (preview?.art ?? null)}
               playing={playing}
               sizes="44px"
               className="record-solo"
             />
           </Link>
           <div className="max-w-[9.5rem] min-w-0 sm:max-w-[12rem]">
-            <p className="meta truncate text-[0.625rem] text-detail">{eyebrow}</p>
+            <p className="meta truncate text-[0.625rem] text-detail">
+              {track ? 'Sampling' : eyebrow}
+            </p>
             <p className="truncate text-sm font-medium text-fg">{title}</p>
           </div>
           <button
