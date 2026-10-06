@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { donny, profile } from '@/content';
 import { Cta, CtaArrow } from './cta';
+import { LivePlayer } from './live-player';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
@@ -109,6 +110,10 @@ export function Hero() {
               </span>
             </span>
           </Link>
+          {/* What Joey is listening to, live. Renders nothing until Spotify is connected. */}
+          <div className="mt-4">
+            <LivePlayer variant="compact" />
+          </div>
         </Reveal>
       </div>
     </section>

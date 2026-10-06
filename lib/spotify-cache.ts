@@ -46,9 +46,9 @@ export async function getSpotifyProfile(userId: string): Promise<SpotifyProfile 
 
 /** Top artists for the profile card, or an empty list to leave the row out. */
 export async function getTopArtists(): Promise<Artist[]> {
-  if (spotifyMock()) return mockTopArtists;
+  if (spotifyMock()) return mockTopArtists.slice(0, 3);
   try {
-    return (await cachedTopArtists()) ?? [];
+    return (await cachedTopArtists(3)) ?? [];
   } catch {
     return [];
   }

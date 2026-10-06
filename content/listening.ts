@@ -15,7 +15,7 @@ export const listening = {
   profileId: 'joeylandry7',
   profileUrl: 'https://open.spotify.com/user/joeylandry7',
   profile: {
-    label: 'On Spotify',
+    label: 'Profile',
     /** Shown when the profile itself can't be read. */
     name: 'Joey Landry',
     /** Joey's Spotify profile photo, used whenever Spotify doesn't send one. */
