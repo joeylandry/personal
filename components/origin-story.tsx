@@ -48,23 +48,13 @@ export function OriginStory() {
           </div>
         </div>
 
-        {/* Off the clock: the things that aren't on a resume. */}
-        <div className="md:col-span-4 md:col-start-9">
-          <h2 className="meta text-faint">Off the clock</h2>
-          <ul className="mt-6">
-            {offClock.map((entry) => (
-              <li key={entry.label} className="rule-t py-5 first:border-t-0 first:pt-0">
-                <p className="meta text-detail">{entry.label}</p>
-                <p className="mt-2 text-base leading-snug text-fg">{entry.detail}</p>
-              </li>
-            ))}
-          </ul>
-
-          {/* The degree. The full work history lives on LinkedIn, so this is
-              the only part of it the site repeats. */}
+        {/* The degree, then off the clock: the things that aren't on a resume.
+            The full work history lives on LinkedIn, so the degree is the only
+            part of it the site repeats. */}
+        <div className="space-y-14 md:col-span-4 md:col-start-9">
           {degrees.length > 0 ? (
-            <>
-              <h2 className="meta mt-14 text-faint">Education</h2>
+            <div>
+              <h2 className="meta text-faint">Education</h2>
               <ul className="mt-6">
                 {degrees.map((entry) => (
                   <li
@@ -82,8 +72,20 @@ export function OriginStory() {
                   </li>
                 ))}
               </ul>
-            </>
+            </div>
           ) : null}
+
+          <div>
+            <h2 className="meta text-faint">Off the clock</h2>
+            <ul className="mt-6">
+              {offClock.map((entry) => (
+                <li key={entry.label} className="rule-t py-5 first:border-t-0 first:pt-0">
+                  <p className="meta text-detail">{entry.label}</p>
+                  <p className="mt-2 text-base leading-snug text-fg">{entry.detail}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </Section>
