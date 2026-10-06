@@ -14,8 +14,13 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <Section id="blog" divider={false} labelledBy="blog-heading">
-      <div className="wrap py-16 md:py-24">
+    <Section id="blog" divider={false} labelledBy="blog-heading" className="overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="grid-field grid-field-drift pointer-events-none absolute inset-0 opacity-60"
+      />
+
+      <div className="wrap relative py-16 md:py-24">
         <SectionHeading
           level={1}
           id="blog-heading"

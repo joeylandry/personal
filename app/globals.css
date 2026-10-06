@@ -356,6 +356,11 @@
     mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
   }
 
+  /* Slow diagonal pan, one cell per loop so it repeats seamlessly. */
+  .grid-field-drift {
+    animation: grid-drift 48s linear infinite;
+  }
+
   /* Paper grain / ink noise, kept extremely low so it reads as material. */
   .grain::after {
     content: '';
@@ -429,6 +434,12 @@
 .preview-page {
   transform: scale(var(--preview-scale, 1));
   transition: opacity 0.5s ease;
+}
+
+@keyframes grid-drift {
+  to {
+    background-position: 5.5rem 5.5rem;
+  }
 }
 
 @keyframes pulse-dot {
