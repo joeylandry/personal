@@ -25,7 +25,7 @@ function Tile({ photo }: { photo: StoryPhoto }) {
 /** About page: Donny as a kitten and now, two photos each, all four in one row on desktop. */
 export function DonnySection() {
   const rows = [
-    { label: 'Kitty', photos: donny.then },
+    { label: 'Then', photos: donny.then },
     { label: 'Now', photos: donny.now },
   ];
 
