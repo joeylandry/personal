@@ -243,7 +243,7 @@ function Ambient({ track }: { track: Track }) {
 
 /** The small capsule in the corner: equaliser plus state. */
 function StatusPill({ state }: { state: PlayerState }) {
-  const label = state.playing ? 'Now playing' : state.current ? 'Paused' : 'Last played';
+  const label = state.playing ? 'Now playing in my ears' : state.current ? 'Paused' : 'Last played';
   return (
     <p className="glass-pill">
       {state.current ? <EqBars playing={state.playing} /> : null}
