@@ -10,8 +10,8 @@
  * markup. The small streaks only move, and the points of light only drift
  * past, while animating; at rest, and under reduced motion (the global rule
  * cancels the animation), they sit at their drawn positions, so the still
- * frame is the full picture. Once WishingFlight takes over, the drawn wishing
- * stars step aside for the live pair. Purely decorative; never announced.
+ * frame is the full picture. Once WishingFlight takes over, this still frame
+ * steps aside for the live ride. Purely decorative; never announced.
  */
 
 /** A wishing star: its head, the heading of its trail, and the trail's shape. */
@@ -127,7 +127,6 @@ export function ShootingStars({ className = '' }: { className?: string }) {
       {SWOOSHES.map((swoosh, index) => (
         <g
           key={`${swoosh.x}-${swoosh.y}`}
-          className="giving-swoosh"
           transform={`translate(${swoosh.x} ${swoosh.y}) rotate(${swoosh.angle})`}
         >
           {/* Every contour starts a little lower at the tail and meets at the head. */}

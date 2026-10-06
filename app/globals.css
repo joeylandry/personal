@@ -1240,7 +1240,7 @@
    Shooting stars streak now and then and the points of light drift past; at
    rest, and under reduced motion, each sits at its drawn position. With
    JavaScript and motion allowed, WishingFlight (wishing-flight.tsx) swaps the
-   two drawn wishing stars for a live pair dancing across the hero. The timeline spine and nodes start drawn
+   whole still frame for a live ride through space with the two wishing stars. The timeline spine and nodes start drawn
    and lit; only a page with JavaScript ties them to scroll.
    -------------------------------------------------------------------------- */
 
@@ -1289,8 +1289,8 @@
   }
 }
 
-/* The live pair replaces the drawn pair; the canvas fades in once it runs. */
-[data-flight='on'] .giving-swoosh {
+/* The live ride replaces the still frame; the canvas fades in once it runs. */
+[data-flight='on'] .giving-static {
   display: none;
 }
 .giving-flight {

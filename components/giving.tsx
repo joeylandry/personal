@@ -41,7 +41,7 @@ export function GivingIntro() {
       className="overflow-hidden"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <ShootingStars className="absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
+        <ShootingStars className="giving-static absolute -top-10 -right-40 h-[440px] w-[840px] max-w-none text-sea opacity-75 md:inset-0 md:h-full md:w-full" />
         <WishingFlight className="text-sea opacity-75" />
       </div>
 
@@ -50,14 +50,14 @@ export function GivingIntro() {
           <h1 id="giving-heading" className="text-title font-medium">
             {intro.title}
           </h1>
-          <div className="measure mt-8 space-y-5 text-lead text-muted">
+          <div data-flight-from className="measure mt-8 space-y-5 text-lead text-muted">
             {intro.body.map((paragraph) => (
               <p key={paragraph.slice(0, 24)}>{paragraph}</p>
             ))}
           </div>
         </div>
 
-        <div className="md:col-span-4 md:col-start-9 md:pt-2">
+        <div data-flight-to className="md:col-span-4 md:col-start-9 md:pt-2">
           <dl className="space-y-6">
             {intro.stats.map((stat) => (
               <div key={stat.value} className="rule-t pt-5 first:border-t-0 first:pt-0">
