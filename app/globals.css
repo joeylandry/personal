@@ -978,10 +978,6 @@
     opacity 300ms ease,
     background-color 200ms ease;
 }
-.record-button:hover {
-  scale: 1.06;
-  background: rgb(20 24 28 / 0.55);
-}
 .record-button:active {
   scale: 0.96;
 }
@@ -989,8 +985,21 @@
   border-radius: 999px;
 }
 /* While it plays, the pause control fades back so the label shows. */
-.turntable[data-playing='true'] .record-button:not(:hover, :focus-visible) {
+.turntable[data-playing='true'] .record-button:not(:focus-visible) {
   opacity: 0.35;
+}
+/* Hover only where there is a pointer to hover with; on touch screens it sticks. */
+@media (hover: hover) {
+  .record-button:hover {
+    scale: 1.06;
+    background: rgb(20 24 28 / 0.55);
+  }
+  .turntable[data-playing='true'] .record-button:hover {
+    opacity: 1;
+  }
+  .record-button:active {
+    scale: 0.96;
+  }
 }
 .tonearm {
   position: absolute;
@@ -1167,12 +1176,18 @@
   background: rgb(255 255 255 / 0.1);
   transition: opacity 150ms ease;
 }
-/* A highlighted row hides the separators on both of its edges, as iOS does. */
-.ios-row:hover::before,
-.ios-row:hover + .ios-row::before,
+/* A highlighted row hides the separators on both of its edges, as iOS does.
+   Hover only where there is a pointer to hover with: on touch screens it
+   sticks to the last row tapped. */
 .ios-row:focus-within::before,
 .ios-row:focus-within + .ios-row::before {
   opacity: 0;
+}
+@media (hover: hover) {
+  .ios-row:hover::before,
+  .ios-row:hover + .ios-row::before {
+    opacity: 0;
+  }
 }
 .ios-row-link {
   display: flex;
@@ -1182,8 +1197,10 @@
   border-radius: 14px;
   transition: background-color 150ms ease;
 }
-.ios-row-link:hover {
-  background: rgb(255 255 255 / 0.1);
+@media (hover: hover) {
+  .ios-row-link:hover {
+    background: rgb(255 255 255 / 0.1);
+  }
 }
 .ios-row-link:active {
   background: rgb(255 255 255 / 0.16);
@@ -1409,9 +1426,11 @@
     scale 200ms var(--ease-out-soft),
     background-color 200ms ease;
 }
-.glass-sample:hover {
-  scale: 1.08;
-  background: rgb(20 24 28 / 0.6);
+@media (hover: hover) {
+  .glass-sample:hover {
+    scale: 1.08;
+    background: rgb(20 24 28 / 0.6);
+  }
 }
 .glass-sample:active {
   scale: 0.95;
@@ -1441,13 +1460,17 @@
     background: rgb(0 0 0 / 0.28);
   }
 }
-.ios-row-link:hover .ios-row-play,
 .ios-row-link:focus-visible .ios-row-play,
 .ios-row-link[data-on-record='true'] .ios-row-play {
   opacity: 1;
 }
 .ios-row-link[data-on-record='true'] {
   background: rgb(255 255 255 / 0.08);
+}
+@media (hover: hover) {
+  .ios-row-link:hover .ios-row-play {
+    opacity: 1;
+  }
 }
 /* The way out to Spotify, beside each row. */
 .ios-row-out {
@@ -1462,10 +1485,15 @@
     color 150ms ease,
     background-color 150ms ease;
 }
-.ios-row-out:hover,
 .ios-row-out:focus-visible {
   color: #fff;
   background: rgb(255 255 255 / 0.1);
+}
+@media (hover: hover) {
+  .ios-row-out:hover {
+    color: #fff;
+    background: rgb(255 255 255 / 0.1);
+  }
 }
 
 /* --- Music island (components/music-island.tsx) -------------------------- */
