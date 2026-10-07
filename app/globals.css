@@ -1806,7 +1806,8 @@
 /* --------------------------------------------------------------------------
    Mobile nav drawer (components/site-header.tsx)
    --------------------------------------------------------------------------
-   Slides in from the right below the header, so the menu toggle stays in reach.
+   A full-screen overlay that slides in from the right, top of screen to bottom.
+   The header (z-50) stays above it so the menu toggle stays in reach.
    While a swipe is in progress the script sets --drawer-progress (0 closed,
    1 open) and data-dragging, and the drawer follows the finger untransitioned.
    Visibility waits for the slide-out to finish so the closed drawer leaves the
@@ -1815,7 +1816,7 @@
 .nav-drawer,
 .nav-drawer-overlay {
   position: fixed;
-  top: 4rem;
+  top: 0;
   bottom: 0;
   z-index: 40;
 }
@@ -1823,7 +1824,8 @@
 .nav-drawer {
   --drawer-progress: 0;
   right: 0;
-  width: min(20rem, 85vw);
+  width: 100vw;
+  padding-top: 4rem;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-bottom: env(safe-area-inset-bottom);
