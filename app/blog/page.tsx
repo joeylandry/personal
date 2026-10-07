@@ -17,9 +17,13 @@ export default function BlogPage() {
   return (
     <Section id="blog" divider={false} labelledBy="blog-heading" className="overflow-hidden">
       {/* A striped flag, outlined only, cropped to its rippling middle and
-          tilted a few degrees so the stripes climb toward the right. */}
+          tilted a few degrees so the stripes climb toward the right. On phones it
+          keeps its true proportions and is cropped by the edge instead of squeezed. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <StripedFlag className="absolute -top-[8%] -left-[4%] h-[150%] w-[130%] origin-top-left -rotate-6 text-fog" opacity={0.42} />
+        <StripedFlag
+          className="absolute -top-[8%] -left-[4%] h-[150%] w-auto aspect-[850/600] max-w-none origin-top-left md:aspect-auto md:w-[130%] -rotate-6 text-fog"
+          opacity={0.42}
+        />
       </div>
 
       <div className="wrap relative py-16 md:py-24">
