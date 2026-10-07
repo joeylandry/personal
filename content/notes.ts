@@ -8,90 +8,59 @@ import type { Note } from './types';
  */
 export const notes: Note[] = [
   {
-    slug: 'the-friend-i-almost-missed',
-    title: 'The friend I almost missed, and why I’m planning to run.',
-    dek: 'A school newspaper, a kitchen with no eggs, and a stair climb for 9/11 taught me the same lesson about unity. It’s the reason I’m soft-launching a run for president for when I turn 35.',
+    slug: 'a-statement-on-unity',
+    title: 'A statement on unity.',
+    dek: 'Why I intend to seek the presidency when I turn 35, and the one principle I will build everything on.',
     date: '2026-10-07',
-    tags: ['Unity', 'Personal', 'Soft launch'],
+    tags: ['Statement', 'Unity', 'Soft launch'],
+    letterhead: { office: 'The Office of Joey Landry', label: 'Statement · For immediate release' },
     body: [
       {
         type: 'p',
-        text: 'Let me get the big part out of the way first. When I turn 35, the minimum age to be president of the United States, I plan to run. This is the soft launch. There is no campaign, no platform and no logo yet, and I’m a software engineer with a day job, so consider this the very early, very honest version of the announcement.',
+        text: 'Today I am announcing, early and without ceremony, that I intend to seek the presidency of the United States when I reach the constitutional age of 35. This is not a campaign. There is no committee, no platform and no schedule. It is a statement of direction, made now so that the years between here and then can be held to account.',
       },
       {
         type: 'p',
-        text: 'This post is not about a party or a policy. It is about the one idea I would want a campaign built on, and I can trace it back to a kitchen, a school newspaper and a lot of stairs.',
+        text: 'I am beginning with one principle, and not with a party, a program or an opponent.',
       },
-      { type: 'h', text: 'Two editorials, side by side' },
+      { type: 'h', text: 'The principle' },
       {
         type: 'p',
-        text: 'In high school, I asked the advisor of our school newspaper if I could write an editorial on a major national story. I felt strongly about it, and I could not understand why so many people saw it differently. She said yes, and she knew it would be a good one because another student had already volunteered to write the opposing side.',
-      },
-      {
-        type: 'p',
-        text: 'My first draft ran four pages and was, to put it kindly, a little too emotional. Revising it taught me something I still use. I started writing down the questions I had at the beginning of my research and answering each one with what I found. The draft got more organized, and, to my surprise, a lot more diplomatic. Tone follows curiosity.',
+        text: 'The principle is unity: the conviction that Americans who disagree are still Americans first, and that a country is strong in proportion to its ability to hold its disagreements without breaking.',
       },
       {
         type: 'p',
-        text: 'A few weeks later, both editorials ran side by side. I remember wondering who the other writer was. I did not know her. All I knew was that she saw the world very differently than I did, and that was enough for me to form an opinion of her without ever speaking to her.',
+        text: 'Unity is not agreement. It has never required agreement. It requires that we assume good faith until given a reason not to, that we listen before we answer, and that we treat the dignity of the person across from us as settled, not as something they must earn by thinking like us.',
       },
-      { type: 'h', text: 'The kitchen with no eggs' },
+      { type: 'h', text: 'The moment' },
       {
         type: 'p',
-        text: 'A little over a year later, I found out that the writer, Zoe, was the older sister of my best friend. One afternoon we got stuck together at his house, just the two of us. It was awkward, as you would expect from two people who had spent a year assuming the worst about each other.',
-      },
-      {
-        type: 'p',
-        text: 'We decided to bake, and about ten minutes in we realized the kitchen had almost nothing in it. No eggs, not even the basics. So we went to the store together, came back, and kept going, and somewhere between the mixing bowl and the speaker we were dancing and singing along to “I Wanna Dance with Somebody.” Whitney Houston’s voice did what no argument ever could. We were laughing, trading songs and cracking jokes, and quietly becoming friends.',
+        text: 'We live in a time when it is cheap to be certain and costly to be curious. Feeds reward the sharpest line, not the fairest one. Many of us know our neighbors’ opinions long before we know their names. I do not believe that reflects who Americans are. I believe it reflects the habits we have been rewarded for, and habits can change.',
       },
       {
         type: 'p',
-        text: 'Later the conversation turned serious, and we talked about what we actually value. Zoe was just herself. She wasn’t softening anything or telling me what I wanted to hear. Somewhere in that conversation I forgot that we were the same two people who had written opposing editorials the year before.',
+        text: 'My generation grew up watching disagreement turn into spectacle. It can also be the generation that decides it has had enough. I intend to help it decide.',
       },
-      {
-        type: 'quote',
-        text: 'Befriending Zoe did not make my beliefs any less solid. It taught me how to be firm in them and open-minded at the same time.',
-      },
-      {
-        type: 'p',
-        text: 'I think about how close I came to missing her. If I had let my opinions decide who she was before I met her, I would never have known the generous, thoughtful person who has wished for my success and happiness ever since. That is the whole lesson, and I keep relearning it. Getting to know someone costs an afternoon. Not getting to know them can cost a friendship.',
-      },
-      { type: 'h', text: 'A hundred and ten flights up' },
-      {
-        type: 'p',
-        text: 'This year I took part in Fidelity’s 9/11 Memorial Stair Climb, more than 110 flights alongside friends, colleagues, firefighters, police officers and first responders. People pushed themselves, cheered each other on and moved as one group. The climb was hard, but it is nothing compared to what first responders faced that day, and nobody there pretended otherwise.',
-      },
-      {
-        type: 'p',
-        text: 'I was not alive on September 11, 2001, yet the day has always felt personal to me. That is why remembering has to be passed from one generation to the next. What I take from it is how people responded. In the face of unimaginable tragedy, they came together across every difference in background, perspective and opinion. They did not stop to ask what anyone believed before they helped.',
-      },
-      { type: 'h', text: 'What I mean by unity' },
-      {
-        type: 'p',
-        text: 'Unity does not mean agreeing. Zoe and I still would not have written the same editorial. It means a few simple habits that are easy to say and hard to practice:',
-      },
+      { type: 'h', text: 'My commitments' },
       {
         type: 'list',
         items: [
-          'Get to know the person before you decide who they are. An afternoon together beats a year of assumptions.',
-          'Hold your beliefs firmly and hold the person across from you gently. Those two things do not compete.',
-          'Ask the question before you write the answer. Curiosity makes you more convincing, not less.',
-          'Remember the shared dignity underneath every disagreement. We can disagree and still respect one another.',
+          'I will describe positions I disagree with in terms their holders would call fair.',
+          'I will hold my convictions firmly and the people who disagree with them gently. The two do not compete.',
+          'I will show up in person, in rooms where I am not the most popular person, and I will stay for the whole conversation.',
+          'I will remember that service comes before politics. Those who run toward hardship, from first responders to volunteers, have never first asked what a person believes.',
         ],
       },
+      { type: 'h', text: 'Between now and then' },
       {
         type: 'p',
-        text: 'I think we have lost sight of this as a country. We have gotten very good at the editorial and very bad at the kitchen. I want to spend my career getting better at the kitchen.',
-      },
-      { type: 'h', text: 'So, the plan' },
-      {
-        type: 'p',
-        text: 'Between now and 35, the plan is boring on purpose. Keep building things, keep serving my community, keep showing up at the climbs and the cleanups, and keep having real conversations with people who see the world differently than I do. I will write more here as I go, including the things I get wrong. If I ever do stand on a ballot, I want the record to show that I spent these years practicing what I would ask the country to do.',
+        text: 'The work before 35 is ordinary work: building things, serving my community and earning trust the slow way. I will report on it here as I go, including what I get wrong. Anyone who asks the country for unity should spend the intervening years practicing it.',
       },
       {
         type: 'p',
-        text: 'If you disagree with me about almost everything, you are exactly who I want to hear from. My contact page is open, and I promise to bring eggs. 🇺🇸',
+        text: 'If you disagree with me about nearly everything, you are exactly who I hope to hear from. My door, and my contact page, are open.',
       },
+      { type: 'p', text: 'Joey Landry' },
     ],
   },
   {

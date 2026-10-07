@@ -97,6 +97,12 @@ export default async function NotePage({ params }: Params) {
               <time dateTime={note.date}>{formatDate(note.date)}</time>
               {note.draft ? <span className="ml-2 text-accent">Draft, not live</span> : null}
             </p>
+            {note.letterhead ? (
+              <div className="rule-t mt-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-detail pt-4 pb-4">
+                <p className="meta text-fg">{note.letterhead.office}</p>
+                <p className="meta text-faint">{note.letterhead.label}</p>
+              </div>
+            ) : null}
             <h1 id="note-heading" className="mt-6 text-title font-medium text-fg">
               {note.title}
             </h1>
