@@ -146,7 +146,7 @@ function TimelineStep({
 export function GivingTimeline() {
   return (
     <Section surface="paper" labelledBy="giving-timeline-heading">
-      <div className="wrap py-20 md:py-28">
+      <div className="wrap pt-14 pb-20 md:pt-16 md:pb-28">
         <div>
           <p className="meta section-label">Make-A-Wish · Nyes Neck</p>
           <h2 id="giving-timeline-heading" className="mt-5 text-title font-medium">
@@ -156,7 +156,7 @@ export function GivingTimeline() {
 
         {/* The spine fades out below the last step and fades back in at the
             top of GivingNext, past the thank-you. */}
-        <TimelineTrack className="mt-14 md:mt-20">
+        <TimelineTrack className="mt-8 md:mt-10">
           {giving.chapters.map((chapter, index) => (
             <TimelineStep
               key={chapter.title}
@@ -177,11 +177,14 @@ export function GivingThanks() {
   const { thanks } = giving;
   return (
     <Section surface="ink" labelledBy="giving-thanks-heading">
-      <div className="wrap py-20 md:py-28">
-        <h2 id="giving-thanks-heading" className="measure text-title font-medium">
-          {thanks.title}
-        </h2>
-        <div className="mt-12 max-w-4xl">
+      <div className="wrap grid items-center gap-x-12 gap-y-8 py-14 md:grid-cols-12 md:py-16">
+        <div className="md:col-span-5 md:col-start-1 md:row-start-1">
+          <h2 id="giving-thanks-heading" className="text-2xl font-medium tracking-tight md:text-3xl">
+            {thanks.title}
+          </h2>
+          <p className="mt-5 text-base leading-relaxed text-muted">{thanks.reply}</p>
+        </div>
+        <figure className="md:col-span-7 md:col-start-6 md:row-start-1">
           <div className="relative border border-rule bg-raised p-1.5">
             <Corners />
             <Image
@@ -189,13 +192,12 @@ export function GivingThanks() {
               alt={thanks.image.alt}
               width={thanks.image.width}
               height={thanks.image.height}
-              sizes="(min-width: 1024px) 56rem, 100vw"
+              sizes="(min-width: 1024px) 40rem, (min-width: 768px) 55vw, 100vw"
               className="h-auto w-full"
             />
           </div>
-          <p className="meta mt-3 text-faint">{thanks.image.caption}</p>
-        </div>
-        <p className="measure mt-12 text-lead font-medium">{thanks.reply}</p>
+          <figcaption className="meta mt-3 text-faint">{thanks.image.caption}</figcaption>
+        </figure>
       </div>
     </Section>
   );
