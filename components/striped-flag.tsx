@@ -54,9 +54,9 @@ function mulberry32(seed: number) {
 }
 
 // The sky fills the top-left corner of the cloth, edge to edge.
-const SKY = { x: CROP_X, y: 12, width: 470, height: 520 };
-const STAR_COUNT = 420;
-const CLUSTERS = 14;
+const SKY = { x: CROP_X, y: 12, width: 380, height: 290 };
+const STAR_COUNT = 320;
+const CLUSTERS = 7;
 const CLUSTERED = 0.6; // share of the stars that belong to a cluster
 
 const STARS: Star[] = (() => {
@@ -79,8 +79,8 @@ const STARS: Star[] = (() => {
       ? { x: centre.x + bell() * centre.spread * 1.5, y: centre.y + bell() * centre.spread * 1.2 }
       : place();
     return {
-      x: Math.max(SKY.x, at.x),
-      y: Math.max(SKY.y, at.y),
+      x: Math.min(Math.max(SKY.x, at.x), SKY.x + SKY.width),
+      y: Math.min(Math.max(SKY.y, at.y), SKY.y + SKY.height),
       size: 1 + random() ** 2.2 * 3.4,
       period: 1.4 + random() * 3,
       seed: random() * Math.PI * 2,
