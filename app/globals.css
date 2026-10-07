@@ -363,9 +363,17 @@
 
   /* Endless slow downward scroll, one cell per loop. The mask lives on the
      element, not the background, so the fade stays put while lines move. */
+  /* The fade is a static overlay in the surface colour rather than a mask:
+     masking a moving layer re-composites it every frame and causes judder. */
   .grid-scroll {
     overflow: hidden;
-    mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+  }
+
+  .grid-scroll::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 15%, var(--bg) 85%);
   }
 
   /* Animated with transform (GPU-composited) rather than background-position,
@@ -377,8 +385,10 @@
       linear-gradient(to right, var(--rule) 1px, transparent 1px),
       linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
     background-size: 5.5rem 5.5rem;
+    opacity: 0.6;
     will-change: transform;
-    animation: grid-scroll-down 9s linear infinite;
+    backface-visibility: hidden;
+    animation: grid-scroll-down 7s linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {

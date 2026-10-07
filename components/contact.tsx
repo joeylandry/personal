@@ -18,7 +18,7 @@ export function Contact() {
     >
       <div
         aria-hidden="true"
-        className="grid-scroll pointer-events-none absolute inset-0 opacity-60"
+        className="grid-scroll pointer-events-none absolute inset-0"
       >
         <div className="grid-scroll-lines" />
       </div>
