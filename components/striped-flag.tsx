@@ -152,7 +152,7 @@ function flagState(stripes: number, t: number, animated: boolean) {
     return {
       d: `M${star.x.toFixed(1)} ${y.toFixed(1)}h0.01`,
       opacity: bright,
-      width: star.size * (animated ? 0.6 + 0.8 * beat : 1),
+      width: Number((star.size * (animated ? 0.6 + 0.8 * beat : 1)).toFixed(2)),
     };
   });
   return { borders, stars };
@@ -212,7 +212,7 @@ export function StripedFlag({
       key={index}
       data-flag-border=""
       d={d}
-      stroke={index % 2 === 0 ? 'var(--accent-graphic)' : 'currentColor'}
+      stroke={`url(#${fadeId}-${index % 2 === 0 ? 'line-accent' : 'line'})`}
       strokeWidth={index % 2 === 0 ? 1.1 : 0.85}
       vectorEffect="non-scaling-stroke"
     />
@@ -229,32 +229,31 @@ export function StripedFlag({
       className={className}
     >
       <defs>
-        <radialGradient
-          id={`${fadeId}-grad`}
-          gradientUnits="userSpaceOnUse"
-          cx={FADE_CENTRE.x}
-          cy={FADE_CENTRE.y}
-          r={FADE_RADIUS}
-          gradientTransform={`translate(${FADE_CENTRE.x} ${FADE_CENTRE.y}) scale(1 ${FADE_SQUASH}) translate(${-FADE_CENTRE.x} ${-FADE_CENTRE.y})`}
-        >
-          <stop offset="0" stopColor="#000" />
-          <stop offset="0.75" stopColor="#000" />
-          <stop offset="1" stopColor="#fff" />
-        </radialGradient>
-        <mask
-          id={fadeId}
-          maskUnits="userSpaceOnUse"
-          x={CROP_X}
-          y={-H}
-          width={CROP_W}
-          height={H * 3}
-        >
-          <rect x={CROP_X} y={-H} width={CROP_W} height={H * 3} fill={`url(#${fadeId}-grad)`} />
-        </mask>
+        {/* The stripes fade out toward the corner through their own stroke, not a
+            mask: a mask over linework that moves every frame is re-rendered in
+            an offscreen layer each time, which stutters on a large desktop box. */}
+        {(['line', 'line-accent'] as const).map((name) => {
+          const color = name === 'line' ? 'currentColor' : 'var(--accent-graphic)';
+          return (
+            <radialGradient
+              key={name}
+              id={`${fadeId}-${name}`}
+              gradientUnits="userSpaceOnUse"
+              cx={FADE_CENTRE.x}
+              cy={FADE_CENTRE.y}
+              r={FADE_RADIUS}
+              gradientTransform={`translate(${FADE_CENTRE.x} ${FADE_CENTRE.y}) scale(1 ${FADE_SQUASH}) translate(${-FADE_CENTRE.x} ${-FADE_CENTRE.y})`}
+            >
+              <stop offset="0" style={{ stopColor: color }} stopOpacity="0" />
+              <stop offset="0.75" style={{ stopColor: color }} stopOpacity="0" />
+              <stop offset="1" style={{ stopColor: color }} stopOpacity="1" />
+            </radialGradient>
+          );
+        })}
       </defs>
       <g opacity={opacity}>
         {/* The stripes fade out as they run into the corner of stars. */}
-        <g mask={`url(#${fadeId})`}>{initial.borders.map((d, index) => border(d, index))}</g>
+        {initial.borders.map((d, index) => border(d, index))}
       </g>
       {/* Stars are drawn at full strength: points of light, not part of the cloth's linework. */}
       {initial.stars.map((star, index) => {
