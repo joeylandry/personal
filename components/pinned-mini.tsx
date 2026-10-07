@@ -84,7 +84,9 @@ export function PinnedMini({
             </span>
           ) : null}
         </p>
-        <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg">{title}</p>
+        <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg transition-colors duration-300 group-hover:text-detail">
+          {title}
+        </p>
         {status === 'failed' ? (
           <ExternalLink
             href={trackUrl}

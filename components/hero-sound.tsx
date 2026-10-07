@@ -45,7 +45,7 @@ function EarsCard({ lead, playing }: { lead: Track | null; playing: boolean }) {
             </span>
           ) : null}
         </p>
-        <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg">
+        <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg transition-colors duration-300 group-hover:text-detail">
           {lead?.title ?? ' '}
         </p>
         <p className="mt-0.5 truncate text-sm text-muted transition-colors group-hover:text-fg">
