@@ -58,6 +58,7 @@ const SKY = { x: CROP_X, y: 12, width: 300, height: 240 };
 const STAR_COUNT = 320;
 const CLUSTERS = 7;
 const CLUSTERED = 0.6; // share of the stars that belong to a cluster
+const STRAYS = 16; // loners that drift out just past the corner's edge
 
 const STARS: Star[] = (() => {
   const random = mulberry32(11);
@@ -72,7 +73,7 @@ const STARS: Star[] = (() => {
     ...place(),
     spread: 14 + random() * 22,
   }));
-  return Array.from({ length: STAR_COUNT }, () => {
+  const sky = Array.from({ length: STAR_COUNT }, () => {
     // Stars stay inside the oval where the stripes are fully faded out, so
     // none ride over a visible stripe. A star that lands outside is thrown
     // again, not pushed back to the edge, which would draw a curved line.
@@ -99,6 +100,20 @@ const STARS: Star[] = (() => {
       accent: random() < 0.25,
     };
   });
+  // A few stars wander out slightly past the corner, mostly off its right side.
+  const strays = Array.from({ length: STRAYS }, () => {
+    const angle = (random() * 0.5 - 0.05) * Math.PI; // from just above level to well down
+    const reach = 1.05 + random() ** 1.5 * 0.3;
+    return {
+      x: SKY.x + SKY.width * reach * Math.cos(angle),
+      y: SKY.y + SKY.height * reach * Math.sin(angle),
+      size: 1 + random() * 1.6,
+      period: 1.4 + random() * 3,
+      seed: random() * Math.PI * 2,
+      accent: random() < 0.25,
+    };
+  });
+  return [...sky, ...strays];
 })();
 
 const stripeSpan = (stripes: number) => (H - INSET * 2) / stripes;
