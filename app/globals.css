@@ -1515,8 +1515,7 @@
 /* A chapter's photos, at their own aspect ratio, sized by height so the
    timeline reads evenly. On phones they fill the column, capped so a tall
    photo never runs taller than the screen. From md up the slot holds the mini
-   size beside the year; the giving-timeline script scales the photo up from
-   there, centered on the spine, and shrinks it home as the reader scrolls. */
+   size beside the year. */
 .giving-photo-slot {
   width: min(100%, min(30rem, 70svh) * var(--ratio, 1));
 }
@@ -1524,12 +1523,6 @@
   .giving-photo-slot {
     width: min(100%, 12rem * var(--ratio, 1));
   }
-}
-.giving-photo {
-  transform-origin: 50% 0;
-}
-.giving-photo[data-zoom='true'] {
-  box-shadow: 0 24px 60px -24px rgb(7 16 24 / 0.45);
 }
 
 /* Full-screen photo gallery: a native modal dialog with a strip of photos
