@@ -31,9 +31,9 @@ function EarsCard({ lead, playing }: { lead: Track | null; playing: boolean }) {
     >
       <div aria-hidden="true" className="relative size-[4.5rem] shrink-0">
         {lead ? (
-          <Artwork track={lead} sizes="72px" className="size-full rounded-lg" />
+          <Artwork track={lead} sizes="72px" className="size-full border border-rule" />
         ) : (
-          <div aria-hidden="true" className="size-full animate-pulse rounded-lg bg-raised" />
+          <div aria-hidden="true" className="size-full animate-pulse bg-raised" />
         )}
       </div>
       <div className="min-w-0 flex-1">
@@ -45,10 +45,10 @@ function EarsCard({ lead, playing }: { lead: Track | null; playing: boolean }) {
             </span>
           ) : null}
         </p>
-        <p className="mt-1.5 truncate text-base font-medium tracking-tight text-fg transition-colors duration-300 group-hover:text-detail">
+        <p className="mt-2 truncate text-xl font-medium tracking-tight text-fg transition-colors duration-300 group-hover:text-detail md:mt-1.5 md:text-base">
           {lead?.title ?? ' '}
         </p>
-        <p className="mt-0.5 truncate text-sm text-muted transition-colors group-hover:text-fg">
+        <p className="mt-1.5 truncate text-sm text-muted md:mt-0.5 transition-colors group-hover:text-fg">
           {lead?.artist ?? ' '}
         </p>
       </div>
