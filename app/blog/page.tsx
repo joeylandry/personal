@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Coastline } from '@/components/coastline';
 import { Section, SectionHeading } from '@/components/section';
+import { StripedFlag } from '@/components/striped-flag';
 import { publishedNotes } from '@/content';
 import { formatDate } from '@/lib/format';
 
@@ -16,17 +16,10 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <Section id="blog" divider={false} labelledBy="blog-heading" className="overflow-hidden">
-      {/* The breeze lines are tied off past the left edge of the screen and
-          fly loose to the right, just reaching its right edge. (The field is
-          mirrored with -scale-x-100.) */}
+      {/* A striped flag, outlined only, pinned to the left edge and rippling
+          out across the whole section. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Coastline
-          className="absolute -top-[18%] right-0 h-[110%] w-[112%] -scale-x-100 text-fog"
-          opacity={0.42}
-          lines={11}
-          gap={19}
-          breeze
-        />
+        <StripedFlag className="absolute inset-0 h-full w-full text-fog" opacity={0.42} />
       </div>
 
       <div className="wrap relative py-16 md:py-24">
