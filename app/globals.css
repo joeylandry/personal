@@ -496,6 +496,29 @@
   border-radius: 9999px;
   background-color: var(--muted);
 }
+/* Footer ticker line: scrolls out and back when it overflows its slot. */
+.ticker-viewport[data-scroll='true'] .ticker-text {
+  animation: ticker-scroll var(--ticker-time, 8s) ease-in-out infinite alternate;
+}
+@keyframes ticker-scroll {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+  85%,
+  100% {
+    transform: translateX(var(--ticker-shift, 0));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-viewport {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .ticker-viewport[data-scroll='true'] .ticker-text {
+    animation: none;
+  }
+}
 /* Footer ticker bars take the yellow accent. */
 .ticker-eq .eq > span {
   background-color: var(--accent);
