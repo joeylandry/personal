@@ -30,8 +30,8 @@ const STRIPES = 13;
 // The stripes fade out inside an oval around the corner the stars fill, and
 // are fully drawn again beyond it, so nothing below or beside the stars is bare.
 const FADE_CENTRE = { x: CROP_X, y: 12 };
-const FADE_RADIUS = 440;
-const FADE_SQUASH = 0.8; // the oval is a little shorter than it is wide
+const FADE_RADIUS = 700;
+const FADE_SQUASH = 0.95; // the oval is nearly as tall as it is wide
 
 type Star = {
   x: number;
