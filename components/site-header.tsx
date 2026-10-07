@@ -319,16 +319,16 @@ export function SiteHeader() {
         ref={panelRef}
         inert={!open}
         data-open={open}
-        className="nav-drawer surface-ink border-l border-rule bg-ink md:hidden"
+        className="nav-drawer surface-ink bg-ink md:hidden"
       >
-        <nav aria-label="Primary" className="flex flex-col px-6 py-2">
+        <nav aria-label="Primary" className="flex flex-col px-6 py-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
               aria-current={isCurrent(link.href) ? 'page' : undefined}
-              className="rule-b flex items-center justify-between py-4 text-base text-fg aria-[current=page]:text-accent"
+              className="rule-b flex items-center justify-between py-5 text-2xl text-fg aria-[current=page]:text-accent"
             >
               {link.label}
               <span aria-hidden="true" className="meta text-faint">
@@ -341,7 +341,7 @@ export function SiteHeader() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-between py-4 text-base text-fg"
+            className="flex items-center justify-between py-5 text-2xl text-fg"
           >
             LinkedIn
             <LinkedInGlyph className="h-5 w-5" />
