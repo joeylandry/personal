@@ -15,7 +15,7 @@ test.describe('homepage', () => {
     const errors = trackErrors(page);
     await page.goto('/');
 
-    await expect(page).toHaveTitle(/Joey Landry/);
+    await expect(page).toHaveTitle('SWE');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Building software');
 
     // A recent-work teaser follows the hero and points on to the work page.

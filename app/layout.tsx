@@ -12,7 +12,7 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: siteTitle,
+    default: 'SWE',
     template: '%s | Joey Landry',
   },
   description: profile.metaDescription,
