@@ -18,8 +18,10 @@ export function Contact() {
     >
       <div
         aria-hidden="true"
-        className="grid-field pointer-events-none absolute inset-0 opacity-60"
-      />
+        className="grid-scroll pointer-events-none absolute inset-0"
+      >
+        <div className="grid-scroll-lines" />
+      </div>
 
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-5">

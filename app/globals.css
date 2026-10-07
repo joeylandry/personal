@@ -361,6 +361,42 @@
     animation: grid-drift 48s linear infinite;
   }
 
+  /* Endless slow downward scroll, one cell per loop. The mask lives on the
+     element, not the background, so the fade stays put while lines move. */
+  /* The fade is a static overlay in the surface colour rather than a mask:
+     masking a moving layer re-composites it every frame and causes judder. */
+  .grid-scroll {
+    overflow: hidden;
+  }
+
+  .grid-scroll::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 15%, var(--bg) 85%);
+  }
+
+  /* Animated with transform (GPU-composited) rather than background-position,
+     which repaints every frame and stutters. Extra cell above hides the loop. */
+  .grid-scroll-lines {
+    position: absolute;
+    inset: -5.5rem 0 0 0;
+    background-image:
+      linear-gradient(to right, var(--rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 5.5rem 5.5rem;
+    opacity: 0.6;
+    will-change: transform;
+    backface-visibility: hidden;
+    animation: grid-scroll-down 4s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grid-scroll-lines {
+      animation: none;
+    }
+  }
+
   /* Paper grain / ink noise, kept extremely low so it reads as material. */
   .grain::after {
     content: '';
@@ -438,6 +474,12 @@
 @keyframes grid-drift {
   to {
     background-position: 5.5rem 5.5rem;
+  }
+}
+
+@keyframes grid-scroll-down {
+  to {
+    transform: translate3d(0, 5.5rem, 0);
   }
 }
 
