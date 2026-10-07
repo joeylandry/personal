@@ -125,7 +125,7 @@ export async function Hero() {
                 Meet {donny.name}
                 <CtaArrow size={18} />
               </span>
-              <span className="mt-1.5 block text-sm leading-snug text-muted">
+              <span className="mt-1.5 block text-sm leading-snug text-muted transition-colors group-hover:text-fg">
                 Business partner, code reviewer, professional napper.
               </span>
             </span>
