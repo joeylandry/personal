@@ -363,12 +363,26 @@
 
   /* Endless slow downward scroll, one cell per loop. The mask lives on the
      element, not the background, so the fade stays put while lines move. */
-  .grid-field-down {
-    animation: grid-drift-down 14s linear infinite;
+  .grid-scroll {
+    overflow: hidden;
+    mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+  }
+
+  /* Animated with transform (GPU-composited) rather than background-position,
+     which repaints every frame and stutters. Extra cell above hides the loop. */
+  .grid-scroll-lines {
+    position: absolute;
+    inset: -5.5rem 0 0 0;
+    background-image:
+      linear-gradient(to right, var(--rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 5.5rem 5.5rem;
+    will-change: transform;
+    animation: grid-scroll-down 9s linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .grid-field-down {
+    .grid-scroll-lines {
       animation: none;
     }
   }
@@ -453,9 +467,9 @@
   }
 }
 
-@keyframes grid-drift-down {
+@keyframes grid-scroll-down {
   to {
-    background-position: 0 5.5rem;
+    transform: translate3d(0, 5.5rem, 0);
   }
 }
 
