@@ -54,7 +54,7 @@ function mulberry32(seed: number) {
 }
 
 // The sky fills the top-left corner of the cloth, edge to edge.
-const SKY = { x: CROP_X, y: 12, width: 380, height: 290 };
+const SKY = { x: CROP_X, y: 12, width: 300, height: 240 };
 const STAR_COUNT = 320;
 const CLUSTERS = 7;
 const CLUSTERED = 0.6; // share of the stars that belong to a cluster
@@ -70,7 +70,7 @@ const STARS: Star[] = (() => {
   });
   const centres = Array.from({ length: CLUSTERS }, () => ({
     ...place(),
-    spread: 22 + random() * 30,
+    spread: 14 + random() * 22,
   }));
   return Array.from({ length: STAR_COUNT }, () => {
     const centre = centres[Math.floor(random() * CLUSTERS)]!;
@@ -78,9 +78,15 @@ const STARS: Star[] = (() => {
     const at = clustered
       ? { x: centre.x + bell() * centre.spread * 1.5, y: centre.y + bell() * centre.spread * 1.2 }
       : place();
+    // Stars stay inside the oval where the stripes are fully faded out, so
+    // none ride over a visible stripe.
+    const dx = Math.max(at.x - SKY.x, 0);
+    const dy = Math.max(at.y - SKY.y, 0);
+    const out = Math.hypot(dx / SKY.width, dy / SKY.height);
+    const pull = out > 1 ? 1 / out : 1;
     return {
-      x: Math.min(Math.max(SKY.x, at.x), SKY.x + SKY.width),
-      y: Math.min(Math.max(SKY.y, at.y), SKY.y + SKY.height),
+      x: SKY.x + dx * pull,
+      y: SKY.y + dy * pull,
       size: 1 + random() ** 2.2 * 3.4,
       period: 1.4 + random() * 3,
       seed: random() * Math.PI * 2,
@@ -209,7 +215,7 @@ export function StripedFlag({
           gradientTransform={`translate(${FADE_CENTRE.x} ${FADE_CENTRE.y}) scale(1 ${FADE_SQUASH}) translate(${-FADE_CENTRE.x} ${-FADE_CENTRE.y})`}
         >
           <stop offset="0" stopColor="#000" />
-          <stop offset="0.5" stopColor="#000" />
+          <stop offset="0.75" stopColor="#000" />
           <stop offset="1" stopColor="#fff" />
         </radialGradient>
         <mask id={fadeId} maskUnits="userSpaceOnUse" x={CROP_X} y={-H} width={CROP_W} height={H * 3}>
