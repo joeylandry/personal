@@ -16,11 +16,12 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <Section id="blog" divider={false} labelledBy="blog-heading" className="overflow-hidden">
-      {/* The breeze lines are tied off past the right edge of the screen and
-          fly loose to the left, just reaching its left edge. */}
+      {/* The breeze lines are tied off past the left edge of the screen and
+          fly loose to the right, just reaching its right edge. (The field is
+          mirrored with -scale-x-100.) */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <Coastline
-          className="absolute -top-[18%] left-0 h-[110%] w-[112%] text-fog"
+          className="absolute -top-[18%] right-0 h-[110%] w-[112%] -scale-x-100 text-fog"
           opacity={0.42}
           lines={11}
           gap={19}
