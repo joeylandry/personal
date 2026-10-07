@@ -911,6 +911,86 @@
   width: 100%;
   translate: none;
 }
+/* The hero's two-faced music card: both faces share one grid cell, and the
+   resting one slides aside and fades. A timed hop bounces the whole card and
+   rings the face that lands. */
+.hero-sound {
+  display: grid;
+  touch-action: pan-y;
+}
+.hero-sound-face {
+  grid-area: 1 / 1;
+  transition:
+    opacity 0.45s ease,
+    translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hero-sound-face[data-active='false'] {
+  opacity: 0;
+  pointer-events: none;
+}
+.hero-sound-face[data-active='false'][data-side='left'] {
+  translate: -1.5rem 0;
+}
+.hero-sound-face[data-active='false'][data-side='right'] {
+  translate: 1.5rem 0;
+}
+.hero-sound[data-hop='true'] {
+  animation: hero-sound-hop 0.8s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.hero-sound[data-hop='true'] .hero-sound-face[data-active='true'] {
+  animation: hero-sound-ring 0.9s ease-out;
+}
+@keyframes hero-sound-hop {
+  30% {
+    transform: translateY(-0.7rem) scale(1.02);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-0.25rem);
+  }
+}
+@keyframes hero-sound-ring {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 0.75rem transparent;
+  }
+}
+/* A dot with a bigger tap target around it. */
+.hero-sound-dot {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+.hero-sound-dot::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.35);
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
+}
+.hero-sound-dot[aria-pressed='true']::before {
+  width: 1.25rem;
+  background: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-sound-face {
+    transition: opacity 0.2s ease;
+    translate: none !important;
+  }
+  .hero-sound[data-hop='true'],
+  .hero-sound[data-hop='true'] .hero-sound-face {
+    animation: none;
+  }
+}
 /* A small disc wears a bigger label, so the art still reads. */
 .record-solo .record-label {
   inset: 26%;

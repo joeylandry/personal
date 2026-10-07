@@ -51,7 +51,7 @@ export function PinnedMini({
         if ((event.target as HTMLElement).closest('a, button')) return;
         togglePinned();
       }}
-      className={`group flex w-full max-w-sm items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md transition-colors duration-300 hover:border-detail md:p-4 ${
+      className={`group flex w-full items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md transition-colors duration-300 hover:border-detail md:p-4 ${
         status === 'ready' ? 'cursor-pointer' : ''
       }`}
     >
