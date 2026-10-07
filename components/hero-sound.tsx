@@ -31,9 +31,9 @@ function EarsCard({ lead, playing }: { lead: Track | null; playing: boolean }) {
     >
       <div aria-hidden="true" className="relative size-[4.5rem] shrink-0">
         {lead ? (
-          <Artwork track={lead} sizes="72px" className="size-full rounded-lg" />
+          <Artwork track={lead} sizes="72px" className="size-full" />
         ) : (
-          <div aria-hidden="true" className="size-full animate-pulse rounded-lg bg-raised" />
+          <div aria-hidden="true" className="size-full animate-pulse bg-raised" />
         )}
       </div>
       <div className="min-w-0 flex-1">
