@@ -13,9 +13,6 @@ export function SiteFooter() {
       <div className="wrap grid gap-12 py-16 md:grid-cols-12 md:py-20">
         <div className="md:col-span-5">
           <Monogram className="h-8 w-[2.667rem] text-fg" title={`${profile.name} monogram`} />
-          <p className="measure-tight mt-6 text-sm leading-relaxed text-muted">
-            {profile.footerNote}
-          </p>
           <p className="meta mt-6 text-faint">{profile.origin}</p>
           <p className="meta mt-1.5 whitespace-nowrap text-faint">{profile.coordinates}</p>
         </div>

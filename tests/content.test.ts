@@ -219,8 +219,4 @@ describe('profile', () => {
       expect(new URL(social.href).protocol).toBe('https:');
     }
   });
-
-  it('disclaims employer affiliation in the footer', () => {
-    expect(profile.footerNote.toLowerCase()).toContain('not affiliated');
-  });
 });
