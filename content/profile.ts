@@ -57,9 +57,6 @@ export const profile = {
     headline: 'Have an idea that should exist?',
     body: "I'm always interested in thoughtful products, ambitious builds, and people working on something real.",
   },
-
-  footerNote:
-    'Designed and built by Joey Landry. Independent projects are my own and are not affiliated with or endorsed by my employer.',
 } as const;
 
 export const socials: SocialLink[] = [
