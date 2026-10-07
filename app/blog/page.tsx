@@ -35,7 +35,7 @@ export default function BlogPage() {
         ) : (
           <ol className="mt-14 md:mt-20">
             {publishedNotes.map((note) => (
-              <li key={note.slug} className="rule-t">
+              <li key={note.slug} className="rule-t first:border-t-0">
                 <Link
                   href={`/blog/${note.slug}`}
                   className="group grid gap-x-10 gap-y-3 py-8 md:grid-cols-12 md:py-10"
