@@ -5,6 +5,7 @@ import type { GivingChapter } from '@/content';
 import { giving } from '@/content';
 import { ExternalLink } from './external-link';
 import { Corners } from './frame';
+import { NoBreak } from './no-break';
 import { TimelineTrack } from './giving-timeline';
 import { PhotoLightbox } from './photo-lightbox';
 import { Reveal } from './reveal';
@@ -34,7 +35,7 @@ export function GivingIntro() {
           </h1>
           <div data-flight-from className="measure mt-8 space-y-5 text-lead text-muted">
             {intro.body.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+              <p key={paragraph.slice(0, 24)}><NoBreak>{paragraph}</NoBreak></p>
             ))}
           </div>
         </div>
@@ -43,10 +44,10 @@ export function GivingIntro() {
           <dl className="space-y-6">
             {intro.stats.map((stat) => (
               <div key={stat.value} className="rule-t pt-5 first:border-t-0 first:pt-0">
-                <dt className="sr-only">{stat.label}</dt>
+                <dt className="sr-only"><NoBreak>{stat.label}</NoBreak></dt>
                 <dd>
                   <p className="text-title font-medium tracking-tight text-accent">{stat.value}</p>
-                  <p className="mt-1.5 text-sm leading-snug text-muted">{stat.label}</p>
+                  <p className="mt-1.5 text-sm leading-snug text-muted"><NoBreak>{stat.label}</NoBreak></p>
                 </dd>
               </div>
             ))}
@@ -91,10 +92,10 @@ function ChapterCard({ chapter, left }: { chapter: GivingChapter; left: boolean 
         </div>
       </div>
       <p className="meta mt-3 text-faint">
-        {multiple ? `${chapter.photos.length} photos` : first?.caption}
+        {multiple ? `${chapter.photos.length} photos` : first && <NoBreak>{first.caption}</NoBreak>}
       </p>
-      <h3 className="mt-5 text-xl font-medium tracking-tight md:text-2xl">{chapter.title}</h3>
-      <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{chapter.body}</p>
+      <h3 className="mt-5 text-xl font-medium tracking-tight md:text-2xl"><NoBreak>{chapter.title}</NoBreak></h3>
+      <p className="mt-3 text-[0.95rem] leading-relaxed text-muted"><NoBreak>{chapter.body}</NoBreak></p>
     </article>
   );
 }
@@ -148,7 +149,9 @@ export function GivingTimeline() {
     <Section surface="paper" labelledBy="giving-timeline-heading">
       <div className="wrap pt-14 pb-20 md:pt-16 md:pb-28">
         <div>
-          <p className="meta section-label">Make-A-Wish · Nyes Neck</p>
+          <p className="meta section-label">
+            <NoBreak>Make-A-Wish</NoBreak> · Nyes Neck
+          </p>
           <h2 id="giving-timeline-heading" className="mt-5 text-title font-medium">
             Where it all began.
           </h2>
@@ -180,9 +183,9 @@ export function GivingThanks() {
       <div className="wrap grid items-center gap-x-12 gap-y-8 py-14 md:grid-cols-12 md:py-16">
         <div className="md:col-span-5 md:col-start-1 md:row-start-1">
           <h2 id="giving-thanks-heading" className="text-2xl font-medium tracking-tight md:text-3xl">
-            {thanks.title}
+            <NoBreak>{thanks.title}</NoBreak>
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-muted">{thanks.reply}</p>
+          <p className="mt-5 text-base leading-relaxed text-muted"><NoBreak>{thanks.reply}</NoBreak></p>
         </div>
         <figure className="md:col-span-7 md:col-start-6 md:row-start-1">
           <div className="relative border border-rule bg-raised p-1.5">
@@ -196,7 +199,7 @@ export function GivingThanks() {
               className="h-auto w-full"
             />
           </div>
-          <figcaption className="meta mt-3 text-faint">{thanks.image.caption}</figcaption>
+          <figcaption className="meta mt-3 text-faint"><NoBreak>{thanks.image.caption}</NoBreak></figcaption>
         </figure>
       </div>
     </Section>
@@ -222,16 +225,16 @@ export function GivingNext() {
                 layout="single"
                 sizes="(min-width: 768px) 36vw, 100vw"
               />
-              <p className="meta mt-3 text-faint">{next.photo.caption}</p>
+              <p className="meta mt-3 text-faint"><NoBreak>{next.photo.caption}</NoBreak></p>
               <h2
                 id="giving-next-heading"
                 className="mt-5 text-xl font-medium tracking-tight md:text-2xl"
               >
-                {next.title}
+                <NoBreak>{next.title}</NoBreak>
               </h2>
               <div className="mt-3 space-y-3 text-[0.95rem] leading-relaxed text-muted">
                 {next.body.map((paragraph) => (
-                  <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+                  <p key={paragraph.slice(0, 24)}><NoBreak>{paragraph}</NoBreak></p>
                 ))}
               </div>
               <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
@@ -251,7 +254,7 @@ export function GivingNext() {
           <TimelineStep index={first + 1} year={now.year} tuck>
             <article>
               <h3 className="text-xl font-medium tracking-tight md:text-2xl">{now.title}</h3>
-              <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">{now.body}</p>
+              <p className="mt-3 text-[0.95rem] leading-relaxed text-muted"><NoBreak>{now.body}</NoBreak></p>
               <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
                 <Link href="/contact" className="link-on font-medium text-fg">
                   Get involved <span aria-hidden="true">→</span>

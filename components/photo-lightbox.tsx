@@ -15,6 +15,7 @@ import {
 import { createPortal } from 'react-dom';
 import type { StoryPhoto } from '@/content';
 import { Corners } from './frame';
+import { NoBreak } from './no-break';
 
 /**
  * Photo thumbnails that open a full-screen gallery.
@@ -200,7 +201,7 @@ export function PhotoLightbox({
                   id={position === index ? captionId : undefined}
                   className="meta mt-4 shrink-0 text-center text-muted"
                 >
-                  {photo.caption}
+                  <NoBreak>{photo.caption}</NoBreak>
                 </figcaption>
               </figure>
             ))}
