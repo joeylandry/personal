@@ -388,7 +388,7 @@
     opacity: 0.6;
     will-change: transform;
     backface-visibility: hidden;
-    animation: grid-scroll-down 7s linear infinite;
+    animation: grid-scroll-down 5s linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
