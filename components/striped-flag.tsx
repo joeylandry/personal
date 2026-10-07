@@ -11,8 +11,7 @@ import { useEffect, useId, useRef } from 'react';
  * into the stars, which have no border or field behind them: nothing but
  * points of light, gathered in bunches like star clusters across the corner
  * with a thin scatter between them. Every star ripples with the cloth and
- * twinkles on its own beat, swelling and brightening as it flashes. The
- * brighter ones burn as small fireballs with a tight halo.
+ * twinkles on its own beat, swelling and brightening as it flashes.
  * The box that holds it is meant to be tilted slightly, like a camera angle.
  * Idles while off screen; under reduced motion it holds a single frame.
  * Purely decorative; never announced.
@@ -59,6 +58,7 @@ const SKY = { x: CROP_X, y: 12, width: 300, height: 240 };
 const STAR_COUNT = 260;
 const CLUSTERS = 10;
 const CLUSTERED = 0.3; // share of the stars that belong to a cluster
+const MAX_SIZE = 2.4; // stars at or above this size are dropped
 const STRAYS = 16; // loners that drift out just past the corner's edge
 
 const STARS: Star[] = (() => {
@@ -116,12 +116,9 @@ const STARS: Star[] = (() => {
       accent: random() < 0.25,
     };
   });
-  return [...sky, ...strays];
+  // The biggest stars are left out; only the small points of light remain.
+  return [...sky, ...strays].filter((star) => star.size < MAX_SIZE);
 })();
-
-// The brighter stars burn as small fireballs: a soft halo that swells with the
-// flash.
-const HALOS = STARS.flatMap((star, index) => (star.size >= 2.4 ? [index] : []));
 
 const stripeSpan = (stripes: number) => (H - INSET * 2) / stripes;
 
@@ -158,18 +155,7 @@ function flagState(stripes: number, t: number, animated: boolean) {
       width: star.size * (animated ? 0.6 + 0.8 * beat : 1),
     };
   });
-  const halos = HALOS.map((index) => {
-    const star = STARS[index]!;
-    const y = star.y + ripple(star.x, t, ((star.y - INSET) / span) * 0.35);
-    const beat = animated ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed) : 0.7;
-    return {
-      cx: star.x,
-      cy: y,
-      r: star.size * (2.2 + (animated ? 2 * beat : 1.2)),
-      opacity: animated ? 0.3 + 0.6 * beat ** 2 : 0.6,
-    };
-  });
-  return { borders, stars, halos };
+  return { borders, stars };
 }
 
 export function StripedFlag({
@@ -190,7 +176,6 @@ export function StripedFlag({
 
     const borders = Array.from(svg.querySelectorAll<SVGPathElement>('[data-flag-border]'));
     const stars = Array.from(svg.querySelectorAll<SVGPathElement>('[data-flag-star]'));
-    const halos = Array.from(svg.querySelectorAll<SVGCircleElement>('[data-flag-halo]'));
 
     let frame = 0;
     let visible = true;
@@ -206,16 +191,6 @@ export function StripedFlag({
         path.setAttribute('opacity', star.opacity.toFixed(2));
         path.setAttribute('stroke-width', star.width.toFixed(2));
       });
-      const glow = (circles: SVGCircleElement[], specs: typeof next.halos) =>
-        circles.forEach((circle, i) => {
-          const spec = specs[i];
-          if (!spec) return;
-          circle.setAttribute('cx', spec.cx.toFixed(1));
-          circle.setAttribute('cy', spec.cy.toFixed(1));
-          circle.setAttribute('r', spec.r.toFixed(1));
-          circle.setAttribute('opacity', spec.opacity.toFixed(2));
-        });
-      glow(halos, next.halos);
       frame = visible ? requestAnimationFrame(draw) : 0;
     };
 
@@ -266,25 +241,6 @@ export function StripedFlag({
           <stop offset="0.75" stopColor="#000" />
           <stop offset="1" stopColor="#fff" />
         </radialGradient>
-        {(['glow', 'glow-accent'] as const).map((name) => (
-          <radialGradient key={name} id={`${fadeId}-${name}`}>
-            <stop
-              offset="0"
-              stopColor={name === 'glow' ? 'currentColor' : 'var(--accent-graphic)'}
-              stopOpacity="0.95"
-            />
-            <stop
-              offset="0.15"
-              stopColor={name === 'glow' ? 'currentColor' : 'var(--accent-graphic)'}
-              stopOpacity="0.45"
-            />
-            <stop
-              offset="1"
-              stopColor={name === 'glow' ? 'currentColor' : 'var(--accent-graphic)'}
-              stopOpacity="0"
-            />
-          </radialGradient>
-        ))}
         <mask
           id={fadeId}
           maskUnits="userSpaceOnUse"
@@ -300,18 +256,6 @@ export function StripedFlag({
         {/* The stripes fade out as they run into the corner of stars. */}
         <g mask={`url(#${fadeId})`}>{initial.borders.map((d, index) => border(d, index))}</g>
       </g>
-      {/* Each bright star's halo, under the points themselves. */}
-      {initial.halos.map((h, index) => (
-        <circle
-          key={`h${index}`}
-          data-flag-halo=""
-          cx={h.cx}
-          cy={h.cy}
-          r={h.r}
-          opacity={h.opacity}
-          fill={`url(#${fadeId}-${STARS[HALOS[index]!]!.accent ? 'glow-accent' : 'glow'})`}
-        />
-      ))}
       {/* Stars are drawn at full strength: points of light, not part of the cloth's linework. */}
       {initial.stars.map((star, index) => {
         const spec = STARS[index]!;
