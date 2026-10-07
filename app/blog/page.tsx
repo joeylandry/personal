@@ -16,10 +16,6 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <Section id="blog" divider={false} labelledBy="blog-heading" className="overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="grid-field grid-field-drift pointer-events-none absolute inset-0 opacity-60"
-      />
       {/* The breeze lines are tied off past the right edge of the screen and
           fly loose to the left, just reaching its left edge. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
