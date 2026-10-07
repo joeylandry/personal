@@ -8,11 +8,12 @@ import { useEffect, useId, useRef } from 'react';
  *
  * The stripe borders ripple in a slow wave that runs out from an unseen pole
  * off the left, freer the farther it gets. The stripes fade out as they run
- * into the stars, which have no border or field behind them: a crowd of
- * points of light of every size, thickest in the middle, with a few
- * four-point sparkles drawn as outlines among them (the same sky as the
- * giving page's shooting stars). Every star ripples with the cloth and
- * twinkles on its own beat, the sparkles growing and shrinking as they flash.
+ * into the stars, which have no border or field behind them: a scatter of
+ * points of light of every size, packed densest at the very corner and
+ * thinning out across it, with a few glinting through as tiny crosses (the
+ * same sky as the giving page's shooting stars). Every star ripples with the
+ * cloth and twinkles on its own beat, the glints growing and shrinking as
+ * they flash.
  * The box that holds it is meant to be tilted slightly, like a camera angle.
  * Idles while off screen; under reduced motion it holds a single frame.
  * Purely decorative; never announced.
@@ -30,14 +31,14 @@ const STRIPES = 13;
 const CANTON_ROWS = 7; // stripes the star field spans, as on the real flag
 
 // The stripes are fully visible from FADE_END, and gone before the first star.
-const FADE_START = 380;
-const FADE_END = 560;
+const FADE_START = 300;
+const FADE_END = 540;
 
 type Star = {
   x: number;
   y: number;
-  sparkle: boolean;
-  size: number; // dots: stroke width in px; sparkles: radius in viewBox units
+  glint: boolean;
+  size: number; // dots: stroke width in px; glints: arm length in viewBox units
   period: number; // seconds per twinkle
   seed: number;
   accent: boolean;
@@ -54,22 +55,22 @@ function mulberry32(seed: number) {
   };
 }
 
-const SKY = { x: 320, y: 190, spreadX: 105, spreadY: 85 };
-const DOTS = 30;
-const SPARKLES = 7;
+// The sky fills the top-left corner of the cloth, edge to edge.
+const SKY = { x: CROP_X, y: 12, width: 380, height: 290 };
+const DOTS = 100;
+const GLINTS = 14;
 
 const STARS: Star[] = (() => {
   const random = mulberry32(11);
-  // Roughly normal, so stars crowd toward the middle of the corner.
-  const bell = () => (random() + random() + random() - 1.5) / 1.5;
-  return Array.from({ length: DOTS + SPARKLES }, (_, i) => {
-    const sparkle = i >= DOTS;
+  return Array.from({ length: DOTS + GLINTS }, (_, i) => {
+    const glint = i >= DOTS;
     return {
-      x: SKY.x + bell() * SKY.spreadX * 1.6,
-      y: SKY.y + bell() * SKY.spreadY * 1.6,
-      sparkle,
-      size: sparkle ? 9 + random() * 9 : 1.1 + random() ** 2 * 2.6,
-      period: 1.6 + random() * 2.8,
+      // Raising to a power crowds stars toward the corner and thins them outward.
+      x: SKY.x + SKY.width * random() ** 1.35,
+      y: SKY.y + SKY.height * random() ** 1.35,
+      glint,
+      size: glint ? 3 + random() * 4 : 1 + random() ** 2.2 * 3.2,
+      period: 1.4 + random() * 3,
       seed: random() * Math.PI * 2,
       accent: random() < 0.25,
     };
@@ -89,14 +90,11 @@ function ripple(x: number, t: number, rowPhase: number) {
   return AMPLITUDE * gust * slack * wave;
 }
 
-/** A four-point sparkle with pinched sides, like the giving page's wishing stars. */
-function sparklePath(cx: number, cy: number, r: number) {
-  const p = r * 0.14;
+/** A tiny cross of two hairlines: the glint of a bright star. */
+function glintPath(cx: number, cy: number, r: number) {
   return (
-    `M${cx.toFixed(1)} ${(cy - r).toFixed(1)}L${(cx + p).toFixed(1)} ${(cy - p).toFixed(1)}` +
-    `L${(cx + r).toFixed(1)} ${cy.toFixed(1)}L${(cx + p).toFixed(1)} ${(cy + p).toFixed(1)}` +
-    `L${cx.toFixed(1)} ${(cy + r).toFixed(1)}L${(cx - p).toFixed(1)} ${(cy + p).toFixed(1)}` +
-    `L${(cx - r).toFixed(1)} ${cy.toFixed(1)}L${(cx - p).toFixed(1)} ${(cy - p).toFixed(1)}Z`
+    `M${(cx - r).toFixed(1)} ${cy.toFixed(1)}H${(cx + r).toFixed(1)}` +
+    `M${cx.toFixed(1)} ${(cy - r).toFixed(1)}V${(cy + r).toFixed(1)}`
   );
 }
 
@@ -118,9 +116,9 @@ function flagState(stripes: number, t: number, animated: boolean) {
       ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed)
       : 0.7;
     const bright = animated ? 0.2 + 0.8 * beat ** 2 : 0.8;
-    if (star.sparkle) {
+    if (star.glint) {
       const scale = animated ? 0.2 + 0.8 * beat ** 3 : 0.7;
-      return { d: sparklePath(star.x, y, star.size * scale), opacity: bright, width: 0.9 };
+      return { d: glintPath(star.x, y, star.size * scale), opacity: bright, width: 0.8 };
     }
     return {
       d: `M${star.x.toFixed(1)} ${y.toFixed(1)}h0.01`,
@@ -162,7 +160,7 @@ export function StripedFlag({
         if (!star) return;
         path.setAttribute('d', star.d);
         path.setAttribute('opacity', star.opacity.toFixed(2));
-        if (!STARS[i]?.sparkle) path.setAttribute('stroke-width', star.width.toFixed(2));
+        if (!STARS[i]?.glint) path.setAttribute('stroke-width', star.width.toFixed(2));
       });
       frame = visible ? requestAnimationFrame(draw) : 0;
     };
