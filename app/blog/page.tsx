@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Coastline } from '@/components/coastline';
 import { Section, SectionHeading } from '@/components/section';
+import { StripedFlag } from '@/components/striped-flag';
 import { publishedNotes } from '@/content';
 import { formatDate } from '@/lib/format';
 
@@ -16,20 +16,10 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <Section id="blog" divider={false} labelledBy="blog-heading" className="overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="grid-field grid-field-drift pointer-events-none absolute inset-0 opacity-60"
-      />
-      {/* The breeze lines are tied off past the right edge of the screen and
-          fly loose to the left, just reaching its left edge. */}
+      {/* A striped flag, outlined only, cropped to its rippling middle and
+          tilted a few degrees so the stripes climb toward the right. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Coastline
-          className="absolute -top-[18%] left-0 h-[110%] w-[112%] text-fog"
-          opacity={0.42}
-          lines={11}
-          gap={19}
-          breeze
-        />
+        <StripedFlag className="absolute -top-[8%] -left-[4%] h-[150%] w-[130%] origin-top-left -rotate-6 text-fog" opacity={0.42} />
       </div>
 
       <div className="wrap relative py-16 md:py-24">
@@ -45,7 +35,7 @@ export default function BlogPage() {
         ) : (
           <ol className="mt-14 md:mt-20">
             {publishedNotes.map((note) => (
-              <li key={note.slug} className="rule-t">
+              <li key={note.slug} className="rule-t first:border-t-0">
                 <Link
                   href={`/blog/${note.slug}`}
                   className="group grid gap-x-10 gap-y-3 py-8 md:grid-cols-12 md:py-10"
