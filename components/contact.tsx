@@ -18,7 +18,7 @@ export function Contact() {
     >
       <div
         aria-hidden="true"
-        className="grid-field pointer-events-none absolute inset-0 opacity-60"
+        className="grid-field grid-field-down pointer-events-none absolute inset-0 opacity-60"
       />
 
       <div className="wrap relative grid gap-x-10 gap-y-14 py-20 md:grid-cols-12 md:py-28">

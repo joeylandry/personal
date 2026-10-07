@@ -361,6 +361,18 @@
     animation: grid-drift 48s linear infinite;
   }
 
+  /* Endless slow downward scroll, one cell per loop. The mask lives on the
+     element, not the background, so the fade stays put while lines move. */
+  .grid-field-down {
+    animation: grid-drift-down 14s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grid-field-down {
+      animation: none;
+    }
+  }
+
   /* Paper grain / ink noise, kept extremely low so it reads as material. */
   .grain::after {
     content: '';
@@ -438,6 +450,12 @@
 @keyframes grid-drift {
   to {
     background-position: 5.5rem 5.5rem;
+  }
+}
+
+@keyframes grid-drift-down {
+  to {
+    background-position: 0 5.5rem;
   }
 }
 
