@@ -61,7 +61,7 @@ const CLUSTERS = 10;
 const CLUSTERED = 0.3; // share of the stars that belong to a cluster
 const STRAYS = 16; // loners that drift out just past the corner's edge
 
-const { STARS, CENTRES } = (() => {
+const STARS: Star[] = (() => {
   const random = mulberry32(11);
   // Roughly normal, so a cluster is dense in the middle and ragged at its edge.
   const bell = () => (random() + random() + random() - 1.5) / 1.5;
@@ -116,7 +116,7 @@ const { STARS, CENTRES } = (() => {
       accent: random() < 0.25,
     };
   });
-  return { STARS: [...sky, ...strays] as Star[], CENTRES: centres };
+  return [...sky, ...strays];
 })();
 
 // The brighter stars burn as small fireballs: a soft halo that swells with the
