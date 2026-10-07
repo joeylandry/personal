@@ -1022,7 +1022,7 @@
 }
 @keyframes hero-sound-ring {
   from {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-sea) 60%, transparent);
   }
   to {
     box-shadow: 0 0 0 0.75rem transparent;
