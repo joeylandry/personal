@@ -67,8 +67,7 @@ const timelinePhotos = giving.chapters.flatMap((chapter) => chapter.photos);
 /**
  * One fundraiser: the photos at their own aspect ratio (opening full size in a
  * gallery), the caption, then the story. From md up the photos sit mini beside
- * their year; TimelineTrack zooms them in from the middle of the timeline the
- * first time the reader scrolls to them.
+ * their year.
  */
 function ChapterCard({ chapter, left }: { chapter: GivingChapter; left: boolean }) {
   const [first] = chapter.photos;
