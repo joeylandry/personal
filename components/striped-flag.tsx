@@ -73,20 +73,26 @@ const STARS: Star[] = (() => {
     spread: 14 + random() * 22,
   }));
   return Array.from({ length: STAR_COUNT }, () => {
-    const centre = centres[Math.floor(random() * CLUSTERS)]!;
-    const clustered = random() < CLUSTERED;
-    const at = clustered
-      ? { x: centre.x + bell() * centre.spread * 1.5, y: centre.y + bell() * centre.spread * 1.2 }
-      : place();
     // Stars stay inside the oval where the stripes are fully faded out, so
-    // none ride over a visible stripe.
-    const dx = Math.max(at.x - SKY.x, 0);
-    const dy = Math.max(at.y - SKY.y, 0);
-    const out = Math.hypot(dx / SKY.width, dy / SKY.height);
-    const pull = out > 1 ? 1 / out : 1;
+    // none ride over a visible stripe. A star that lands outside is thrown
+    // again, not pushed back to the edge, which would draw a curved line.
+    let dx = 0;
+    let dy = 0;
+    for (let tries = 0; tries < 40; tries++) {
+      const centre = centres[Math.floor(random() * CLUSTERS)]!;
+      const at =
+        random() < CLUSTERED
+          ? { x: centre.x + bell() * centre.spread * 1.5, y: centre.y + bell() * centre.spread * 1.2 }
+          : place();
+      dx = at.x - SKY.x;
+      dy = at.y - SKY.y;
+      if (dx >= 0 && dy >= 0 && Math.hypot(dx / SKY.width, dy / SKY.height) <= 1) break;
+      dx = 0;
+      dy = 0;
+    }
     return {
-      x: SKY.x + dx * pull,
-      y: SKY.y + dy * pull,
+      x: SKY.x + dx,
+      y: SKY.y + dy,
       size: 1 + random() ** 2.2 * 3.4,
       period: 1.4 + random() * 3,
       seed: random() * Math.PI * 2,
