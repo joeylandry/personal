@@ -26,11 +26,12 @@ const AMPLITUDE = 28; // at the free edge
 const CROP_X = 150; // the visible window along the flag, in viewBox units
 const CROP_W = W - CROP_X;
 const STRIPES = 13;
-const CANTON_ROWS = 7; // stripes the star field spans, as on the real flag
 
-// The stripes are fully visible from FADE_END, and gone before the first star.
-const FADE_START = 300;
-const FADE_END = 540;
+// The stripes fade out inside an oval around the corner the stars fill, and
+// are fully drawn again beyond it, so nothing below or beside the stars is bare.
+const FADE_CENTRE = { x: CROP_X, y: 12 };
+const FADE_RADIUS = 440;
+const FADE_SQUASH = 0.8; // the oval is a little shorter than it is wide
 
 type Star = {
   x: number;
@@ -199,20 +200,25 @@ export function StripedFlag({
       className={className}
     >
       <defs>
-        <linearGradient id={`${fadeId}-grad`} gradientUnits="userSpaceOnUse" x1={FADE_START} x2={FADE_END}>
+        <radialGradient
+          id={`${fadeId}-grad`}
+          gradientUnits="userSpaceOnUse"
+          cx={FADE_CENTRE.x}
+          cy={FADE_CENTRE.y}
+          r={FADE_RADIUS}
+          gradientTransform={`translate(${FADE_CENTRE.x} ${FADE_CENTRE.y}) scale(1 ${FADE_SQUASH}) translate(${-FADE_CENTRE.x} ${-FADE_CENTRE.y})`}
+        >
           <stop offset="0" stopColor="#000" />
+          <stop offset="0.5" stopColor="#000" />
           <stop offset="1" stopColor="#fff" />
-        </linearGradient>
+        </radialGradient>
         <mask id={fadeId} maskUnits="userSpaceOnUse" x={CROP_X} y={-H} width={CROP_W} height={H * 3}>
           <rect x={CROP_X} y={-H} width={CROP_W} height={H * 3} fill={`url(#${fadeId}-grad)`} />
         </mask>
       </defs>
       <g opacity={opacity}>
-        {/* The stripes beside the stars fade out as they run into them. */}
-        <g mask={`url(#${fadeId})`}>
-          {initial.borders.slice(0, CANTON_ROWS + 1).map((d, index) => border(d, index))}
-        </g>
-        {initial.borders.slice(CANTON_ROWS + 1).map((d, index) => border(d, index + CANTON_ROWS + 1))}
+        {/* The stripes fade out as they run into the corner of stars. */}
+        <g mask={`url(#${fadeId})`}>{initial.borders.map((d, index) => border(d, index))}</g>
       </g>
       {/* Stars are drawn at full strength: points of light, not part of the cloth's linework. */}
       {initial.stars.map((star, index) => {
