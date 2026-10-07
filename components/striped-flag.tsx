@@ -3,17 +3,19 @@
 import { useEffect, useId, useRef } from 'react';
 
 /**
- * An American flag, outlined only, waving: thirteen stripes with a field of
- * stars in the top-left corner, seen as a crop of the cloth.
+ * An American flag, outlined only, waving: thirteen stripes with a cluster of
+ * twinkling stars in the top-left corner, seen as a crop of the cloth.
  *
  * The stripe borders ripple in a slow wave that runs out from an unseen pole
  * off the left, freer the farther it gets. The stripes fade out as they run
- * into the star field, which has no border of its own: nine outlined stars
- * ride the same ripple and each grows and shrinks on its own beat, like
- * flashing briefly. The box that holds it is meant to be tilted slightly,
- * like a camera angle. Idles while off screen; under reduced motion it holds
- * a single frame with the stars at rest size. Purely decorative; never
- * announced.
+ * into the stars, which have no border or field behind them: a crowd of
+ * points of light of every size, thickest in the middle, with a few
+ * four-point sparkles drawn as outlines among them (the same sky as the
+ * giving page's shooting stars). Every star ripples with the cloth and
+ * twinkles on its own beat, the sparkles growing and shrinking as they flash.
+ * The box that holds it is meant to be tilted slightly, like a camera angle.
+ * Idles while off screen; under reduced motion it holds a single frame.
+ * Purely decorative; never announced.
  */
 const W = 1000;
 const H = 600;
@@ -27,20 +29,52 @@ const CROP_W = W - CROP_X;
 const STRIPES = 13;
 const CANTON_ROWS = 7; // stripes the star field spans, as on the real flag
 
-// Stars: three staggered rows of three, upper-left of the cloth.
-const STAR_RADIUS = 26;
-const STAR_REST = 0.7; // size under reduced motion
-const STAR_PERIOD = 2.5; // seconds per grow-and-shrink
-const STAR_ROWS_Y = [100, 178, 256];
-const STAR_COLS_X = [200, 290, 380];
-const STAR_STAGGER = 45;
-const STARS = STAR_ROWS_Y.flatMap((y, row) =>
-  STAR_COLS_X.map((x, col) => ({ x: x + (row % 2 ? STAR_STAGGER : 0), y, seed: row * 3 + col })),
-);
-
 // The stripes are fully visible from FADE_END, and gone before the first star.
 const FADE_START = 380;
 const FADE_END = 560;
+
+type Star = {
+  x: number;
+  y: number;
+  sparkle: boolean;
+  size: number; // dots: stroke width in px; sparkles: radius in viewBox units
+  period: number; // seconds per twinkle
+  seed: number;
+  accent: boolean;
+};
+
+/** Small deterministic generator, so server and client draw the same sky. */
+function mulberry32(seed: number) {
+  let a = seed;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const SKY = { x: 320, y: 190, spreadX: 105, spreadY: 85 };
+const DOTS = 30;
+const SPARKLES = 7;
+
+const STARS: Star[] = (() => {
+  const random = mulberry32(11);
+  // Roughly normal, so stars crowd toward the middle of the corner.
+  const bell = () => (random() + random() + random() - 1.5) / 1.5;
+  return Array.from({ length: DOTS + SPARKLES }, (_, i) => {
+    const sparkle = i >= DOTS;
+    return {
+      x: SKY.x + bell() * SKY.spreadX * 1.6,
+      y: SKY.y + bell() * SKY.spreadY * 1.6,
+      sparkle,
+      size: sparkle ? 9 + random() * 9 : 1.1 + random() ** 2 * 2.6,
+      period: 1.6 + random() * 2.8,
+      seed: random() * Math.PI * 2,
+      accent: random() < 0.25,
+    };
+  });
+})();
 
 const stripeSpan = (stripes: number) => (H - INSET * 2) / stripes;
 
@@ -55,17 +89,18 @@ function ripple(x: number, t: number, rowPhase: number) {
   return AMPLITUDE * gust * slack * wave;
 }
 
-function starPath(cx: number, cy: number, radius: number) {
-  let d = '';
-  for (let i = 0; i < 10; i++) {
-    const r = i % 2 === 0 ? radius : radius * 0.4;
-    const angle = -Math.PI / 2 + (i * Math.PI) / 5;
-    d += `${i === 0 ? 'M' : 'L'}${(cx + r * Math.cos(angle)).toFixed(1)} ${(cy + r * Math.sin(angle)).toFixed(1)}`;
-  }
-  return `${d}Z`;
+/** A four-point sparkle with pinched sides, like the giving page's wishing stars. */
+function sparklePath(cx: number, cy: number, r: number) {
+  const p = r * 0.14;
+  return (
+    `M${cx.toFixed(1)} ${(cy - r).toFixed(1)}L${(cx + p).toFixed(1)} ${(cy - p).toFixed(1)}` +
+    `L${(cx + r).toFixed(1)} ${cy.toFixed(1)}L${(cx + p).toFixed(1)} ${(cy + p).toFixed(1)}` +
+    `L${cx.toFixed(1)} ${(cy + r).toFixed(1)}L${(cx - p).toFixed(1)} ${(cy + p).toFixed(1)}` +
+    `L${(cx - r).toFixed(1)} ${cy.toFixed(1)}L${(cx - p).toFixed(1)} ${(cy - p).toFixed(1)}Z`
+  );
 }
 
-function flagPaths(stripes: number, t: number, animated: boolean) {
+function flagState(stripes: number, t: number, animated: boolean) {
   const span = stripeSpan(stripes);
   const borders: string[] = [];
   for (let line = 0; line <= stripes; line++) {
@@ -73,16 +108,25 @@ function flagPaths(stripes: number, t: number, animated: boolean) {
     let d = '';
     for (let i = 0; i <= SAMPLES; i++) {
       const x = (W * i) / SAMPLES;
-      const y = baseY + ripple(x, t, line * 0.35);
-      d += `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`;
+      d += `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${(baseY + ripple(x, t, line * 0.35)).toFixed(1)}`;
     }
     borders.push(d);
   }
-  const stars = STARS.map(({ x, y, seed }) => {
-    const rowPhase = ((y - INSET) / span) * 0.35;
-    const beat = 0.5 + 0.5 * Math.sin((t / STAR_PERIOD) * Math.PI * 2 + seed * 1.9);
-    const size = animated ? 0.15 + 0.85 * beat ** 3 : STAR_REST;
-    return starPath(x, y + ripple(x, t, rowPhase), STAR_RADIUS * size);
+  const stars = STARS.map((star) => {
+    const y = star.y + ripple(star.x, t, ((star.y - INSET) / span) * 0.35);
+    const beat = animated
+      ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed)
+      : 0.7;
+    const bright = animated ? 0.2 + 0.8 * beat ** 2 : 0.8;
+    if (star.sparkle) {
+      const scale = animated ? 0.2 + 0.8 * beat ** 3 : 0.7;
+      return { d: sparklePath(star.x, y, star.size * scale), opacity: bright, width: 0.9 };
+    }
+    return {
+      d: `M${star.x.toFixed(1)} ${y.toFixed(1)}h0.01`,
+      opacity: bright,
+      width: star.size * (animated ? 0.6 + 0.8 * beat : 1),
+    };
   });
   return { borders, stars };
 }
@@ -96,7 +140,7 @@ export function StripedFlag({
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const fadeId = `flag-fade-${useId().replace(/:/g, '')}`;
-  const initial = flagPaths(STRIPES, 0, false);
+  const initial = flagState(STRIPES, 0, false);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -111,9 +155,15 @@ export function StripedFlag({
     const start = performance.now();
 
     const draw = (now: number) => {
-      const next = flagPaths(STRIPES, (now - start) / 1000, true);
+      const next = flagState(STRIPES, (now - start) / 1000, true);
       borders.forEach((path, i) => path.setAttribute('d', next.borders[i] ?? ''));
-      stars.forEach((path, i) => path.setAttribute('d', next.stars[i] ?? ''));
+      stars.forEach((path, i) => {
+        const star = next.stars[i];
+        if (!star) return;
+        path.setAttribute('d', star.d);
+        path.setAttribute('opacity', star.opacity.toFixed(2));
+        if (!STARS[i]?.sparkle) path.setAttribute('stroke-width', star.width.toFixed(2));
+      });
       frame = visible ? requestAnimationFrame(draw) : 0;
     };
 
@@ -150,7 +200,6 @@ export function StripedFlag({
       aria-hidden="true"
       focusable="false"
       className={className}
-      style={{ opacity }}
     >
       <defs>
         <linearGradient id={`${fadeId}-grad`} gradientUnits="userSpaceOnUse" x1={FADE_START} x2={FADE_END}>
@@ -161,22 +210,30 @@ export function StripedFlag({
           <rect x={CROP_X} y={-H} width={CROP_W} height={H * 3} fill={`url(#${fadeId}-grad)`} />
         </mask>
       </defs>
-      {/* The stripes beside the star field fade out as they run into it. */}
-      <g mask={`url(#${fadeId})`}>
-        {initial.borders.slice(0, CANTON_ROWS + 1).map((d, index) => border(d, index))}
+      <g opacity={opacity}>
+        {/* The stripes beside the stars fade out as they run into them. */}
+        <g mask={`url(#${fadeId})`}>
+          {initial.borders.slice(0, CANTON_ROWS + 1).map((d, index) => border(d, index))}
+        </g>
+        {initial.borders.slice(CANTON_ROWS + 1).map((d, index) => border(d, index + CANTON_ROWS + 1))}
       </g>
-      {initial.borders.slice(CANTON_ROWS + 1).map((d, index) => border(d, index + CANTON_ROWS + 1))}
-      {initial.stars.map((d, index) => (
-        <path
-          key={index}
-          data-flag-star=""
-          d={d}
-          stroke={index % 2 === 0 ? 'var(--accent-graphic)' : 'currentColor'}
-          strokeWidth={0.9}
-          strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      ))}
+      {/* Stars are drawn at full strength: points of light, not part of the cloth's linework. */}
+      {initial.stars.map((star, index) => {
+        const spec = STARS[index]!;
+        return (
+          <path
+            key={index}
+            data-flag-star=""
+            d={star.d}
+            opacity={star.opacity}
+            stroke={spec.accent ? 'var(--accent-graphic)' : 'currentColor'}
+            strokeWidth={star.width}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        );
+      })}
     </svg>
   );
 }
