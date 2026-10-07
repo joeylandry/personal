@@ -8,12 +8,10 @@ import { useEffect, useId, useRef } from 'react';
  *
  * The stripe borders ripple in a slow wave that runs out from an unseen pole
  * off the left, freer the farther it gets. The stripes fade out as they run
- * into the stars, which have no border or field behind them: a scatter of
- * points of light of every size, packed densest at the very corner and
- * thinning out across it, with a few glinting through as tiny crosses (the
- * same sky as the giving page's shooting stars). Every star ripples with the
- * cloth and twinkles on its own beat, the glints growing and shrinking as
- * they flash.
+ * into the stars, which have no border or field behind them: nothing but
+ * points of light, gathered in bunches like star clusters across the corner
+ * with a thin scatter between them. Every star ripples with the cloth and
+ * twinkles on its own beat, swelling and brightening as it flashes.
  * The box that holds it is meant to be tilted slightly, like a camera angle.
  * Idles while off screen; under reduced motion it holds a single frame.
  * Purely decorative; never announced.
@@ -37,8 +35,7 @@ const FADE_END = 540;
 type Star = {
   x: number;
   y: number;
-  glint: boolean;
-  size: number; // dots: stroke width in px; glints: arm length in viewBox units
+  size: number; // stroke width in px
   period: number; // seconds per twinkle
   seed: number;
   accent: boolean;
@@ -57,19 +54,33 @@ function mulberry32(seed: number) {
 
 // The sky fills the top-left corner of the cloth, edge to edge.
 const SKY = { x: CROP_X, y: 12, width: 380, height: 290 };
-const DOTS = 100;
-const GLINTS = 14;
+const STAR_COUNT = 150;
+const CLUSTERS = 7;
+const CLUSTERED = 0.75; // share of the stars that belong to a cluster
 
 const STARS: Star[] = (() => {
   const random = mulberry32(11);
-  return Array.from({ length: DOTS + GLINTS }, (_, i) => {
-    const glint = i >= DOTS;
+  // Roughly normal, so a cluster is dense in the middle and ragged at its edge.
+  const bell = () => (random() + random() + random() - 1.5) / 1.5;
+  const place = () => ({
+    // Raising to a power crowds stars toward the corner and thins them outward.
+    x: SKY.x + SKY.width * random() ** 1.35,
+    y: SKY.y + SKY.height * random() ** 1.35,
+  });
+  const centres = Array.from({ length: CLUSTERS }, () => ({
+    ...place(),
+    spread: 22 + random() * 30,
+  }));
+  return Array.from({ length: STAR_COUNT }, () => {
+    const centre = centres[Math.floor(random() * CLUSTERS)]!;
+    const clustered = random() < CLUSTERED;
+    const at = clustered
+      ? { x: centre.x + bell() * centre.spread * 1.5, y: centre.y + bell() * centre.spread * 1.2 }
+      : place();
     return {
-      // Raising to a power crowds stars toward the corner and thins them outward.
-      x: SKY.x + SKY.width * random() ** 1.35,
-      y: SKY.y + SKY.height * random() ** 1.35,
-      glint,
-      size: glint ? 3 + random() * 4 : 1 + random() ** 2.2 * 3.2,
+      x: Math.max(SKY.x, at.x),
+      y: Math.max(SKY.y, at.y),
+      size: 1 + random() ** 2.2 * 3.4,
       period: 1.4 + random() * 3,
       seed: random() * Math.PI * 2,
       accent: random() < 0.25,
@@ -90,14 +101,6 @@ function ripple(x: number, t: number, rowPhase: number) {
   return AMPLITUDE * gust * slack * wave;
 }
 
-/** A tiny cross of two hairlines: the glint of a bright star. */
-function glintPath(cx: number, cy: number, r: number) {
-  return (
-    `M${(cx - r).toFixed(1)} ${cy.toFixed(1)}H${(cx + r).toFixed(1)}` +
-    `M${cx.toFixed(1)} ${(cy - r).toFixed(1)}V${(cy + r).toFixed(1)}`
-  );
-}
-
 function flagState(stripes: number, t: number, animated: boolean) {
   const span = stripeSpan(stripes);
   const borders: string[] = [];
@@ -116,10 +119,6 @@ function flagState(stripes: number, t: number, animated: boolean) {
       ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed)
       : 0.7;
     const bright = animated ? 0.2 + 0.8 * beat ** 2 : 0.8;
-    if (star.glint) {
-      const scale = animated ? 0.2 + 0.8 * beat ** 3 : 0.7;
-      return { d: glintPath(star.x, y, star.size * scale), opacity: bright, width: 0.8 };
-    }
     return {
       d: `M${star.x.toFixed(1)} ${y.toFixed(1)}h0.01`,
       opacity: bright,
@@ -160,7 +159,7 @@ export function StripedFlag({
         if (!star) return;
         path.setAttribute('d', star.d);
         path.setAttribute('opacity', star.opacity.toFixed(2));
-        if (!STARS[i]?.glint) path.setAttribute('stroke-width', star.width.toFixed(2));
+        path.setAttribute('stroke-width', star.width.toFixed(2));
       });
       frame = visible ? requestAnimationFrame(draw) : 0;
     };
