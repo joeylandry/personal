@@ -16,7 +16,7 @@ export function NowPlayingTicker() {
   return (
     <Link
       href="/about#listening"
-      className="group meta flex min-w-0 items-center gap-2.5 text-faint hover:text-fg"
+      className="ticker-eq group meta flex min-w-0 items-center gap-2.5 text-faint hover:text-fg"
     >
       <EqBars playing />
       <span className="shrink-0 text-detail">Now playing</span>

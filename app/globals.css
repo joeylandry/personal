@@ -496,6 +496,10 @@
   border-radius: 9999px;
   background-color: var(--muted);
 }
+/* Footer ticker bars take the yellow accent. */
+.ticker-eq .eq > span {
+  background-color: var(--accent);
+}
 .eq[data-rolled='true'] > span {
   animation: eq 1.1s ease-in-out infinite paused;
 }
