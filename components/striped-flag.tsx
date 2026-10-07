@@ -11,7 +11,9 @@ import { useEffect, useId, useRef } from 'react';
  * into the stars, which have no border or field behind them: nothing but
  * points of light, gathered in bunches like star clusters across the corner
  * with a thin scatter between them. Every star ripples with the cloth and
- * twinkles on its own beat, swelling and brightening as it flashes.
+ * twinkles on its own beat, swelling and brightening as it flashes. The
+ * brighter ones burn as small fireballs with a soft halo, and each cluster
+ * carries a faint breathing glow.
  * The box that holds it is meant to be tilted slightly, like a camera angle.
  * Idles while off screen; under reduced motion it holds a single frame.
  * Purely decorative; never announced.
@@ -60,7 +62,7 @@ const CLUSTERS = 7;
 const CLUSTERED = 0.6; // share of the stars that belong to a cluster
 const STRAYS = 16; // loners that drift out just past the corner's edge
 
-const STARS: Star[] = (() => {
+const { STARS, CENTRES } = (() => {
   const random = mulberry32(11);
   // Roughly normal, so a cluster is dense in the middle and ragged at its edge.
   const bell = () => (random() + random() + random() - 1.5) / 1.5;
@@ -83,7 +85,10 @@ const STARS: Star[] = (() => {
       const centre = centres[Math.floor(random() * CLUSTERS)]!;
       const at =
         random() < CLUSTERED
-          ? { x: centre.x + bell() * centre.spread * 1.5, y: centre.y + bell() * centre.spread * 1.2 }
+          ? {
+              x: centre.x + bell() * centre.spread * 1.5,
+              y: centre.y + bell() * centre.spread * 1.2,
+            }
           : place();
       dx = at.x - SKY.x;
       dy = at.y - SKY.y;
@@ -113,8 +118,12 @@ const STARS: Star[] = (() => {
       accent: random() < 0.25,
     };
   });
-  return [...sky, ...strays];
+  return { STARS: [...sky, ...strays] as Star[], CENTRES: centres };
 })();
+
+// The brighter stars burn as small fireballs: a soft halo that swells with the
+// flash. Each cluster also carries a faint glow of its own, like a nebula.
+const HALOS = STARS.flatMap((star, index) => (star.size >= 2 ? [index] : []));
 
 const stripeSpan = (stripes: number) => (H - INSET * 2) / stripes;
 
@@ -143,9 +152,7 @@ function flagState(stripes: number, t: number, animated: boolean) {
   }
   const stars = STARS.map((star) => {
     const y = star.y + ripple(star.x, t, ((star.y - INSET) / span) * 0.35);
-    const beat = animated
-      ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed)
-      : 0.7;
+    const beat = animated ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed) : 0.7;
     const bright = animated ? 0.2 + 0.8 * beat ** 2 : 0.8;
     return {
       d: `M${star.x.toFixed(1)} ${y.toFixed(1)}h0.01`,
@@ -153,7 +160,27 @@ function flagState(stripes: number, t: number, animated: boolean) {
       width: star.size * (animated ? 0.6 + 0.8 * beat : 1),
     };
   });
-  return { borders, stars };
+  const halos = HALOS.map((index) => {
+    const star = STARS[index]!;
+    const y = star.y + ripple(star.x, t, ((star.y - INSET) / span) * 0.35);
+    const beat = animated ? 0.5 + 0.5 * Math.sin((t / star.period) * Math.PI * 2 + star.seed) : 0.7;
+    return {
+      cx: star.x,
+      cy: y,
+      r: star.size * (4 + (animated ? 4 * beat : 2.5)),
+      opacity: animated ? 0.15 + 0.55 * beat ** 2 : 0.4,
+    };
+  });
+  const nebulae = CENTRES.map((centre, i) => {
+    const breath = animated ? 0.5 + 0.5 * Math.sin(t * 0.4 + i * 1.9) : 0.6;
+    return {
+      cx: centre.x,
+      cy: centre.y + ripple(centre.x, t, ((centre.y - INSET) / span) * 0.35),
+      r: centre.spread * (1.6 + 0.5 * breath),
+      opacity: 0.12 + 0.14 * breath,
+    };
+  });
+  return { borders, stars, halos, nebulae };
 }
 
 export function StripedFlag({
@@ -174,6 +201,8 @@ export function StripedFlag({
 
     const borders = Array.from(svg.querySelectorAll<SVGPathElement>('[data-flag-border]'));
     const stars = Array.from(svg.querySelectorAll<SVGPathElement>('[data-flag-star]'));
+    const halos = Array.from(svg.querySelectorAll<SVGCircleElement>('[data-flag-halo]'));
+    const nebulae = Array.from(svg.querySelectorAll<SVGCircleElement>('[data-flag-nebula]'));
 
     let frame = 0;
     let visible = true;
@@ -189,6 +218,17 @@ export function StripedFlag({
         path.setAttribute('opacity', star.opacity.toFixed(2));
         path.setAttribute('stroke-width', star.width.toFixed(2));
       });
+      const glow = (circles: SVGCircleElement[], specs: typeof next.halos) =>
+        circles.forEach((circle, i) => {
+          const spec = specs[i];
+          if (!spec) return;
+          circle.setAttribute('cx', spec.cx.toFixed(1));
+          circle.setAttribute('cy', spec.cy.toFixed(1));
+          circle.setAttribute('r', spec.r.toFixed(1));
+          circle.setAttribute('opacity', spec.opacity.toFixed(2));
+        });
+      glow(halos, next.halos);
+      glow(nebulae, next.nebulae);
       frame = visible ? requestAnimationFrame(draw) : 0;
     };
 
@@ -239,7 +279,33 @@ export function StripedFlag({
           <stop offset="0.75" stopColor="#000" />
           <stop offset="1" stopColor="#fff" />
         </radialGradient>
-        <mask id={fadeId} maskUnits="userSpaceOnUse" x={CROP_X} y={-H} width={CROP_W} height={H * 3}>
+        {(['glow', 'glow-accent'] as const).map((name) => (
+          <radialGradient key={name} id={`${fadeId}-${name}`}>
+            <stop
+              offset="0"
+              stopColor={name === 'glow' ? 'currentColor' : 'var(--accent-graphic)'}
+              stopOpacity="0.95"
+            />
+            <stop
+              offset="0.3"
+              stopColor={name === 'glow' ? 'currentColor' : 'var(--accent-graphic)'}
+              stopOpacity="0.35"
+            />
+            <stop
+              offset="1"
+              stopColor={name === 'glow' ? 'currentColor' : 'var(--accent-graphic)'}
+              stopOpacity="0"
+            />
+          </radialGradient>
+        ))}
+        <mask
+          id={fadeId}
+          maskUnits="userSpaceOnUse"
+          x={CROP_X}
+          y={-H}
+          width={CROP_W}
+          height={H * 3}
+        >
           <rect x={CROP_X} y={-H} width={CROP_W} height={H * 3} fill={`url(#${fadeId}-grad)`} />
         </mask>
       </defs>
@@ -247,6 +313,29 @@ export function StripedFlag({
         {/* The stripes fade out as they run into the corner of stars. */}
         <g mask={`url(#${fadeId})`}>{initial.borders.map((d, index) => border(d, index))}</g>
       </g>
+      {/* Cluster glow, then each bright star's halo, under the points themselves. */}
+      {initial.nebulae.map((n, index) => (
+        <circle
+          key={`n${index}`}
+          data-flag-nebula=""
+          cx={n.cx}
+          cy={n.cy}
+          r={n.r}
+          opacity={n.opacity}
+          fill={`url(#${fadeId}-${index % 2 ? 'glow-accent' : 'glow'})`}
+        />
+      ))}
+      {initial.halos.map((h, index) => (
+        <circle
+          key={`h${index}`}
+          data-flag-halo=""
+          cx={h.cx}
+          cy={h.cy}
+          r={h.r}
+          opacity={h.opacity}
+          fill={`url(#${fadeId}-${STARS[HALOS[index]!]!.accent ? 'glow-accent' : 'glow'})`}
+        />
+      ))}
       {/* Stars are drawn at full strength: points of light, not part of the cloth's linework. */}
       {initial.stars.map((star, index) => {
         const spec = STARS[index]!;
