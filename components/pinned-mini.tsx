@@ -96,7 +96,7 @@ export function PinnedMini({
             Play on Spotify
           </ExternalLink>
         ) : (
-          <p className="mt-0.5 truncate text-sm text-muted">
+          <p className="mt-0.5 truncate text-sm text-muted transition-colors group-hover:text-fg">
             {artist ?? (
               <Link href="/about#listening" className="link hover:text-fg">
                 On the turntable
