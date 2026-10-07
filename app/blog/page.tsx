@@ -19,7 +19,7 @@ export default function BlogPage() {
       {/* A striped flag, outlined only, cropped to its rippling middle and
           tilted a few degrees so the stripes climb toward the right. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <StripedFlag className="absolute top-1/2 left-1/2 h-[150%] w-[130%] -translate-x-1/2 -translate-y-1/2 -rotate-6 text-fog" opacity={0.42} />
+        <StripedFlag className="absolute -top-[8%] -left-[4%] h-[150%] w-[130%] origin-top-left -rotate-6 text-fog" opacity={0.42} />
       </div>
 
       <div className="wrap relative py-16 md:py-24">
