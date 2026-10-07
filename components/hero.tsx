@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { donny, listening, profile, spotifyTrackUrl } from '@/content';
 import { getTrackPreview } from '@/lib/spotify-cache';
 import { Cta, CtaArrow } from './cta';
-import { PinnedMini } from './pinned-mini';
+import { HeroSound } from './hero-sound';
 import { Reveal } from './reveal';
 
 /** Reveal delays (ms) for each headline line. */
@@ -33,7 +33,7 @@ export async function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
-      <div className="wrap grid gap-x-10 gap-y-14 pt-14 pb-14 md:grid-cols-12 md:pt-16 md:pb-16 lg:pt-20 lg:pb-20">
+      <div className="wrap grid gap-x-10 gap-y-6 pt-14 pb-14 md:grid-cols-12 md:gap-y-14 md:pt-16 md:pb-16 lg:pt-20 lg:pb-20">
         <div className="md:col-span-8">
           <Reveal immediate>
             {/* An eyebrow over the headline, not a rival to it. The name is
@@ -93,7 +93,7 @@ export async function Hero() {
                 delay={1000}
                 className="flex w-full sm:w-auto sm:min-w-[17rem] sm:flex-1 lg:-mr-6 lg:justify-center"
               >
-                <PinnedMini
+                <HeroSound
                   trackId={pinned.spotifyId}
                   eyebrow={pinned.label}
                   preview={preview}
@@ -108,14 +108,14 @@ export async function Hero() {
         <Reveal immediate delay={600} className="md:col-span-4 md:self-end">
           <Link
             href="/about#donny"
-            className="group flex items-center gap-5 border border-rule bg-ink/55 p-4 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
+            className="group flex items-center gap-4 border border-rule bg-ink/55 p-3.5 backdrop-blur-md transition-colors hover:border-accent md:flex-col md:items-start md:p-5"
           >
-            <span className="relative block aspect-square w-24 shrink-0 overflow-hidden border border-rule md:w-full">
+            <span className="relative block aspect-square w-[4.5rem] shrink-0 overflow-hidden border border-rule md:w-full">
               <Image
                 src={donny.headshot.src}
                 alt={donny.headshot.alt}
                 fill
-                sizes="(min-width: 768px) 28vw, 96px"
+                sizes="(min-width: 768px) 28vw, 72px"
                 className="object-cover object-[50%_35%]"
               />
             </span>
