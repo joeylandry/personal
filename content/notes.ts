@@ -13,11 +13,7 @@ export const notes: Note[] = [
     dek: 'Why I intend to seek the presidency when I turn 35, and the one principle I will build everything on.',
     date: '2026-10-07',
     tags: ['Statement', 'Unity', 'Soft launch'],
-    letterhead: {
-      office: 'Office of Joey Landry',
-      label: 'For immediate release',
-      headline: 'Joey Landry Announces Intent to Seek the Presidency at 35',
-    },
+    letterhead: { office: 'The Office of Joey Landry', label: 'Statement · For immediate release' },
     body: [
       {
         type: 'p',

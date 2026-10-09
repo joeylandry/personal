@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ExternalLink } from '@/components/external-link';
-import { Monogram } from '@/components/monogram';
 import { Section } from '@/components/section';
 import { getNote, publishedNotes } from '@/content';
 import type { NoteBlock } from '@/content';
@@ -36,22 +35,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-function Block({ block, release = false }: { block: NoteBlock; release?: boolean }) {
+function Block({ block }: { block: NoteBlock }) {
   switch (block.type) {
     case 'p':
       return <p>{block.text}</p>;
     case 'h':
-      return release ? (
-        <h2 className="pt-2 font-serif text-lg font-bold text-ink">{block.text}</h2>
-      ) : (
-        <h2 className="pt-6 text-heading font-medium text-fg">{block.text}</h2>
-      );
+      return <h2 className="pt-6 text-heading font-medium text-fg">{block.text}</h2>;
     case 'quote':
       return (
         <figure className="border-l-2 border-detail py-1 pl-6">
-          <blockquote className={release ? 'text-lead text-ink' : 'text-lead text-fg'}>
-            “{block.text}”
-          </blockquote>
+          <blockquote className="text-lead text-fg">“{block.text}”</blockquote>
           {block.cite ? (
             <figcaption className="meta mt-3 text-faint">{block.cite}</figcaption>
           ) : null}
@@ -63,7 +56,7 @@ function Block({ block, release = false }: { block: NoteBlock; release?: boolean
           {block.items.map((item) => (
             <li key={item} className="relative pl-6">
               <span aria-hidden="true" className="absolute left-0 text-detail">
-                {release ? '•' : '→'}
+                →
               </span>
               {item}
             </li>
@@ -77,68 +70,6 @@ export default async function NotePage({ params }: Params) {
   const { slug } = await params;
   const note = getNote(slug);
   if (!note) notFound();
-
-  if (note.letterhead) {
-    const { office, label, headline } = note.letterhead;
-    return (
-      <article>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: jsonLdString([
-              articleSchema(note),
-              breadcrumbSchema([
-                { name: 'Home', path: '/' },
-                { name: 'Blog', path: '/blog' },
-                { name: note.title, path: `/blog/${note.slug}` },
-              ]),
-            ]),
-          }}
-        />
-        <Section divider={false} labelledBy="note-heading">
-          <div className="wrap py-12 md:py-20">
-            <p className="meta mx-auto max-w-[44rem] text-faint">
-              <Link href="/blog" className="link hover:text-fg">
-                Blog
-              </Link>
-              <span aria-hidden="true"> / </span>
-              Statement
-              {note.draft ? <span className="ml-2 text-accent">Draft, not live</span> : null}
-            </p>
-            <div className="mx-auto mt-6 max-w-[44rem] bg-paper px-6 py-12 font-serif text-ink shadow-2xl md:px-16 md:py-16">
-              <header className="text-center">
-                <Monogram className="mx-auto h-14 w-auto text-ink" title="Joey Landry" />
-                <p className="mt-5 text-3xl tracking-tight uppercase md:text-4xl">Joey Landry</p>
-              </header>
-              <p className="mt-10 text-center text-lg font-bold">{office}</p>
-              <div className="mt-8 text-[1.0625rem]">
-                <p className="font-bold uppercase">{label}</p>
-                <p>
-                  <time dateTime={note.date}>{formatDate(note.date)}</time>
-                </p>
-              </div>
-              <h1 id="note-heading" className="mt-8 text-center text-xl leading-snug font-bold">
-                {headline}
-              </h1>
-              <div className="mt-8 space-y-5 text-[1.0625rem] leading-relaxed">
-                {note.body.map((block, index) => (
-                  <Block key={index} block={block} release />
-                ))}
-              </div>
-              <p aria-hidden="true" className="mt-10 text-center font-bold tracking-widest">
-                ###
-              </p>
-            </div>
-            <p className="mx-auto mt-10 max-w-[44rem]">
-              <Link href="/blog" className="link meta text-muted hover:text-fg">
-                ← All posts
-              </Link>
-            </p>
-          </div>
-        </Section>
-      </article>
-    );
-  }
 
   return (
     <article>
@@ -166,6 +97,12 @@ export default async function NotePage({ params }: Params) {
               <time dateTime={note.date}>{formatDate(note.date)}</time>
               {note.draft ? <span className="ml-2 text-accent">Draft, not live</span> : null}
             </p>
+            {note.letterhead ? (
+              <div className="rule-t mt-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-detail pt-4 pb-4">
+                <p className="meta text-fg">{note.letterhead.office}</p>
+                <p className="meta text-faint">{note.letterhead.label}</p>
+              </div>
+            ) : null}
             <h1 id="note-heading" className="mt-6 text-title font-medium text-fg">
               {note.title}
             </h1>
