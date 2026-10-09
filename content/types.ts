@@ -158,8 +158,11 @@ export interface Note {
   /** YYYY-MM-DD. */
   date: string;
   tags: string[];
-  /** Official-statement styling: an office name and a label shown above the title. */
-  letterhead?: { office: string; label: string };
+  /**
+   * Renders the post as an official press release on a letterhead: masthead,
+   * office line, release label, a plain descriptive headline, and a closing ###.
+   */
+  letterhead?: { office: string; label: string; headline: string };
   /**
    * Drafts render in development and on Vercel previews, never in production,
    * so a post can be read in place before it goes live.
