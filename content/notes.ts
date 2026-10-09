@@ -8,6 +8,62 @@ import type { Note } from './types';
  */
 export const notes: Note[] = [
   {
+    slug: 'a-statement-on-unity',
+    title: 'A statement on unity.',
+    dek: 'Why I intend to seek the presidency when I turn 35, and the one principle I will build everything on.',
+    date: '2026-10-07',
+    tags: ['Statement', 'Unity', 'Soft launch'],
+    letterhead: { office: 'The Office of Joey Landry', label: 'Statement · For immediate release' },
+    body: [
+      {
+        type: 'p',
+        text: 'Today I am announcing, early and without ceremony, that I intend to seek the presidency of the United States when I reach the constitutional age of 35. This is not a campaign. There is no committee, no platform and no schedule. It is a statement of direction, made now so that the years between here and then can be held to account.',
+      },
+      {
+        type: 'p',
+        text: 'I am beginning with one principle, and not with a party, a program or an opponent.',
+      },
+      { type: 'h', text: 'The principle' },
+      {
+        type: 'p',
+        text: 'The principle is unity: the conviction that Americans who disagree are still Americans first, and that a country is strong in proportion to its ability to hold its disagreements without breaking.',
+      },
+      {
+        type: 'p',
+        text: 'Unity is not agreement. It has never required agreement. It requires that we assume good faith until given a reason not to, that we listen before we answer, and that we treat the dignity of the person across from us as settled, not as something they must earn by thinking like us.',
+      },
+      { type: 'h', text: 'The moment' },
+      {
+        type: 'p',
+        text: 'We live in a time when it is cheap to be certain and costly to be curious. Feeds reward the sharpest line, not the fairest one. Many of us know our neighbors’ opinions long before we know their names. I do not believe that reflects who Americans are. I believe it reflects the habits we have been rewarded for, and habits can change.',
+      },
+      {
+        type: 'p',
+        text: 'My generation grew up watching disagreement turn into spectacle. It can also be the generation that decides it has had enough. I intend to help it decide.',
+      },
+      { type: 'h', text: 'My commitments' },
+      {
+        type: 'list',
+        items: [
+          'I will describe positions I disagree with in terms their holders would call fair.',
+          'I will hold my convictions firmly and the people who disagree with them gently. The two do not compete.',
+          'I will show up in person, in rooms where I am not the most popular person, and I will stay for the whole conversation.',
+          'I will remember that service comes before politics. Those who run toward hardship, from first responders to volunteers, have never first asked what a person believes.',
+        ],
+      },
+      { type: 'h', text: 'Between now and then' },
+      {
+        type: 'p',
+        text: 'The work before 35 is ordinary work: building things, serving my community and earning trust the slow way. I will report on it here as I go, including what I get wrong. Anyone who asks the country for unity should spend the intervening years practicing it.',
+      },
+      {
+        type: 'p',
+        text: 'If you disagree with me about nearly everything, you are exactly who I hope to hear from. My door, and my contact page, are open.',
+      },
+      { type: 'p', text: 'Joey Landry' },
+    ],
+  },
+  {
     slug: 'sonos-let-me-fix-your-app',
     title: 'Sonos can’t market its way out of a broken app.',
     dek: 'I built a whole marketing presentation on Sonos this semester. My verdict: the comeback plan is smart, but the ads can only promise what the app actually delivers.',
