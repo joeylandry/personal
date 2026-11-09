@@ -147,7 +147,9 @@ export type NoteBlock =
   | { type: 'p'; text: string }
   | { type: 'h'; text: string }
   | { type: 'quote'; text: string; cite?: string }
-  | { type: 'list'; items: string[] };
+  | { type: 'list'; items: string[] }
+  /** The interactive left-to-right political scale. */
+  | { type: 'scale' };
 
 /** A short post: a hot take, an opinion, a half-built idea. */
 export interface Note {

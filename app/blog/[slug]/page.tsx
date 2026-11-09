@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ExternalLink } from '@/components/external-link';
+import { PoliticalScale } from '@/components/political-scale';
 import { Section } from '@/components/section';
 import { getNote, publishedNotes } from '@/content';
 import type { NoteBlock } from '@/content';
@@ -63,6 +64,8 @@ function Block({ block }: { block: NoteBlock }) {
           ))}
         </ul>
       );
+    case 'scale':
+      return <PoliticalScale />;
   }
 }
 

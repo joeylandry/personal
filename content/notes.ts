@@ -107,13 +107,14 @@ export const notes: Note[] = [
       { type: 'h', text: 'My take (coming soon)' },
       {
         type: 'p',
-        text: 'This is where I’ll add my own view on each side: what I agree with, what I don’t, and where I think I actually land. Then I’ll put it on a scale.',
+        text: 'This is where I’ll add my own view on each side: what I agree with, what I don’t, and where I think I actually land on the scale below.',
       },
-      { type: 'h', text: 'The scale (coming soon)' },
+      { type: 'h', text: 'The scale: where do you fall?' },
       {
         type: 'p',
-        text: 'The plan is an interactive left-to-right scale: where the parties sit, where I sit, where most Americans really fall, and the long list of things nearly all of us agree on at the end of the day. My bet is that the middle is a lot more crowded than the internet makes it look.',
+        text: 'Move along the scale below to see what people at each spot tend to believe, and how many Americans are actually there. My bet going in was that the middle is a lot more crowded than the internet makes it look. The data agrees.',
       },
+      { type: 'scale' },
     ],
     sources: [
       {
